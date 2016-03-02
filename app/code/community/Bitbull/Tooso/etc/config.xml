@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @package Bitbull_Tooso
+ * @author Gennaro Vietri <gennaro.vietri@bitbull.it>
+ */
+-->
+<config>
+    <modules>
+        <Bitbull_Tooso>
+            <version>1.0.0</version>
+        </Bitbull_Tooso>
+    </modules>
+    <global>
+        <models>
+            <tooso>
+                <class>Bitbull_Tooso_Model</class>
+            </tooso>
+            <catalogsearch_resource>
+                <rewrite>
+                    <fulltext>Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext</fulltext>
+                </rewrite>
+            </catalogsearch_resource>
+        </models>
+        <helpers>
+            <tooso>
+                <class>Bitbull_Tooso_Helper</class>
+            </tooso>
+        </helpers>
+        <blocks>
+            <tooso>
+                <class>Bitbull_Tooso_Block</class>
+            </tooso>
+        </blocks>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Bitbull_Tooso before="Mage_Adminhtml">Bitbull_Tooso_Adminhtml</Bitbull_Tooso>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <default>
+        <tooso>
+            <active>
+                <frontend>0</frontend>
+                <admin>0</admin>
+            </active>
+            <server>
+                <host></host>
+                <port></port>
+                <path>/tooso</path>
+            </server>
+            <search>
+                <limit>100</limit>
+            </search>
+        </tooso>
+    </default>
+</config>

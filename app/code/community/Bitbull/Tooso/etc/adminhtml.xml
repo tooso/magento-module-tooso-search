@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @package Bitbull_Tooso
+ * @author Gennaro Vietri <gennaro.vietri@bitbull.it>
+ */
+-->
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <tooso translate="title" module="tooso">
+                                        <title>Tooso Search</title>
+                                    </tooso>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

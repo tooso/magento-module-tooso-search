@@ -7,6 +7,16 @@
 class Bitbull_Tooso_Model_Indexer
 {
     /**
+     * @var Bitbull_Tooso_Helper_Log
+     */
+    protected $_logger = null;
+
+    public function __construct()
+    {
+        $this->_logger = Mage::helper('tooso/log');
+    }
+
+    /**
     * Rebuild Tooso Index
     * 
     * @param int|array|null $productIds
@@ -37,7 +47,8 @@ class Bitbull_Tooso_Model_Indexer
             $search->commit();
             $search->optimize();
         } catch (Exception $e) {
-            Mage::log($e->getMessage(),3,Mage::helper('tooso')->getLogFile());
+            $this->_logger->logException($e);
+
             return false;
         }
 
@@ -66,7 +77,8 @@ class Bitbull_Tooso_Model_Indexer
             $search->commit();
             $search->optimize();
         } catch (Exception $e) {
-            Mage::log($e->getMessage(),3,Mage::helper('tooso')->getLogFile());
+            $this->_logger->logException($e);
+
             return false;
         }
 

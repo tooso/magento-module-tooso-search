@@ -7,6 +7,18 @@
 class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSearch_Model_Resource_Fulltext
 {
     /**
+     * @var Bitbull_Tooso_Helper_Log
+    */
+    protected $_logger = null;
+
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->_logger = Mage::helper('tooso/log');
+    }
+
+    /**
      * Overloaded method prepareResult.
      * Prepare results for query.
      * Replaces the traditional fulltext search with a Tooso search (if active).
@@ -26,27 +38,33 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         if (!$query->getIsProcessed()) {
             
             try {
-                $search = Mage::getModel('tooso/search')
-                          ->loadQuery($queryText,(int)$query->getStoreId(),(int)Mage::getStoreConfig('tooso/search/limit'));
-                
-                if($search->count()) {
-                    $products = $search->getProducts();
+                $search = Mage::getModel('tooso/search')->search($queryText, (int)$query->getStoreId());
 
-                    $data = array();
-                    foreach($products as $product) {
-                        $data[] = array('query_id'   => $query->getId(),
-                                        'product_id' => $product['product_id'],
-                                        'relevance'  => $product['relevance']);
+                if ($search->isSearchAvailable()) {
+                    if ($search->count()) {
+                        $products = $search->getProducts();
+
+                        $data = array();
+                        foreach ($products as $product) {
+                            $data[] = array(
+                                'query_id'   => $query->getId(),
+                                'product_id' => $product['product_id'],
+                                'relevance'  => $product['relevance']
+                            );
+                        }
+
+                        $adapter->insertMultiple($this->getTable('catalogsearch/result'), $data);
                     }
 
-                    $adapter->insertMultiple($this->getTable('catalogsearch/result'),$data);
+                    $query->setIsProcessed(1);
+                } else {
+                    parent::prepareResult($object, $queryText, $query);
                 }
 
-                $query->setIsProcessed(1);
-                
             } catch (Exception $e) {
-                Mage::log($e->getMessage(),3,Mage::helper('tooso')->getLogFile());
-                return parent::prepareResult($object, $queryText, $query);
+                $this->_logger->logException($e);
+
+                parent::prepareResult($object, $queryText, $query);
             }
             
         }

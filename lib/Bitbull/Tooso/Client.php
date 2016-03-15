@@ -33,7 +33,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_connectTimeout = 500;
+    protected $_connectTimeout = 6000;
 
     /**
      * Timeout for API response wait
@@ -41,7 +41,12 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_timeout = 500;
+    protected $_timeout = 6000;
+
+    /**
+     * @var stdClass
+    */
+    protected $_response = null;
 
     /**
      * @param string $apiKey
@@ -57,10 +62,16 @@ class Bitbull_Tooso_Client
      * Perform a search
      *
      * @param string $query
+     * @return Bitbull_Tooso_Search_Result
     */
     public function search($query)
     {
-        $result = $this->_doRequest('search', array('query' => $query));
+        $rawResponse = $this->_doRequest('search', array('query' => $query));
+
+        $result = new Bitbull_Tooso_Search_Result();
+        $result->setResponse($rawResponse);
+
+        return $result;
     }
 
     /**
@@ -69,6 +80,7 @@ class Bitbull_Tooso_Client
      * @param string $path
      * @param array $params
      * @return stdClass
+     * @throws Bitbull_Tooso_Exception
     */
     protected function _doRequest($path, $params)
     {
@@ -84,22 +96,34 @@ class Bitbull_Tooso_Client
 
         $url .= '?' . implode('&', $queryString);
 
-        try {
-            $ch = curl_init();
+        $ch = curl_init();
 
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
-            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
 
-            $output = curl_exec($ch);
+        $output = curl_exec($ch);
+        $error = curl_error($ch);
+        $errorNumber = curl_errno($ch);
 
-            curl_close($ch);
+        curl_close($ch);
 
-            return json_decode($output);
+        if (false === $output) {
 
-        } catch (Exception $e) {
-            return $e->getMessage();
+            throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
+
+        } else {
+            $response = json_decode($output);
+
+            if (isset($response->ToosoError)) {
+                $e = new Bitbull_Tooso_Exception($response->ToosoError->Description, $response->Code);
+                $e->setDebugInfo($response->ToosoError->DebugInfo);
+
+                throw $e;
+            } else {
+                return $response;
+            }
         }
     }
 }

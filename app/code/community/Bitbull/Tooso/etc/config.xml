@@ -51,13 +51,18 @@
                 <admin>0</admin>
             </active>
             <server>
-                <host></host>
-                <port></port>
-                <path>/tooso</path>
+                <api_key />
             </server>
-            <search>
-                <limit>100</limit>
-            </search>
         </tooso>
     </default>
+    <phpunit>
+        <suite>
+            <modules>
+                <Bitbull_Tooso />
+            </modules>
+            <groups>
+                <lib>Lib</lib>
+            </groups>
+        </suite>
+    </phpunit>
 </config>

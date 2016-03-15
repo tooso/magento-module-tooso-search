@@ -46,55 +46,21 @@
                     </fields>
                 </active>
                 <server translate="label">
-                    <label>Server Configuration</label>
+                    <label>API Configuration</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <host translate="label">
-                            <label>Host</label>
+                        <api_key translate="label">
+                            <label>API key</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </host>
-                        <port translate="label">
-                            <label>Port</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </port>
-                        <path translate="label">
-                            <label>Path</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </path>
-                    </fields>
-                </server>
-                <search translate="label">
-                    <label>Search</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>3</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <limit translate="label">
-                            <label>Search limit</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </limit>
+                        </api_key>
                         <delete translate="label">
                             <label>Tooso Index</label>
                             <frontend_type>button</frontend_type>
@@ -105,7 +71,7 @@
                             <show_in_store>1</show_in_store>
                         </delete>
                     </fields>
-                </search>
+                </server>
             </groups>
         </tooso>
     </sections>

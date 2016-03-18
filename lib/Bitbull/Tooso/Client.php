@@ -33,7 +33,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_connectTimeout = 6000;
+    protected $_connectTimeout = 10000;
 
     /**
      * Timeout for API response wait
@@ -41,7 +41,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_timeout = 6000;
+    protected $_timeout = 10000;
 
     /**
      * @var stdClass
@@ -62,11 +62,12 @@ class Bitbull_Tooso_Client
      * Perform a search
      *
      * @param string $query
+     * @param boolean $typoCorrection
      * @return Bitbull_Tooso_Search_Result
     */
-    public function search($query)
+    public function search($query, $typoCorrection = true)
     {
-        $rawResponse = $this->_doRequest('search', array('query' => $query));
+        $rawResponse = $this->_doRequest('search', array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')));
 
         $result = new Bitbull_Tooso_Search_Result();
         $result->setResponse($rawResponse);

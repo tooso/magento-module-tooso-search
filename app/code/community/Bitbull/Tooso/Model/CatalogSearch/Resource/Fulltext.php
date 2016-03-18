@@ -35,10 +35,13 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         }
         
         $adapter = $this->_getWriteAdapter();
+
+        // query ancora non processata oppure già processata ma typoCorrection = 1
+
         if (!$query->getIsProcessed()) {
             
             try {
-                $search = Mage::getModel('tooso/search')->search($queryText, (int)$query->getStoreId());
+                $search = Mage::getModel('tooso/search')->search($queryText, (Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true'));
 
                 if ($search->isSearchAvailable()) {
                     if ($search->count()) {
@@ -56,7 +59,14 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         $adapter->insertMultiple($this->getTable('catalogsearch/result'), $data);
                     }
 
+                    /*if ($search->getFixedSearchString()
+                        && (Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true')) {
+                        $query->setSynonymFor($search->getOriginalSearchString());
+                        $query->setQueryText($search->getFixedSearchString());
+                    }*/
+
                     $query->setIsProcessed(1);
+
                 } else {
                     parent::prepareResult($object, $queryText, $query);
                 }
@@ -66,7 +76,15 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
 
                 parent::prepareResult($object, $queryText, $query);
             }
-            
+        }
+
+        if (false) {
+            $message = sprintf(
+                'Search instead for "<a href="%s">%s</a>"',
+                Mage::getUrl('catalogsearch/result', array('_query' => array('q' => $search->getOriginalSearchString(), 'typoCorrection' => 'false'))),
+                $search->getOriginalSearchString()
+            );
+            Mage::helper('catalogsearch')->addNoteMessage($message);
         }
 
         return $this;

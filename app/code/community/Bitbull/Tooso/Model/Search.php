@@ -48,15 +48,15 @@ class Bitbull_Tooso_Model_Search
      * Load query and set response
      * 
      * @param string $query
-     * @param int $storeId
+     * @param boolean $typoCorrection
      * @return Bitbull_Tooso_Model_Search
      */
-    public function search($query, $storeId = 0)
+    public function search($query, $typoCorrection = true)
     {
         $query = preg_quote($query); // Quote regular expression characters . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
         if ($query) {
             try {
-                $result = $this->_client->search($query);
+                $result = $this->_client->search($query, $typoCorrection);
                 $this->setResult($result);
             } catch (Exception $e) {
                 $this->_logger->logException($e);
@@ -139,7 +139,17 @@ class Bitbull_Tooso_Model_Search
 
         return $products;
     }
-    
+
+    public function getFixedSearchString()
+    {
+        return (!is_null($this->_result) ? $this->_result->getFixedSearchString() : null);
+    }
+
+    public function getOriginalSearchString()
+    {
+        return (!is_null($this->_result) ? $this->_result->getOriginalSearchString() : null);
+    }
+
     /**
      * Retreive documents count
      * 

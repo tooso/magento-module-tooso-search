@@ -105,6 +105,7 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
 
         $output = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         $errorNumber = curl_errno($ch);
 
@@ -113,6 +114,10 @@ class Bitbull_Tooso_Client
         if (false === $output) {
 
             throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
+
+        } else if ($httpStatusCode != 200) {
+
+            throw new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
 
         } else {
             $response = json_decode($output);

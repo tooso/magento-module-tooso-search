@@ -68,13 +68,13 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                     $query->setIsProcessed(1);
 
                 } else {
-                    parent::prepareResult($object, $queryText, $query);
+                    return parent::prepareResult($object, $queryText, $query);
                 }
 
             } catch (Exception $e) {
                 $this->_logger->logException($e);
 
-                parent::prepareResult($object, $queryText, $query);
+                return parent::prepareResult($object, $queryText, $query);
             }
         }
 

@@ -76,6 +76,22 @@ class Bitbull_Tooso_Client
     }
 
     /**
+     * Perform a search for suggestions
+     *
+     * @param string $query
+     * @return Bitbull_Tooso_Suggest_Result
+     */
+    public function suggest($query)
+    {
+        $rawResponse = $this->_doRequest('suggest', array('query' => $query));
+
+        $result = new Bitbull_Tooso_Suggest_Result();
+        $result->setResponse($rawResponse);
+
+        return $result;
+    }
+
+    /**
      * Build and execute request via CURL.
      *
      * @param string $path

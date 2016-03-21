@@ -47,6 +47,7 @@
             <catalogsearch>
                 <rewrite>
                     <result>Bitbull_Tooso_Block_CatalogSearch_Result</result>
+                    <autocomplete>Bitbull_Tooso_Block_CatalogSearch_Autocomplete</autocomplete>
                 </rewrite>
             </catalogsearch>
         </blocks>

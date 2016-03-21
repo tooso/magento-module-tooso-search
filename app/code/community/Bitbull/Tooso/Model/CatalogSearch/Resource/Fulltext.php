@@ -41,7 +41,7 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         if (!$query->getIsProcessed()) {
             
             try {
-                $search = Mage::getModel('tooso/search')->search($queryText, (Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true'));
+                $search = Mage::getModel('tooso/search')->search($queryText, Mage::helper('tooso')->isTypoCorrectedSearch());
 
                 if ($search->isSearchAvailable()) {
                     if ($search->count()) {
@@ -59,11 +59,10 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         $adapter->insertMultiple($this->getTable('catalogsearch/result'), $data);
                     }
 
-                    /*if ($search->getFixedSearchString()
-                        && (Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true')) {
-                        $query->setSynonymFor($search->getOriginalSearchString());
+                    if (Mage::helper('tooso')->isTypoCorrectedSearch() && $search->getFixedSearchString()) {
                         $query->setQueryText($search->getFixedSearchString());
-                    }*/
+                        $query->setSynonymFor($search->getOriginalSearchString());
+                    }
 
                     $query->setIsProcessed(1);
 
@@ -78,13 +77,14 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
             }
         }
 
-        if (false) {
+        if (Mage::helper('catalogsearch')->getQueryText() == $query->getSynonymFor()) {
             $message = sprintf(
                 'Search instead for "<a href="%s">%s</a>"',
-                Mage::getUrl('catalogsearch/result', array('_query' => array('q' => $search->getOriginalSearchString(), 'typoCorrection' => 'false'))),
-                $search->getOriginalSearchString()
+                Mage::getUrl('catalogsearch/result', array('_query' => array('q' => $query->getSynonymFor(), 'typoCorrection' => 'false'))),
+                $query->getSynonymFor()
             );
             Mage::helper('catalogsearch')->addNoteMessage($message);
+            Mage::helper('tooso')->setFixedSearchString($query->getQueryText());
         }
 
         return $this;

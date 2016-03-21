@@ -19,18 +19,36 @@
             <catalogsearch_resource>
                 <rewrite>
                     <fulltext>Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext</fulltext>
+                    <query>Bitbull_Tooso_Model_Resource_CatalogSearch_Query</query>
                 </rewrite>
             </catalogsearch_resource>
         </models>
+        <resources>
+            <tooso_setup>
+                <setup>
+                    <module>Bitbull_Tooso</module>
+                </setup>
+            </tooso_setup>
+        </resources>
         <helpers>
             <tooso>
                 <class>Bitbull_Tooso_Helper</class>
             </tooso>
+            <catalogsearch>
+                <rewrite>
+                    <data>Bitbull_Tooso_Helper_CatalogSearch_Data</data>
+                </rewrite>
+            </catalogsearch>
         </helpers>
         <blocks>
             <tooso>
                 <class>Bitbull_Tooso_Block</class>
             </tooso>
+            <catalogsearch>
+                <rewrite>
+                    <result>Bitbull_Tooso_Block_CatalogSearch_Result</result>
+                </rewrite>
+            </catalogsearch>
         </blocks>
     </global>
     <admin>

@@ -79,11 +79,12 @@ class Bitbull_Tooso_Client
      * Perform a search for suggestions
      *
      * @param string $query
+     * @param int $limit
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function suggest($query)
+    public function suggest($query, $limit = 10)
     {
-        $rawResponse = $this->_doRequest('suggest', array('query' => $query));
+        $rawResponse = $this->_doRequest('suggest', array('query' => $query, 'limit' => $limit));
 
         $result = new Bitbull_Tooso_Suggest_Result();
         $result->setResponse($rawResponse);

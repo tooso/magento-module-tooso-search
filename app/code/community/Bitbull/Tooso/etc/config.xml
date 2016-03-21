@@ -72,6 +72,9 @@
             <server>
                 <api_key />
             </server>
+            <suggest>
+                <max_results>10</max_results>
+            </suggest>
         </tooso>
     </default>
     <phpunit>

@@ -25,6 +25,8 @@ class Bitbull_Tooso_Model_Suggest
      */
     protected $_logger = null;
 
+    protected $_maxResults = 10;
+
     /**
      * Constructor, retrieve config for connection to Tooso API.
      */
@@ -36,6 +38,8 @@ class Bitbull_Tooso_Model_Suggest
         $this->_client = new Bitbull_Tooso_Client($apiKey, $language);
 
         $this->_logger = Mage::helper('tooso/log');
+
+        $this->_maxResults = (int)Mage::getStoreConfig('tooso/suggest/max_results');
     }
 
     /**
@@ -47,7 +51,7 @@ class Bitbull_Tooso_Model_Suggest
         $query = preg_quote($query);
         if ($query) {
             try {
-                $result = $this->_client->suggest($query);
+                $result = $this->_client->suggest($query, $this->_maxResults);
                 $this->setResult($result);
             } catch (Exception $e) {
                 $this->_logger->logException($e);

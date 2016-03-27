@@ -126,14 +126,17 @@ class Bitbull_Tooso_Model_Search
         if (!is_null($this->_result)) {
             $skus = $this->_result->getResults();
 
+            $i = 1;
             $productIds = $this->_getIdsBySkus($skus);
 
-            foreach ($skus as $i => $sku) {
+            foreach ($productIds as $sku => $productId) {
                 $products[] = array(
                     'sku' => $sku,
-                    'product_id' => $productIds[$sku],
-                    'relevance' => $i + 1
+                    'product_id' => $productId,
+                    'relevance' => $i
                 );
+
+                $i++;
             }
         }
 

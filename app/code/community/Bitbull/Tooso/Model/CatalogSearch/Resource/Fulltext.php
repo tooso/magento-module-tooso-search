@@ -19,7 +19,6 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
     }
 
     /**
-     * Overloaded method prepareResult.
      * Prepare results for query.
      * Replaces the traditional fulltext search with a Tooso search (if active).
      *
@@ -91,7 +90,6 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
     }
     
     /**
-     * Overloaded method rebuildIndex.
      * Regenerate search index for store(s)
      *
      * @param  int|null $storeId
@@ -100,18 +98,17 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
      */
     public function rebuildIndex($storeId = null, $productIds = null)
     {
-        parent::rebuildIndex($storeId,$productIds);
-
         if (Mage::getStoreConfigFlag('tooso/active/admin')) {
-            Mage::getModel('tooso/indexer')->rebuildIndex($productIds);
+            Mage::getModel('tooso/indexer')->rebuildIndex();
         }
+
+        parent::rebuildIndex($storeId, $productIds);
 
         return $this;
     }
     
     /**
-     * Overloaded method cleanIndex.
-     * Delete search index data for store
+     * Clean index for store(s)
      *
      * @param int $storeId Store View Id
      * @param int|array|null $productIds Product Entity Id
@@ -122,7 +119,7 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         parent::cleanIndex($storeId, $productIds);
         
         if (Mage::getStoreConfigFlag('tooso/active/admin')) {
-            Mage::getModel('tooso/indexer')->cleanIndex($productIds);
+            Mage::getModel('tooso/indexer')->cleanIndex();
         }
 
         return $this;

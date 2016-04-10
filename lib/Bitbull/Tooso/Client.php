@@ -6,6 +6,9 @@
 */
 class Bitbull_Tooso_Client
 {
+    const HTTP_METHOD_GET = 'GET';
+    const HTTP_METHOD_POST = 'POST';
+
     /**
      * Base url for API calls
      *
@@ -67,7 +70,7 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true)
     {
-        $rawResponse = $this->_doRequest('search', array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')));
+        $rawResponse = $this->_doRequest('/Search/search', self::HTTP_METHOD_GET, array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')));
 
         $result = new Bitbull_Tooso_Search_Result();
         $result->setResponse($rawResponse);
@@ -84,9 +87,38 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10)
     {
-        $rawResponse = $this->_doRequest('suggest', array('query' => $query, 'limit' => $limit));
+        $rawResponse = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, array('query' => $query, 'limit' => $limit));
 
         $result = new Bitbull_Tooso_Suggest_Result();
+        $result->setResponse($rawResponse);
+
+        return $result;
+    }
+
+    /**
+     * Send data to index
+     *
+     * @param string $csvContent
+     * @return Bitbull_Tooso_Index_Result
+     * @throws Bitbull_Tooso_Exception
+    */
+    public function index($csvContent)
+    {
+        $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
+
+        $zip = new ZipArchive;
+        if ($zip->open($tmpZipFile, ZipArchive::CREATE)) {
+            $zip->addFromString('magento_catalog.csv', $csvContent);
+            $zip->close();
+        } else {
+            throw new Bitbull_Tooso_Exception('Error creating zip file for reindex', 0);
+        }
+
+        $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile);
+
+        unlink($tmpZipFile);
+
+        $result = new Bitbull_Tooso_Index_Result();
         $result->setResponse($rawResponse);
 
         return $result;
@@ -96,13 +128,15 @@ class Bitbull_Tooso_Client
      * Build and execute request via CURL.
      *
      * @param string $path
+     * @param string $httpMethod
      * @param array $params
+     * @param string $attachment
      * @return stdClass
      * @throws Bitbull_Tooso_Exception
     */
-    protected function _doRequest($path, $params)
+    protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '')
     {
-        $url = $this->_baseUrl . '/' . $this->_apiKey . '/Search/' . $path;
+        $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
 
         $queryString = array(
             'language=' . $this->_language
@@ -116,8 +150,18 @@ class Bitbull_Tooso_Client
 
         $ch = curl_init();
 
+        if ($httpMethod == self::HTTP_METHOD_POST) {
+            curl_setopt($ch, CURLOPT_POST, true);
+        }
+
+        if (strlen($attachment) > 0) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+                'file' => '@' . realpath($attachment)
+            ));
+        }
+
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
 

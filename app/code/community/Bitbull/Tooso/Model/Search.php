@@ -67,44 +67,6 @@ class Bitbull_Tooso_Model_Search
     }
     
     /**
-     * Delete All documents
-     *
-     * @return Bitbull_Tooso_Model_Search
-     * @todo implement me
-     */
-    public function deleteAllDocuments()
-    {
-        return $this;
-    }
-    
-    /**
-     * Delete specific document
-     * 
-     * @param int $productId
-     * @return Bitbull_Tooso_Model_Search
-     * @todo implement me
-     */
-    public function deleteDocument($productId)
-    {
-        return $this;
-    }
-    
-    /**
-     * Delete specifics document
-     * 
-     * @param array $productIds
-     * @return Bitbull_Tooso_Model_Search
-     */
-    public function deleteDocuments(array $productIds)
-    {
-        foreach($productIds as $id) {
-            $this->deleteDocument($id);
-        }
-        
-        return $this;
-    }
-    
-    /**
      * Set Tooso response
      *
      * @param Bitbull_Tooso_Search_Result $result

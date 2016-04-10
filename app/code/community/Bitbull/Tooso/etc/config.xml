@@ -77,6 +77,18 @@
             </suggest>
         </tooso>
     </default>
+    <crontab>
+        <jobs>
+            <tooso_reindex>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>tooso/observer::rebuildIndex</model>
+                </run>
+            </tooso_reindex>
+        </jobs>
+    </crontab>
     <phpunit>
         <suite>
             <modules>

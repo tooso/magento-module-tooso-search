@@ -80,13 +80,28 @@ class Bitbull_Tooso_Client
      * @param string $query
      * @param boolean $typoCorrection
      * @return Bitbull_Tooso_Search_Result
+     * @throws Bitbull_Tooso_Exception
     */
     public function search($query, $typoCorrection = true)
     {
-        $rawResponse = $this->_doRequest('/Search/search', self::HTTP_METHOD_GET, array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')));
+        $path = '/Search/search';
+        $params = array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false'));
+
+        $rawResponse = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 
         $result = new Bitbull_Tooso_Search_Result();
         $result->setResponse($rawResponse);
+
+        // In the early adopter phase, even a 0 result query need to be treated as an error
+        if ($result->getTotalResults() == 0 && $typoCorrection) {
+            $message = 'No result found for query "' . $query . '""';
+
+            if ($this->_reportSender) {
+                $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $message);
+            }
+
+            throw new Bitbull_Tooso_Exception($message, 0);
+        }
 
         return $result;
     }
@@ -149,17 +164,7 @@ class Bitbull_Tooso_Client
     */
     protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '')
     {
-        $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
-
-        $queryString = array(
-            'language=' . $this->_language
-        );
-
-        foreach ($params as $key => $value) {
-            $queryString[] = $key . '=' . $value;
-        }
-
-        $url .= '?' . implode('&', $queryString);
+        $url = $this->_buildUrl($path, $params);
 
         $ch = curl_init();
 
@@ -225,5 +230,29 @@ class Bitbull_Tooso_Client
                 return $response;
             }
         }
+    }
+
+    /**
+     * Build an url for an API call
+     *
+     * @param string $path
+     * @param array $params
+     * @return string
+    */
+    protected function _buildUrl($path, $params)
+    {
+        $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
+
+        $queryString = array(
+            'language=' . $this->_language
+        );
+
+        foreach ($params as $key => $value) {
+            $queryString[] = $key . '=' . $value;
+        }
+
+        $url .= '?' . implode('&', $queryString);
+
+        return $url;
     }
 }

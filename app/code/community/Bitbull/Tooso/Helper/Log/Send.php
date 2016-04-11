@@ -6,9 +6,9 @@
  */
 class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements Bitbull_Tooso_Log_SendInterface
 {
-    const DEBUG_EMAIL_ADDRESS = 'gennaro.vietri@bitbull.it';
+    const DEBUG_EMAIL_ADDRESS = 'alert@tooso.ai';
 
-    const DEBUG_EMAIL_ADDRESS_CC = 'kesonno@gmail.com';
+    const DEBUG_EMAIL_ADDRESS_CC = 'gennaro.vietri@bitbull.it';
 
     const XML_PATH_SEND_REPORT = 'tooso/server/send_report';
 

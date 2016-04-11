@@ -8,7 +8,7 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
 {
     const LOG_FILENAME = 'tooso_search.log';
 
-    const DEBUG_EMAIL_ADDRESS = 'gennaro.vietri@bitbull.it';
+    const XML_PATH_FORCE_LOG = 'tooso/server/force_log';
 
     /**
      * Retrieve Tooso Log File
@@ -28,15 +28,9 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
     */
     public function log($message, $level = null)
     {
-        // @todo make them configurable
-        $forceLog = true;
-        $sendReport = true;
+        $forceLog = Mage::getStoreConfigFlag(self::XML_PATH_FORCE_LOG);
 
         Mage::log($message, $level, $this->getLogFile(), $forceLog);
-
-        if ($sendReport) {
-            // @todo send email
-        }
     }
 
     public function logException(Exception $e)
@@ -45,8 +39,8 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
             $message = $e->getMessage() . ' - ERROR CODE = ' . $e->getCode() . ($e->getDebugInfo() ? ' - DEBUG INFO = ' . $e->getDebugInfo() : '');
 
             $this->log($message, Zend_Log::ERR);
-        } else {
-            Mage::logException($e);
         }
+
+        Mage::logException($e);
     }
 }

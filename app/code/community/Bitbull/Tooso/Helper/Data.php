@@ -28,4 +28,21 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true';
     }
+    
+    /**
+     * Create and configure a Tooso API Client instance
+     * 
+     * @return Bitbull_Tooso_Client
+    */
+    public function getClient()
+    {
+        $apiKey = Mage::getStoreConfig('tooso/server/api_key');
+        $language = 'en'; // @todo make configurable
+
+        $client = new Bitbull_Tooso_Client($apiKey, $language);
+
+        $client->setReportSender(Mage::helper('tooso/log_send'));
+
+        return $client;
+    }
 }

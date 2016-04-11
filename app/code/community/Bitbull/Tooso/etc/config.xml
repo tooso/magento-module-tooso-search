@@ -71,6 +71,8 @@
             </active>
             <server>
                 <api_key />
+                <send_report>1</send_report>
+                <force_log>1</force_log>
             </server>
             <suggest>
                 <max_results>10</max_results>

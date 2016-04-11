@@ -20,10 +20,7 @@ class Bitbull_Tooso_Model_Indexer
 
     public function __construct()
     {
-        $apiKey = Mage::getStoreConfig('tooso/server/api_key');
-        $language = 'en'; // @todo make configurable
-
-        $this->_client = new Bitbull_Tooso_Client($apiKey, $language);
+        $this->_client = Mage::helper('tooso')->getClient();
 
         $this->_logger = Mage::helper('tooso/log');
     }

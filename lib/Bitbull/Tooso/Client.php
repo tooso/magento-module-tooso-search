@@ -52,6 +52,11 @@ class Bitbull_Tooso_Client
     protected $_response = null;
 
     /**
+     * @var Bitbull_Tooso_Log_SendInterface
+    */
+    protected $_reportSender;
+
+    /**
      * @param string $apiKey
      * @param string $language
     */
@@ -59,6 +64,14 @@ class Bitbull_Tooso_Client
     {
         $this->_apiKey = $apiKey;
         $this->_language = $language;
+    }
+
+    /**
+     * @param Bitbull_Tooso_Log_SendInterface $reportSender
+     */
+    public function setReportSender(Bitbull_Tooso_Log_SendInterface $reportSender)
+    {
+        $this->_reportSender = $reportSender;
     }
 
     /**
@@ -173,10 +186,22 @@ class Bitbull_Tooso_Client
         curl_close($ch);
 
         if (false === $output) {
+            
+            if ($this->_reportSender) {
+                $message = 'cURL error = ' . $error . ' - Error number = ' . $errorNumber;
+
+                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+            }
 
             throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
 
         } else if ($httpStatusCode != 200) {
+
+            if ($this->_reportSender) {
+                $message = 'API unavailable, HTTP STATUS CODE = ' . $httpStatusCode;
+
+                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+            }
 
             throw new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
 
@@ -186,6 +211,14 @@ class Bitbull_Tooso_Client
             if (isset($response->ToosoError)) {
                 $e = new Bitbull_Tooso_Exception($response->ToosoError->Description, $response->Code);
                 $e->setDebugInfo($response->ToosoError->DebugInfo);
+
+                if ($this->_reportSender) {
+                    $message = 'Error description = ' . $response->ToosoError->Description . "\n"
+                        . "Error code = " . $response->Code . "\n"
+                        . "Debug info = " . $response->ToosoError->DebugInfo;
+
+                    $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+                }
 
                 throw $e;
             } else {

@@ -49,4 +49,9 @@ class Bitbull_Tooso_Search_Result
     {
         return $this->_response->Content->FixedSearchString;
     }
+
+    public function getParentSearchId()
+    {
+        return $this->_response->Content->ParentSearchId;
+    }
 }

@@ -58,9 +58,14 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         $adapter->insertMultiple($this->getTable('catalogsearch/result'), $data);
                     }
 
-                    if (Mage::helper('tooso')->isTypoCorrectedSearch() && $search->getFixedSearchString()) {
-                        $query->setQueryText($search->getFixedSearchString());
-                        $query->setSynonymFor($search->getOriginalSearchString());
+                    if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
+
+                        Mage::helper('tooso')->setSearchId($search->getSearchId());
+
+                        if ($search->getFixedSearchString()) {
+                            $query->setQueryText($search->getFixedSearchString());
+                            $query->setSynonymFor($search->getOriginalSearchString());
+                        }
                     }
 
                     $query->setIsProcessed(1);
@@ -77,9 +82,16 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         }
 
         if (Mage::helper('catalogsearch')->getQueryText() == $query->getSynonymFor()) {
+
+            $queryString = array(
+                'q' => $query->getSynonymFor(),
+                'typoCorrection' => 'false',
+                Bitbull_Tooso_Model_Search::SEARCH_PARAM_PARENT_SEARCH_ID => Mage::helper('tooso')->getSearchId()
+            );
+
             $message = sprintf(
                 'Search instead for "<a href="%s">%s</a>"',
-                Mage::getUrl('catalogsearch/result', array('_query' => array('q' => $query->getSynonymFor(), 'typoCorrection' => 'false'))),
+                Mage::getUrl('catalogsearch/result', array('_query' => $queryString)),
                 $query->getSynonymFor()
             );
             Mage::helper('catalogsearch')->addNoteMessage($message);

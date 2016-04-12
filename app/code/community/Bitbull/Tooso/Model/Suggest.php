@@ -48,7 +48,9 @@ class Bitbull_Tooso_Model_Suggest
         $query = preg_quote($query);
         if ($query) {
             try {
-                $result = $this->_client->suggest($query, $this->_maxResults);
+                $params = Mage::helper('tooso')->getProfilingParams();
+
+                $result = $this->_client->suggest($query, $this->_maxResults, $params);
                 $this->setResult($result);
             } catch (Exception $e) {
                 $this->_logger->logException($e);

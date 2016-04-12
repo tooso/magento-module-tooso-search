@@ -79,13 +79,17 @@ class Bitbull_Tooso_Client
      *
      * @param string $query
      * @param boolean $typoCorrection
+     * @param array $extraParams
      * @return Bitbull_Tooso_Search_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function search($query, $typoCorrection = true)
+    public function search($query, $typoCorrection = true, $extraParams = array())
     {
         $path = '/Search/search';
-        $params = array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false'));
+        $params = array_merge(
+            array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
+            (array)$extraParams
+        );
 
         $rawResponse = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 
@@ -111,11 +115,17 @@ class Bitbull_Tooso_Client
      *
      * @param string $query
      * @param int $limit
+     * @param array $extraParams
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function suggest($query, $limit = 10)
+    public function suggest($query, $limit = 10, $extraParams = array())
     {
-        $rawResponse = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, array('query' => $query, 'limit' => $limit));
+        $params = array_merge(
+            array('query' => $query, 'limit' => $limit),
+            (array)$extraParams
+        );
+
+        $rawResponse = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, $params);
 
         $result = new Bitbull_Tooso_Suggest_Result();
         $result->setResponse($rawResponse);

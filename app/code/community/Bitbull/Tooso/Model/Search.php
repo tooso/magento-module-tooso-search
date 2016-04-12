@@ -5,6 +5,9 @@
  */
 class Bitbull_Tooso_Model_Search
 {
+    const SEARCH_PARAM_IP_ADDRESS = 'ip';
+    const SEARCH_PARAM_PARENT_SEARCH_ID = 'parentSearchId';
+
     /**
      * Client for API comunication
      *
@@ -46,14 +49,22 @@ class Bitbull_Tooso_Model_Search
      * 
      * @param string $query
      * @param boolean $typoCorrection
+     * @param string $parentSearchId
      * @return Bitbull_Tooso_Model_Search
      */
-    public function search($query, $typoCorrection = true)
+    public function search($query, $typoCorrection = true, $parentSearchId = null)
     {
         $query = preg_quote($query); // Quote regular expression characters . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
         if ($query) {
             try {
-                $result = $this->_client->search($query, $typoCorrection);
+                $params = Mage::helper('tooso')->getProfilingParams();
+                $params[self::SEARCH_PARAM_IP_ADDRESS] = Mage::helper('core/http')->getRemoteAddr();
+
+                if (!is_null($parentSearchId)) {
+                    $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;
+                }
+
+                $result = $this->_client->search($query, $typoCorrection, $params);
                 $this->setResult($result);
             } catch (Exception $e) {
                 $this->_logger->logException($e);
@@ -110,6 +121,16 @@ class Bitbull_Tooso_Model_Search
     public function getOriginalSearchString()
     {
         return (!is_null($this->_result) ? $this->_result->getOriginalSearchString() : null);
+    }
+
+    public function getParentSearchId()
+    {
+        return (!is_null($this->_result) ? $this->_result->getParentSearchId() : null);
+    }
+
+    public function getSearchId()
+    {
+        return (!is_null($this->_result) ? $this->_result->getSearchId() : null);
     }
 
     /**

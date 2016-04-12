@@ -7,6 +7,8 @@
 class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 {
     protected $_fixedSearchString = null;
+    
+    protected $_searchId = null;
 
     /**
      * @param string $fixedSearchString
@@ -22,6 +24,22 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getFixedSearchString()
     {
         return $this->_fixedSearchString;
+    }
+
+    /**
+     * @param string $searchId
+     */
+    public function setSearchId($searchId)
+    {
+        $this->_searchId = $searchId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSearchId()
+    {
+        return $this->_searchId;
     }
 
     public function isTypoCorrectedSearch()
@@ -44,5 +62,25 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $client->setReportSender(Mage::helper('tooso/log_send'));
 
         return $client;
+    }
+    
+    /**
+     * @return array
+    */
+    public function getProfilingParams()
+    {
+        $customerSession = Mage::getSingleton('customer/session');
+        $sessionId = Mage::getSingleton('core/session')->getSessionId();
+
+        if ($customerSession->isLoggedIn()) {
+            $userId = $customerSession->getCustomerId();
+        } else {
+            $userId = $sessionId;
+        }
+
+        return array(
+            'userId' => $userId,
+            'sessionId' => $sessionId,
+        );
     }
 }

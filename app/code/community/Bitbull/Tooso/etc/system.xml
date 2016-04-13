@@ -83,7 +83,7 @@
                         </force_log>
                     </fields>
                 </server>
-                <index translate="label">
+                <!--index translate="label">
                     <label>Index</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>30</sort_order>
@@ -101,7 +101,7 @@
                             <show_in_store>1</show_in_store>
                         </rebuild>
                     </fields>
-                </index>
+                </index-->
                 <suggest translate="label">
                     <label>Suggest</label>
                     <frontend_type>text</frontend_type>

@@ -152,7 +152,7 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception('Error creating zip file for reindex', 0);
         }
 
-        $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile);
+        $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
 
         unlink($tmpZipFile);
 
@@ -169,10 +169,11 @@ class Bitbull_Tooso_Client
      * @param string $httpMethod
      * @param array $params
      * @param string $attachment
+     * @param int $timeout
      * @return stdClass
      * @throws Bitbull_Tooso_Exception
     */
-    protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '')
+    protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '', $timeout = null)
     {
         $url = $this->_buildUrl($path, $params);
 
@@ -191,7 +192,7 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
-        curl_setopt($ch, CURLOPT_TIMEOUT_MS, $this->_timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT_MS, !is_null($timeout) ? $timeout : $this->_timeout);
 
         $output = curl_exec($ch);
         $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

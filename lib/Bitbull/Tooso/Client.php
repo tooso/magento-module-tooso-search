@@ -216,6 +216,11 @@ class Bitbull_Tooso_Client
             if ($this->_reportSender) {
                 $message = 'API unavailable, HTTP STATUS CODE = ' . $httpStatusCode;
 
+                $response = json_decode($output);
+                if (isset($response->ToosoError) && isset($response->ToosoError->DebugInfo)) {
+                    $message .= "\n\nDebugInfo: " . $response->ToosoError->DebugInfo;
+                }
+
                 $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
             }
 

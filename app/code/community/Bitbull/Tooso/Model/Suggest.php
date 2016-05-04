@@ -45,7 +45,7 @@ class Bitbull_Tooso_Model_Suggest
      */
     public function suggest($query)
     {
-        $query = preg_quote($query);
+        $query = urlencode($query);
         if ($query) {
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();

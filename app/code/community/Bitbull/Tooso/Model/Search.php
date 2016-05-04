@@ -54,7 +54,7 @@ class Bitbull_Tooso_Model_Search
      */
     public function search($query, $typoCorrection = true, $parentSearchId = null)
     {
-        $query = preg_quote($query); // Quote regular expression characters . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
+        $query = urlencode($query);
         if ($query) {
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();

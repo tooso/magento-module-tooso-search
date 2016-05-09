@@ -36,7 +36,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_connectTimeout = 20000;
+    protected $_connectTimeout = 2000;
 
     /**
      * Timeout for API response wait
@@ -44,7 +44,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_timeout = 20000;
+    protected $_timeout = 2000;
 
     /**
      * @var stdClass

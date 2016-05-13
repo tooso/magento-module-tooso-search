@@ -10,6 +10,24 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     
     protected $_searchId = null;
 
+    protected $_products = null;
+
+    /**
+     * @return array
+     */
+    public function getProducts()
+    {
+        return $this->_products;
+    }
+
+    /**
+     * @param array $products
+     */
+    public function setProducts($products)
+    {
+        $this->_products = $products;
+    }
+
     /**
      * @param string $fixedSearchString
      */

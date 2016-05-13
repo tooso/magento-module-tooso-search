@@ -20,6 +20,7 @@
                 <rewrite>
                     <fulltext>Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext</fulltext>
                     <query>Bitbull_Tooso_Model_Resource_CatalogSearch_Query</query>
+                    <fulltext_collection>Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection</fulltext_collection>
                 </rewrite>
             </catalogsearch_resource>
         </models>

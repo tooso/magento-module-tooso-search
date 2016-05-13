@@ -33,30 +33,19 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
             return parent::prepareResult($object, $queryText, $query);
         }
         
-        $adapter = $this->_getWriteAdapter();
-
-        // query ancora non processata oppure già processata ma typoCorrection = 1
-
-        if (!$query->getIsProcessed()) {
+        if (null == Mage::helper('tooso')->getProducts()) {
             
             try {
                 $search = Mage::getModel('tooso/search')->search($queryText, Mage::helper('tooso')->isTypoCorrectedSearch());
 
                 if ($search->isSearchAvailable()) {
-                    if ($search->count()) {
-                        $products = $search->getProducts();
 
-                        $data = array();
-                        foreach ($products as $product) {
-                            $data[] = array(
-                                'query_id'   => $query->getId(),
-                                'product_id' => $product['product_id'],
-                                'relevance'  => $product['relevance']
-                            );
-                        }
-
-                        $adapter->insertMultiple($this->getTable('catalogsearch/result'), $data);
+                    $products = array();
+                    foreach ($search->getProducts() as $product) {
+                        $products[] = $product['product_id'];
                     }
+
+                    Mage::helper('tooso')->setProducts($products);
 
                     if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
 
@@ -67,8 +56,6 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                             $query->setSynonymFor($search->getOriginalSearchString());
                         }
                     }
-
-                    $query->setIsProcessed(1);
 
                 } else {
                     return parent::prepareResult($object, $queryText, $query);

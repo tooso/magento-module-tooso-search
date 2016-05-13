@@ -174,6 +174,9 @@ class Bitbull_Tooso_Model_Search
         $adapter = $this->_getReadAdapter();
 
         $skusCount = count($skus);
+
+        if ($skusCount == 0) return array();
+
         $where = 'sku IN (';
         $bind = array();
 

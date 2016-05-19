@@ -52,6 +52,15 @@
                 </rewrite>
             </catalogsearch>
         </blocks>
+        <template>
+            <email>
+                <tooso_alert_email_template translate="label" module="tooso">
+                    <label>Send report for API error</label>
+                    <file>tooso_alert.html</file>
+                    <type>html</type>
+                </tooso_alert_email_template>
+            </email>
+        </template>
     </global>
     <admin>
         <routers>

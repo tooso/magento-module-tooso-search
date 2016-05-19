@@ -1,0 +1,23 @@
+<!--@subject Magento / Tooso - API Error occurred @-->
+<!--@vars
+{"var data.name":"Sender Name",
+"var data.email":"Sender Email",
+"var data.telephone":"Sender Telephone",
+"var data.comment":"Comment"}
+@-->
+<p><strong>An error occurred</strong></p>
+<br />
+<p>Information for current environment:</p>
+<ul>
+    <li>Date: {{var data.currentDate}}</li>
+    <li>Store name: {{var data.storeName}}</li>
+    <li>Current URL: {{var data.currentUrl}}</li>
+    <li>API language: {{var data.language}}</li>
+    <li>API key: {{var data.apiKey}}</li>
+</ul>
+<br />
+<p>The following API call was performed (with HTTP method {{var data.httpMethod}}):</p>
+<p>{{var data.url}}</p>
+<br />
+<p>The result was:</p>
+{{var data.message}}

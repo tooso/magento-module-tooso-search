@@ -12,6 +12,8 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
 
     const XML_PATH_SEND_REPORT = 'tooso/server/send_report';
 
+    const EMAIL_TEMPLATE = 'tooso_alert_email_template';
+
     /**
      * Send report via email
      *
@@ -27,32 +29,35 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
 
         if ($sendReport) {
 
-            $reportSubject = 'Magento / Tooso - API Error occurred';
-            $reportText = "An error occurred \n\n"
-                . "Information for current environment:\n\n"
-                . "- Date: " . Mage::getModel('core/date')->date('Y-m-d H:i:s') . "\n"
-                . "- Store name: " . Mage::app()->getStore()->getFrontendName() . "\n"
-                . "- Current URL: " . Mage::helper('core/url')->getCurrentUrl() . "\n"
-                . "- API language: " . $language . "\n"
-                . "- API key: " . $apiKey . "\n\n"
-                . "The following API call was performed (with HTTP method " . $httpMethod . "):\n\n"
-                . $url . "\n\n"
-                . "The result was : \n\n"
-                . $message
-            ;
+            $data = array(
+                'currentDate' => Mage::getModel('core/date')->date('Y-m-d H:i:s'),
+                'storeName' => Mage::app()->getStore()->getFrontendName(),
+                'currentUrl' => Mage::helper('core/url')->getCurrentUrl(),
+                'language' => $language,
+                'apiKey' => $apiKey,
+                'url' => $url,
+                'message' => $message,
+            );
 
-            $mail = new Zend_Mail();
-
-            $mail
-                ->setFrom(self::DEBUG_EMAIL_ADDRESS, 'Tooso report')
-                ->addTo(self::DEBUG_EMAIL_ADDRESS, 'Tooso report')
-                ->addTo(self::DEBUG_EMAIL_ADDRESS_CC)
-                ->setBodyText($reportText)
-                ->setSubject($reportSubject)
-            ;
+            /* @var $mailTemplate Mage_Core_Model_Email_Template */
+            $mailTemplate = Mage::getModel('core/email_template');
 
             try {
-                $mail->send();
+                $mailTemplate
+                    ->setDesignConfig(array('area' => 'frontend'))
+                    ->sendTransactional(
+                        self::EMAIL_TEMPLATE,
+                        array(
+                            'name' => 'Tooso report',
+                            'email' => self::DEBUG_EMAIL_ADDRESS,
+                        ),
+                        array(
+                            self::DEBUG_EMAIL_ADDRESS,
+                            self::DEBUG_EMAIL_ADDRESS_CC
+                        ),
+                        null,
+                        array('data' => $data)
+                    );
             }
             catch(Exception $error) {}
         }

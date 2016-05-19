@@ -37,14 +37,18 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
                 'apiKey' => $apiKey,
                 'url' => $url,
                 'message' => $message,
+                'httpMethod' => $httpMethod,
             );
+
+            $dataObject = new Varien_Object();
+            $dataObject->setData($data);
 
             /* @var $mailTemplate Mage_Core_Model_Email_Template */
             $mailTemplate = Mage::getModel('core/email_template');
 
             try {
                 $mailTemplate
-                    ->setDesignConfig(array('area' => 'frontend'))
+                    ->setDesignConfig(array('area' => 'admin'))
                     ->sendTransactional(
                         self::EMAIL_TEMPLATE,
                         array(
@@ -56,7 +60,7 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
                             self::DEBUG_EMAIL_ADDRESS_CC
                         ),
                         null,
-                        array('data' => $data)
+                        array('data' => $dataObject)
                     );
             }
             catch(Exception $error) {}

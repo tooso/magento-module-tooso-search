@@ -24,7 +24,7 @@ class Bitbull_Tooso_Model_Observer
      */
     public function rebuildIndex(Mage_Cron_Model_Schedule $schedule)
     {
-        if (Mage::getStoreConfigFlag('tooso/active/admin')) {
+        if (Mage::getStoreConfigFlag('tooso/active/frontend')) {
             $this->_logger->log('Start scheduled reindex', Zend_Log::DEBUG);
 
             Mage::getModel('tooso/indexer')->rebuildIndex();

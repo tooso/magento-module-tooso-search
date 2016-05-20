@@ -61,6 +61,14 @@
                 </tooso_alert_email_template>
             </email>
         </template>
+        <importexport>
+            <export_file_formats>
+                <tooso_csv translate="label">
+                    <model_token>tooso/export_adapter_csv</model_token>
+                    <label>CSV</label>
+                </tooso_csv>
+            </export_file_formats>
+        </importexport>
     </global>
     <admin>
         <routers>

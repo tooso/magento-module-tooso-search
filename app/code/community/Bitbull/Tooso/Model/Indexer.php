@@ -64,7 +64,7 @@ class Bitbull_Tooso_Model_Indexer
         $model = Mage::getModel('importexport/export');
         $model->setData(array(
             'entity' => 'catalog_product',
-            'file_format' => 'csv',
+            'file_format' => 'tooso_csv',
             'export_filter' => array(),
         ));
 

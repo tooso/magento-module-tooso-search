@@ -189,8 +189,6 @@ class Bitbull_Tooso_Client
             ));
         }
 
-        Mage::log('URL = ' . $url, Zend_Log::DEBUG, 'tooso_search.log');
-
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);

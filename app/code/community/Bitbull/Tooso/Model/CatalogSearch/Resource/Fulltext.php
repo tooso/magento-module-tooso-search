@@ -29,8 +29,6 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
      */
     public function prepareResult($object, $queryText, $query)
     {
-        Mage::log($query->getData(), Zend_Log::DEBUG, 'tooso_search.log');
-
         if (!Mage::getStoreConfigFlag('tooso/active/frontend')) {
             return parent::prepareResult($object, $queryText, $query);
         }

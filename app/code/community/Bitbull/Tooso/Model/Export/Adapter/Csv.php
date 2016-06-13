@@ -7,7 +7,7 @@ class Bitbull_Tooso_Model_Export_Adapter_Csv extends Mage_ImportExport_Model_Exp
 {
     /**
      * Close file handler on shutdown
-     * and delete it
+     * and delete the temporary file
      */
     public function destruct()
     {

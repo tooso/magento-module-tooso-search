@@ -20,7 +20,7 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
 
     /**
      * Prepare results for query.
-     * Replaces the traditional fulltext search with a Tooso search (if active).
+     * Replaces the built-in fulltext search with a Tooso search (if active).
      *
      * @param Mage_CatalogSearch_Model_Fulltext $object
      * @param string $queryText
@@ -34,12 +34,13 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         }
 
         $search = null;
-        
+
         if (null == Mage::helper('tooso')->getProducts()) {
             
             try {
                 $search = Mage::getModel('tooso/search')->search($queryText, Mage::helper('tooso')->isTypoCorrectedSearch());
 
+                // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {
 
                     $products = array();
@@ -47,8 +48,11 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         $products[] = $product['product_id'];
                     }
 
+                    // Store products ids for later use them to build database query
                     Mage::helper('tooso')->setProducts($products);
 
+                    // If this query was automatically typo-corrected, save in request scope the searchId for link
+                    // this query (the parent) with the following one forced as not typo-correct
                     if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
                         Mage::helper('tooso')->setSearchId($search->getSearchId());
                     }
@@ -64,6 +68,8 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
             }
         }
 
+        // If this query was typo-corrected, build the link to the same query but with typo-correction disabled
+        // and build the message that will be shown to the user
         if ($search
             && $search->getFixedSearchString()
             && Mage::helper('catalogsearch')->getQueryText() == $search->getOriginalSearchString()) {

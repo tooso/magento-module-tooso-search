@@ -7,7 +7,8 @@
 class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mage_CatalogSearch_Model_Resource_Fulltext_Collection
 {
     /**
-     * Add search query filter
+     * Filter database query using the products ids
+     * retrieved from API call.
      *
      * @param string $query
      * @return Mage_CatalogSearch_Model_Resource_Fulltext_Collection
@@ -33,6 +34,8 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
     {
         if ($attribute == 'relevance') {
             $products = Mage::helper('tooso')->getProducts();
+
+            // If the order criteria is the relevance, we need to respect the order of products ids given by API call
             if (sizeof($products) > 0) {
                 $this->getSelect()->order(new Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
             }

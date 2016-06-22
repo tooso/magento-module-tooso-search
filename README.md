@@ -8,7 +8,7 @@ This extension replaces the default search of Magento with a typo-tolerant, fast
 
 - version: 1.0.0
 - extension key: Bitbull_Tooso
-- [extension on Magento Connect](http://www.magentocommerce.com/magento-connect/tooso-search.html)
+- [extension on Magento Connect](https://www.magentocommerce.com/magento-connect/tooso-search-integration.html)
 - Magento Connect 2.0 extension key: http://connect20.magentocommerce.com/community/Bitbull_Tooso
 - [extension on GitHub](https://github.com/bitbull-team/Bitbull_Tooso)
 - [direct download link](http://connect.magentocommerce.com/community/get/Bitbull_Tooso-1.0.0.tgz)

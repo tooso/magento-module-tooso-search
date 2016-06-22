@@ -85,7 +85,7 @@
         <tooso>
             <active>
                 <frontend>0</frontend>
-                <admin>0</admin>
+                <index>0</index>
             </active>
             <server>
                 <api_key />

@@ -6,6 +6,10 @@
 
 class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    const XML_PATH_ENABLE_SEARCH = 'tooso/active/frontend';
+
+    const XML_PATH_ENABLE_INDEX = 'tooso/active/index';
+
     protected $_fixedSearchString = null;
     
     protected $_searchId = null;

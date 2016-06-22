@@ -13,7 +13,8 @@ interface Bitbull_Tooso_Log_SendInterface
      * @param string $httpMethod
      * @param string $apiKey
      * @param string $language
+     * @param string $storeCode
      * @param string $message
      */
-    public function sendReport($url, $httpMethod, $apiKey, $language, $message);
+    public function sendReport($url, $httpMethod, $apiKey, $language, $storeCode, $message);
 }

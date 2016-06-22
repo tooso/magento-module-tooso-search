@@ -109,14 +109,4 @@
             </tooso_reindex>
         </jobs>
     </crontab>
-    <phpunit>
-        <suite>
-            <modules>
-                <Bitbull_Tooso />
-            </modules>
-            <groups>
-                <lib>Lib</lib>
-            </groups>
-        </suite>
-    </phpunit>
 </config>

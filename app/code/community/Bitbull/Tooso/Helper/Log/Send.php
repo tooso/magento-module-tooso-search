@@ -21,9 +21,10 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
      * @param string $httpMethod
      * @param string $apiKey
      * @param string $language
+     * @param string $storeCode
      * @param string $message
      */
-    public function sendReport($url, $httpMethod, $apiKey, $language, $message)
+    public function sendReport($url, $httpMethod, $apiKey, $language, $storeCode, $message)
     {
         $sendReport = Mage::getStoreConfigFlag(self::XML_PATH_SEND_REPORT);
 
@@ -34,6 +35,7 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
                 'storeName' => Mage::app()->getStore()->getFrontendName(),
                 'currentUrl' => Mage::helper('core/url')->getCurrentUrl(),
                 'language' => $language,
+                'storeCode' => $storeCode,
                 'apiKey' => $apiKey,
                 'url' => $url,
                 'message' => $message,

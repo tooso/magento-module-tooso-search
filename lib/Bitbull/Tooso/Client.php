@@ -27,8 +27,15 @@ class Bitbull_Tooso_Client
      * Store language
      *
      * @var string
-    */
+     */
     protected $_language;
+
+    /**
+     * Store code
+     *
+     * @var string
+     */
+    protected $_storeCode;
 
     /**
      * Timeout for API connection wait
@@ -59,11 +66,13 @@ class Bitbull_Tooso_Client
     /**
      * @param string $apiKey
      * @param string $language
+     * @param string $storeCode
     */
-    public function __construct($apiKey, $language)
+    public function __construct($apiKey, $language, $storeCode)
     {
         $this->_apiKey = $apiKey;
         $this->_language = $language;
+        $this->_storeCode = $storeCode;
     }
 
     /**
@@ -101,7 +110,7 @@ class Bitbull_Tooso_Client
             $message = 'No result found for query "' . $query . '""';
 
             if ($this->_reportSender) {
-                $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $message);
+                $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $this->_storeCode, $message);
             }
 
             throw new Bitbull_Tooso_Exception($message, 0);
@@ -206,7 +215,7 @@ class Bitbull_Tooso_Client
             if ($this->_reportSender) {
                 $message = 'cURL error = ' . $error . ' - Error number = ' . $errorNumber;
 
-                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
             }
 
             throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
@@ -221,7 +230,7 @@ class Bitbull_Tooso_Client
                     $message .= "\n\nDebugInfo: " . $response->ToosoError->DebugInfo;
                 }
 
-                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+                $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
             }
 
             throw new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
@@ -238,7 +247,7 @@ class Bitbull_Tooso_Client
                         . "Error code = " . $response->Code . "\n"
                         . "Debug info = " . $response->ToosoError->DebugInfo;
 
-                    $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $message);
+                    $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
                 }
 
                 throw $e;
@@ -260,7 +269,8 @@ class Bitbull_Tooso_Client
         $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
 
         $queryString = array(
-            'language=' . $this->_language
+            'language=' . $this->_language,
+            'storeCode=' . $this->_storeCode,
         );
 
         foreach ($params as $key => $value) {

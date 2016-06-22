@@ -97,3 +97,25 @@ Regardless the method you choose, after installation you need to clear the cache
 2. Insert your API key into __API key__ field under __API Configuration__ and enable Tooso Search setting to __Yes__ the field __Enable Search__ under __Active Tooso__.
 3. If you are in the Early Adopter phase, it's highly advisable to leave enabled __Send report__ and __Force logging__ configurations under __API Configuration__. This will give to the Tooso support team more information for help you troubleshoot in case of errors.
 **Please note:** to be able to send report to Tooso, your Magento installation need to be able to send email.
+
+## Customize reindex flow
+
+By default, the catalog reindex process start every 15 minutes. This is done through the standard Magento cron framework (more info [here](http://www.webguys.de/magento-1/tuerchen-08-magento-cron-demystified)).
+You can customize the frequency of reindex schedule editing the file `app/code/community/Bitbull/Tooso/etc/config.xml`:
+
+```
+    <crontab>
+        <jobs>
+            <tooso_reindex>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>tooso/observer::rebuildIndex</model>
+                </run>
+            </tooso_reindex>
+        </jobs>
+    </crontab>
+```
+
+you can change the value of node `<cron_expr>` using any standard [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression).

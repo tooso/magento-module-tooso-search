@@ -8,8 +8,6 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
 {
     const DEBUG_EMAIL_ADDRESS = 'alert@tooso.ai';
 
-    const DEBUG_EMAIL_ADDRESS_CC = 'gennaro.vietri@bitbull.it';
-
     const XML_PATH_SEND_REPORT = 'tooso/server/send_report';
 
     const EMAIL_TEMPLATE = 'tooso_alert_email_template';
@@ -58,8 +56,7 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
                             'email' => self::DEBUG_EMAIL_ADDRESS,
                         ),
                         array(
-                            self::DEBUG_EMAIL_ADDRESS,
-                            self::DEBUG_EMAIL_ADDRESS_CC
+                            self::DEBUG_EMAIL_ADDRESS
                         ),
                         null,
                         array('data' => $dataObject)

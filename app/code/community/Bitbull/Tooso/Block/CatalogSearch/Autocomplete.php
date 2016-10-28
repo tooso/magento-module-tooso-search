@@ -8,7 +8,7 @@ class Bitbull_Tooso_Block_CatalogSearch_Autocomplete extends Mage_CatalogSearch_
 {
     public function getSuggestData()
     {
-        if (!Mage::getStoreConfigFlag(Bitbull_Tooso_Helper_Data::XML_PATH_ENABLE_SEARCH)) {
+        if (!$this->helper('tooso')->isSearchEnabled()) {
             return parent::getSuggestData();
         }
 

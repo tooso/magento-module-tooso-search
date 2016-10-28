@@ -10,6 +10,11 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
 
     const XML_PATH_FORCE_LOG = 'tooso/server/force_log';
 
+    public function isDebugEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_FORCE_LOG, $store);
+    }
+
     /**
      * Retrieve Tooso Log File
      *
@@ -28,7 +33,7 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
     */
     public function log($message, $level = null)
     {
-        $forceLog = Mage::getStoreConfigFlag(self::XML_PATH_FORCE_LOG);
+        $forceLog = Mage::helper('tooso/log')->isDebugEnabled();
 
         Mage::log($message, $level, $this->getLogFile(), $forceLog);
     }

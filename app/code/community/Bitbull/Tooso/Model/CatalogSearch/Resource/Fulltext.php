@@ -29,7 +29,7 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
      */
     public function prepareResult($object, $queryText, $query)
     {
-        if (!Mage::getStoreConfigFlag(Bitbull_Tooso_Helper_Data::XML_PATH_ENABLE_SEARCH)) {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
             return parent::prepareResult($object, $queryText, $query);
         }
 

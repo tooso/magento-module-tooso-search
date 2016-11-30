@@ -44,4 +44,24 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
         }
         return $this;
     }
+
+    /**
+     * Needed for Magento version >= 1.9.3.1
+     * Get found products ids
+     *
+     * @return array
+     */
+    public function getFoundIds()
+    {
+        if (is_null($this->_foundData)) {
+            /** @var Mage_CatalogSearch_Model_Fulltext $preparedResult */
+            $preparedResult = Mage::getSingleton('catalogsearch/fulltext');
+            $preparedResult->prepareResult();
+            $this->_foundData = array_flip(Mage::helper('tooso')->getProducts());
+        }
+        if (isset($this->_orders[self::RELEVANCE_ORDER_NAME])) {
+            $this->_resortFoundDataByRelevance();
+        }
+        return array_keys($this->_foundData);
+    }
 }

@@ -57,7 +57,8 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
             /** @var Mage_CatalogSearch_Model_Fulltext $preparedResult */
             $preparedResult = Mage::getSingleton('catalogsearch/fulltext');
             $preparedResult->prepareResult();
-            $this->_foundData = array_flip(Mage::helper('tooso')->getProducts());
+            $productsIds = Mage::helper('tooso')->getProducts();
+            $this->_foundData = $productsIds ? array_flip($productsIds) : array();
         }
         if (isset($this->_orders[self::RELEVANCE_ORDER_NAME])) {
             $this->_resortFoundDataByRelevance();

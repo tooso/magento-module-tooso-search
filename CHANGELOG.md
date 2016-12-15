@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.6]
+
+- Set `CURLOPT_SAFE_UPLOAD` to true for enable catalog upload with "@" prefix, as from PHP 5.6 is set to false by default
+
 ## [1.0.5]
 
 - Fix for results page error when Tooso search is disabled from admin

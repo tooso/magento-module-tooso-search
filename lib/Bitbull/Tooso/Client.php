@@ -193,6 +193,11 @@ class Bitbull_Tooso_Client
         }
 
         if (strlen($attachment) > 0) {
+
+            if (defined('CURLOPT_SAFE_UPLOAD')) {
+                curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+            }
+
             curl_setopt($ch, CURLOPT_POSTFIELDS, array(
                 'file' => '@' . realpath($attachment)
             ));

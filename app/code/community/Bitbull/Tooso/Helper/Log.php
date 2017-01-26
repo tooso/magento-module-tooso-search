@@ -9,6 +9,7 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
     const LOG_FILENAME = 'tooso_search.log';
 
     const XML_PATH_FORCE_LOG = 'tooso/server/force_log';
+    const XML_PATH_DEBUG_MODE = 'tooso/server/debug_mode';
 
     /**
      * Retrieve Tooso Log File
@@ -42,5 +43,17 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
         }
 
         Mage::logException($e);
+    }
+    
+    /**
+     * @param string $message
+    */
+    public function debug($message)
+    {
+        $debugMode = Mage::getStoreConfigFlag(self::XML_PATH_DEBUG_MODE);
+
+        if ($debugMode) {
+            $this->log($message, Zend_Log::DEBUG);
+        }
     }
 }

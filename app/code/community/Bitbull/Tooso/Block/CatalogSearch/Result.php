@@ -13,6 +13,10 @@ class Bitbull_Tooso_Block_CatalogSearch_Result extends Mage_CatalogSearch_Block_
      */
     protected function _prepareLayout()
     {
+        if (!$this->helper('tooso')->isSearchEnabled()) {
+            return parent::_prepareLayout();
+        }
+
         $fixedSearchString = Mage::helper('tooso')->getFixedSearchString();
 
         // add Home breadcrumb

@@ -4,7 +4,7 @@
  * @package  Bitbull_Tooso
  * @author   Gennaro Vietri <gennaro.vietri@bitbull.it>
 */
-class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
+class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract //implements Bitbull_Tooso_Log_LoggerInterface
 {
     const LOG_FILENAME = 'tooso_search.log';
 

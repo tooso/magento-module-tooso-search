@@ -73,8 +73,10 @@ class Bitbull_Tooso_Model_Indexer
             'export_filter' => array(),
         ));
 
+        $csvContent = $model->export();
+
         $this->_logger->debug('End generating CSV content');
 
-        return $model->export();
+        return $csvContent;
     }
 }

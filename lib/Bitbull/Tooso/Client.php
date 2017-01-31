@@ -175,7 +175,7 @@ class Bitbull_Tooso_Client
 
         $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
 
-        $this->_logger->debug("End uploading zipfile, raw response: " . $rawResponse);
+        $this->_logger->debug("End uploading zipfile, raw response: " . print_r($rawResponse, true));
 
         unlink($tmpZipFile);
 
@@ -233,6 +233,8 @@ class Bitbull_Tooso_Client
         $errorNumber = curl_errno($ch);
 
         curl_close($ch);
+
+        $this->_logger->debug("Raw response: " . print_r($output, true));
 
         if (false === $output) {
             

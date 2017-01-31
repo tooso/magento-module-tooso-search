@@ -106,4 +106,9 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             'sessionId' => $sessionId,
         );
     }
+
+    public function isSearchEnabled()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH);
+    }
 }

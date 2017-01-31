@@ -13,6 +13,10 @@ class Bitbull_Tooso_Helper_CatalogSearch_Data extends Mage_CatalogSearch_Helper_
      */
     public function getQuery()
     {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
+            return parent::getQuery();
+        }
+
         if (!$this->_query) {
             if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
                 $this->_query = Mage::getModel('catalogsearch/query')

@@ -15,6 +15,10 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function addSearchFilter($query)
     {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
+            return parent::addSearchFilter($query);
+        }
+
         Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
 
         $products = Mage::helper('tooso')->getProducts();
@@ -32,6 +36,10 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function setOrder($attribute, $dir = 'desc')
     {
+        if (!Mage::getStoreConfigFlag(Bitbull_Tooso_Helper_Data::XML_PATH_ENABLE_SEARCH)) {
+            return parent::setOrder($attribute, $dir);
+        }
+
         if ($attribute == 'relevance') {
             $products = Mage::helper('tooso')->getProducts();
 

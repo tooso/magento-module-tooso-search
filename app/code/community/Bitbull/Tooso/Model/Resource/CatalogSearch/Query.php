@@ -16,6 +16,10 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Query extends Mage_CatalogSearc
      */
     public function loadByQuery(Mage_Core_Model_Abstract $object, $value)
     {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
+            return parent::loadByQuery($object, $value);
+        }
+
         $readAdapter = $this->_getReadAdapter();
         $select = $readAdapter->select();
 

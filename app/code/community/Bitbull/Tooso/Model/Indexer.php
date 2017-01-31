@@ -60,14 +60,23 @@ class Bitbull_Tooso_Model_Indexer
     */
     protected function _getCsvContent()
     {
+        $this->_logger->debug('Start generating CSV content');
+
         /** @var $model Mage_ImportExport_Model_Export */
         $model = Mage::getModel('importexport/export');
+
+        $this->_logger->debug('Export Model class: ' . get_class($model));
+
         $model->setData(array(
             'entity' => 'catalog_product',
             'file_format' => 'tooso_csv',
             'export_filter' => array(),
         ));
 
-        return $model->export();
+        $csvContent = $model->export();
+
+        $this->_logger->debug('End generating CSV content');
+
+        return $csvContent;
     }
 }

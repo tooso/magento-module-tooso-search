@@ -62,6 +62,11 @@ class Bitbull_Tooso_Client
      * @var Bitbull_Tooso_Log_SendInterface
     */
     protected $_reportSender;
+    
+    /**
+     * @var Bitbull_Tooso_Log_LoggerInterface
+    */
+    protected $_logger;
 
     /**
      * @param string $apiKey
@@ -73,6 +78,9 @@ class Bitbull_Tooso_Client
         $this->_apiKey = $apiKey;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
+
+        // @todo refactor, inject dependency
+        $this->_logger = Mage::helper('tooso/log');
     }
 
     /**
@@ -152,7 +160,9 @@ class Bitbull_Tooso_Client
     public function index($csvContent)
     {
         $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
-
+        
+        $this->_logger->debug("Temporary zip file: " . $tmpZipFile);
+        
         $zip = new ZipArchive;
         if ($zip->open($tmpZipFile, ZipArchive::CREATE)) {
             $zip->addFromString('magento_catalog.csv', $csvContent);
@@ -161,7 +171,11 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception('Error creating zip file for reindex', 0);
         }
 
+        $this->_logger->debug("Start uploading zipfile");
+
         $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
+
+        $this->_logger->debug("End uploading zipfile, raw response: " . $rawResponse);
 
         unlink($tmpZipFile);
 
@@ -185,6 +199,9 @@ class Bitbull_Tooso_Client
     protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '', $timeout = null)
     {
         $url = $this->_buildUrl($path, $params);
+
+        $this->_logger->debug("Performing API request to url: " . $url . " with method: " . $httpMethod);
+        $this->_logger->debug("Params: " . print_r($params, true));
 
         $ch = curl_init();
 

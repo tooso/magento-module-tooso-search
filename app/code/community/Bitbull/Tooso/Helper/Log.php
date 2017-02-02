@@ -4,11 +4,14 @@
  * @package  Bitbull_Tooso
  * @author   Gennaro Vietri <gennaro.vietri@bitbull.it>
 */
-class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
+class Bitbull_Tooso_Helper_Log
+    extends Mage_Core_Helper_Abstract
+    implements Bitbull_Tooso_Log_LoggerInterface
 {
     const LOG_FILENAME = 'tooso_search.log';
 
     const XML_PATH_FORCE_LOG = 'tooso/server/force_log';
+    const XML_PATH_DEBUG_MODE = 'tooso/server/debug_mode';
 
     public function isDebugEnabled($store = null)
     {
@@ -47,5 +50,17 @@ class Bitbull_Tooso_Helper_Log extends Mage_Core_Helper_Abstract
         }
 
         Mage::logException($e);
+    }
+    
+    /**
+     * @param string $message
+    */
+    public function debug($message)
+    {
+        $debugMode = Mage::getStoreConfigFlag(self::XML_PATH_DEBUG_MODE);
+
+        if ($debugMode) {
+            $this->log($message, Zend_Log::DEBUG);
+        }
     }
 }

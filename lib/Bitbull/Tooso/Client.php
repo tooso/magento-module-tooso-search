@@ -14,7 +14,7 @@ class Bitbull_Tooso_Client
      *
      * @var string
      */
-    protected $_baseUrl = 'http://toosopublicapi.cloudapp.net';
+    protected $_baseUrl = 'https://toosopublicapi.cloudapp.net';
 
     /**
      * API key
@@ -62,17 +62,25 @@ class Bitbull_Tooso_Client
      * @var Bitbull_Tooso_Log_SendInterface
     */
     protected $_reportSender;
+    
+    /**
+     * @var Bitbull_Tooso_Log_LoggerInterface
+    */
+    protected $_logger;
 
     /**
      * @param string $apiKey
      * @param string $language
      * @param string $storeCode
+     * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $language, $storeCode)
+    public function __construct($apiKey, $language, $storeCode, Bitbull_Tooso_Log_LoggerInterface $logger)
     {
         $this->_apiKey = $apiKey;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
+
+        $this->_logger = $logger;
     }
 
     /**
@@ -152,7 +160,9 @@ class Bitbull_Tooso_Client
     public function index($csvContent)
     {
         $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
-
+        
+        $this->_logger->debug("Temporary zip file: " . $tmpZipFile);
+        
         $zip = new ZipArchive;
         if ($zip->open($tmpZipFile, ZipArchive::CREATE)) {
             $zip->addFromString('magento_catalog.csv', $csvContent);
@@ -161,7 +171,11 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception('Error creating zip file for reindex', 0);
         }
 
+        $this->_logger->debug("Start uploading zipfile");
+
         $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
+
+        $this->_logger->debug("End uploading zipfile, raw response: " . print_r($rawResponse, true));
 
         unlink($tmpZipFile);
 
@@ -186,6 +200,9 @@ class Bitbull_Tooso_Client
     {
         $url = $this->_buildUrl($path, $params);
 
+        $this->_logger->debug("Performing API request to url: " . $url . " with method: " . $httpMethod);
+        $this->_logger->debug("Params: " . print_r($params, true));
+
         $ch = curl_init();
 
         if ($httpMethod == self::HTTP_METHOD_POST) {
@@ -194,12 +211,14 @@ class Bitbull_Tooso_Client
 
         if (strlen($attachment) > 0) {
 
-            if (defined('CURLOPT_SAFE_UPLOAD')) {
-                curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
+            if (class_exists('CURLFile')) {
+                $file = new CURLFile(realpath($attachment));
+            } else {
+                $file = '@' . realpath($attachment);
             }
 
             curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-                'file' => '@' . realpath($attachment)
+                'file' => $file
             ));
         }
 
@@ -208,12 +227,17 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, !is_null($timeout) ? $timeout : $this->_timeout);
 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
         $output = curl_exec($ch);
         $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         $errorNumber = curl_errno($ch);
 
         curl_close($ch);
+
+        $this->_logger->debug("Raw response: " . print_r($output, true));
 
         if (false === $output) {
             

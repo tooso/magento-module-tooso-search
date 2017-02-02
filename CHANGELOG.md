@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0]
+
+- Use of [`CURLFile`](http://php.net/manual/en/class.curlfile.php) for indexing file upload if available, fallback on "@" prefix
+- Correctly handle the case Tooso search is disabled, and forward to native Magento (fix on 1.0.5 not working properly)
+- Inject logger ad dependency in the Client, and the helper logger now implement the interface from library, so we can use the Magento logger in the client code
+- Consider "position" as value for attribute that apply Tooso search result sorting
+- Moved to https endpoint with self-signed certificate
+
 ## [1.0.6]
 
 - Set `CURLOPT_SAFE_UPLOAD` to true for enable catalog upload with "@" prefix, as from PHP 5.6 is set to false by default

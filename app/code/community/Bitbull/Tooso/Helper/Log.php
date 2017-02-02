@@ -13,9 +13,14 @@ class Bitbull_Tooso_Helper_Log
     const XML_PATH_FORCE_LOG = 'tooso/server/force_log';
     const XML_PATH_DEBUG_MODE = 'tooso/server/debug_mode';
 
-    public function isDebugEnabled($store = null)
+    public function isForceLogEnabled($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_FORCE_LOG, $store);
+    }
+
+    public function isDebugModeEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_DEBUG_MODE, $store);
     }
 
     /**
@@ -36,7 +41,7 @@ class Bitbull_Tooso_Helper_Log
     */
     public function log($message, $level = null)
     {
-        $forceLog = Mage::helper('tooso/log')->isDebugEnabled();
+        $forceLog = $this->isForceLogEnabled();
 
         Mage::log($message, $level, $this->getLogFile(), $forceLog);
     }
@@ -57,7 +62,7 @@ class Bitbull_Tooso_Helper_Log
     */
     public function debug($message)
     {
-        $debugMode = Mage::getStoreConfigFlag(self::XML_PATH_DEBUG_MODE);
+        $debugMode = $this->isDebugModeEnabled();
 
         if ($debugMode) {
             $this->log($message, Zend_Log::DEBUG);

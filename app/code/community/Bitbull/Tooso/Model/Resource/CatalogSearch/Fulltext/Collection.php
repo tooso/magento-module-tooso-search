@@ -36,11 +36,11 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function setOrder($attribute, $dir = 'desc')
     {
-        if (!Mage::getStoreConfigFlag(Bitbull_Tooso_Helper_Data::XML_PATH_ENABLE_SEARCH)) {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
             return parent::setOrder($attribute, $dir);
         }
 
-        if ($attribute == 'relevance') {
+        if ($attribute == 'relevance' || $attribute == 'position') {
             $products = Mage::helper('tooso')->getProducts();
 
             // If the order criteria is the relevance, we need to respect the order of products ids given by API call
@@ -61,6 +61,10 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function getFoundIds()
     {
+        if (!Mage::helper('tooso')->isSearchEnabled()) {
+            return parent::getFoundIds();
+        }
+
         if (is_null($this->_foundData)) {
             /** @var Mage_CatalogSearch_Model_Fulltext $preparedResult */
             $preparedResult = Mage::getSingleton('catalogsearch/fulltext');

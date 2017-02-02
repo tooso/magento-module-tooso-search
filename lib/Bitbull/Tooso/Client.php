@@ -14,7 +14,7 @@ class Bitbull_Tooso_Client
      *
      * @var string
      */
-    protected $_baseUrl = 'http://toosopublicapi.cloudapp.net';
+    protected $_baseUrl = 'https://toosopublicapi.cloudapp.net';
 
     /**
      * API key
@@ -72,15 +72,15 @@ class Bitbull_Tooso_Client
      * @param string $apiKey
      * @param string $language
      * @param string $storeCode
+     * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $language, $storeCode)
+    public function __construct($apiKey, $language, $storeCode, Bitbull_Tooso_Log_LoggerInterface $logger)
     {
         $this->_apiKey = $apiKey;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
 
-        // @todo refactor, inject dependency
-        $this->_logger = Mage::helper('tooso/log');
+        $this->_logger = $logger;
     }
 
     /**
@@ -226,6 +226,9 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, !is_null($timeout) ? $timeout : $this->_timeout);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
         $output = curl_exec($ch);
         $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

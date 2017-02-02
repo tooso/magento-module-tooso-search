@@ -80,7 +80,9 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $language = Mage::app()->getLocale()->getLocaleCode();
         $storeCode = Mage::app()->getStore()->getCode();
 
-        $client = new Bitbull_Tooso_Client($apiKey, $language, $storeCode);
+        $logger = Mage::helper('tooso/log');
+
+        $client = new Bitbull_Tooso_Client($apiKey, $language, $storeCode, $logger);
 
         $client->setReportSender(Mage::helper('tooso/log_send'));
 

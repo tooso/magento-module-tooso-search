@@ -81,7 +81,7 @@ Then you can add the module dependency:
 {
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
-        "bitbull/magento_tooso": "1.0.0"
+        "bitbull/magento-tooso-search": "1.0.*"
     }
 }
 ```

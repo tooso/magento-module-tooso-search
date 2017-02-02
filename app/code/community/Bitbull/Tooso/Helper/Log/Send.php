@@ -62,7 +62,9 @@ class Bitbull_Tooso_Helper_Log_Send extends Mage_Core_Helper_Abstract implements
                         array('data' => $dataObject)
                     );
             }
-            catch(Exception $error) {}
+            catch(Exception $error) {
+                Mage::logException($error);
+            }
         }
     }
 }

@@ -10,11 +10,28 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_INDEX = 'tooso/active/index';
 
+    const XML_PATH_SUGGEST_MAX_RESULTS = 'tooso/suggest/max_results';
+
     protected $_fixedSearchString = null;
     
     protected $_searchId = null;
 
     protected $_products = null;
+
+    public function isSearchEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH, $store);
+    }
+
+    public function isIndexEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX, $store);
+    }
+
+    public function getSuggestMaxResults($store = null)
+    {
+        return Mage::getConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
+    }
 
     /**
      * @return array

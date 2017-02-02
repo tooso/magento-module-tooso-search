@@ -36,7 +36,7 @@ class Bitbull_Tooso_Model_Suggest
 
         $this->_logger = Mage::helper('tooso/log');
 
-        $this->_maxResults = (int)Mage::getStoreConfig('tooso/suggest/max_results');
+        $this->_maxResults = (int) Mage::helper('tooso')->getSuggestMaxResults();
     }
 
     /**

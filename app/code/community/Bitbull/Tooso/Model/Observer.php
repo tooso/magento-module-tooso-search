@@ -43,11 +43,11 @@ class Bitbull_Tooso_Model_Observer
     */
     public function showFixedSearchStringOnSearchResults(Varien_Event_Observer $observer)
     {
-        if (Mage::helper('tooso')->isSearchEnabled()) {
+        $block = $observer->getBlock();
+        $fixedSearchString = Mage::helper('tooso')->getFixedSearchString();
+        $title = $block->__("Search results for: '%s'", $fixedSearchString ? $fixedSearchString : Mage::helper('catalogsearch')->getEscapedQueryText());
 
-            $block = $observer->getBlock();
-            $fixedSearchString = Mage::helper('tooso')->getFixedSearchString();
-            $title = $block->__("Search results for: '%s'", $fixedSearchString ? $fixedSearchString : Mage::helper('catalogsearch')->getEscapedQueryText());
+        if (Mage::helper('tooso')->isSearchEnabled() && $fixedSearchString) {
 
             if ($block instanceof Mage_CatalogSearch_Block_Result) {
                 $block->setHeaderText($title);

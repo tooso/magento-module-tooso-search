@@ -98,6 +98,7 @@
             </active>
             <server>
                 <api_key />
+                <api_base_url>https://toosopublicapi.cloudapp.net</api_base_url>
                 <send_report>1</send_report>
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>

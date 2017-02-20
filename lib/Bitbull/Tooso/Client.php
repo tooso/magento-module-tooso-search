@@ -14,7 +14,7 @@ class Bitbull_Tooso_Client
      *
      * @var string
      */
-    protected $_baseUrl = 'https://toosopublicapi.cloudapp.net';
+    protected $_baseUrl;
 
     /**
      * API key
@@ -70,13 +70,15 @@ class Bitbull_Tooso_Client
 
     /**
      * @param string $apiKey
+     * @param string $apiBaseUrl
      * @param string $language
      * @param string $storeCode
      * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $language, $storeCode, Bitbull_Tooso_Log_LoggerInterface $logger)
+    public function __construct($apiKey, $apiBaseUrl, $language, $storeCode, Bitbull_Tooso_Log_LoggerInterface $logger)
     {
         $this->_apiKey = $apiKey;
+        $this->_baseUrl = $apiBaseUrl;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
 
@@ -292,9 +294,20 @@ class Bitbull_Tooso_Client
      * @param string $path
      * @param array $params
      * @return string
+     * @throws Bitbull_Tooso_Exception
     */
     protected function _buildUrl($path, $params)
     {
+        if (filter_var($this->_baseUrl, FILTER_VALIDATE_URL) === false) {
+            $message = 'API base URL missing or invalid: "' . $this->_baseUrl . '"';
+
+            if ($this->_reportSender) {
+                $this->_reportSender->sendReport('', '', $this->_apiKey, $this->_language, $this->_storeCode, $message);
+            }
+
+            throw new Bitbull_Tooso_Exception($message, 0);
+        }
+
         $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
 
         $queryString = array(

@@ -12,6 +12,10 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_SUGGEST_MAX_RESULTS = 'tooso/suggest/max_results';
 
+    const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
+
+    const XML_PATH_SERVER_API_BASEURL = 'tooso/server/api_base_url';
+
     protected $_fixedSearchString = null;
     
     protected $_searchId = null;
@@ -93,13 +97,14 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     */
     public function getClient()
     {
-        $apiKey = Mage::getStoreConfig('tooso/server/api_key');
+        $apiKey = Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY);
+        $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
         $language = Mage::app()->getLocale()->getLocaleCode();
         $storeCode = Mage::app()->getStore()->getCode();
 
         $logger = Mage::helper('tooso/log');
 
-        $client = new Bitbull_Tooso_Client($apiKey, $language, $storeCode, $logger);
+        $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode, $logger);
 
         $client->setReportSender(Mage::helper('tooso/log_send'));
 
@@ -124,10 +129,5 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             'userId' => $userId,
             'sessionId' => $sessionId,
         );
-    }
-
-    public function isSearchEnabled()
-    {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH);
     }
 }

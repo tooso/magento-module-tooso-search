@@ -34,4 +34,41 @@ class Bitbull_Tooso_Model_Observer
 
         return $this;
     }
+
+    /**
+     * Change title in some places, replacing original query
+     * with fixed search string.
+     *
+     * @param Varien_Event_Observer $observer
+    */
+    public function showFixedSearchStringOnSearchResults(Varien_Event_Observer $observer)
+    {
+        $block = $observer->getBlock();
+        $fixedSearchString = Mage::helper('tooso')->getFixedSearchString();
+        $title = $block->__("Search results for: '%s'", $fixedSearchString ? $fixedSearchString : Mage::helper('catalogsearch')->getEscapedQueryText());
+
+        if (Mage::helper('tooso')->isSearchEnabled() && $fixedSearchString) {
+
+            if ($block instanceof Mage_CatalogSearch_Block_Result) {
+                $block->setHeaderText($title);
+            }
+
+            // modify page title
+            if ($block instanceof Mage_Page_Block_Html_Head) {
+                $block->setTitle($title);
+            }
+
+            // add Home breadcrumb
+            if ($block instanceof Mage_Page_Block_Html_Breadcrumbs) {
+                $block->addCrumb('home', array(
+                    'label' => $block->__('Home'),
+                    'title' => $block->__('Go to Home Page'),
+                    'link'  => Mage::getBaseUrl()
+                ))->addCrumb('search', array(
+                    'label' => $title,
+                    'title' => $title
+                ));
+            }
+        }
+    }
 }

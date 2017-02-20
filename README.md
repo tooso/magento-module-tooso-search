@@ -4,14 +4,6 @@
 
 This extension replaces the default search of Magento with a typo-tolerant, fast & relevant search experience backed by [Tooso](http://tooso.ai/Default.aspx).
 
-## Facts
-
-- version: 1.0.5
-- extension key: Bitbull_Tooso
-- [extension on Magento Connect](https://www.magentocommerce.com/magento-connect/tooso-search-integration.html)
-- Magento Connect 2.0 extension key: http://connect20.magentocommerce.com/community/Bitbull_Tooso
-- [direct download link](https://connect20.magentocommerce.com/community/Bitbull_Tooso/1.0.5/Bitbull_Tooso-1.0.5.tgz)
-
 ## Description
 
 This extension replaces the default Magento search engine with one based on Tooso API.

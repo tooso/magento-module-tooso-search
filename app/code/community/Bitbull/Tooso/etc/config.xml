@@ -47,11 +47,20 @@
             </tooso>
             <catalogsearch>
                 <rewrite>
-                    <result>Bitbull_Tooso_Block_CatalogSearch_Result</result>
                     <autocomplete>Bitbull_Tooso_Block_CatalogSearch_Autocomplete</autocomplete>
                 </rewrite>
             </catalogsearch>
         </blocks>
+        <events>
+            <core_block_abstract_to_html_before>
+                <observers>
+                    <tooso_search_results_breadcrumbs>
+                        <class>tooso/observer</class>
+                        <method>showFixedSearchStringOnSearchResults</method>
+                    </tooso_search_results_breadcrumbs>
+                </observers>
+            </core_block_abstract_to_html_before>
+        </events>
         <template>
             <email>
                 <tooso_alert_email_template translate="label" module="tooso">

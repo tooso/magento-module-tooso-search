@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0]
+
+- Added configuration to change API base url
+- Fixed compatibility with EE moving generation of breadcrumbs, title and message with fixed search string to an observer
+
 ## [1.1.0]
 
 - Use of [`CURLFile`](http://php.net/manual/en/class.curlfile.php) for indexing file upload if available, fallback on "@" prefix

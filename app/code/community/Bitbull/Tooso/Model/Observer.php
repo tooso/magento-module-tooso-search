@@ -10,10 +10,13 @@ class Bitbull_Tooso_Model_Observer
      * @var Bitbull_Tooso_Helper_Log
      */
     protected $_logger = null;
+    protected $_client = null;
 
     public function __construct()
     {
         $this->_logger = Mage::helper('tooso/log');
+
+        $this->_client = Mage::helper('tooso')->getClient();
     }
 
     /**
@@ -71,4 +74,33 @@ class Bitbull_Tooso_Model_Observer
             }
         }
     }
+
+    /**
+     * Add conversion pixel on the end of product page
+     * @param  Varien_Event_Observer $observer
+     */
+    public function showTrackingPixel(Varien_Event_Observer $observer)
+    {
+        $current_product = Mage::registry('current_product');
+        if($current_product) {
+            $sku = $current_product->getSku();
+            $toosoSearchId = Mage::getSingleton('core/session')->getToosoSearchId();
+            $rank = -1;//TODO find search rate from associative array SKU-rate
+
+            $tracking_url = $this->_client->getTrackingUrl(array(
+                "searchId" => $toosoSearchId,
+                "resultId" => $sku,
+                "rank" => $rank
+            ));
+
+            $layout = Mage::app()->getLayout();
+            $block = $layout->createBlock('core/text');
+            $block->setText(
+                '<img style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
+            );
+            $layout->getBlock('before_body_end')->append($block);
+        }
+
+    }
+
 }

@@ -65,6 +65,9 @@ class Bitbull_Tooso_Model_Search
                 }
 
                 $result = $this->_client->search($query, $typoCorrection, $params);
+
+                Mage::getSingleton('core/session')->setToosoSearchId($result->getSearchId());
+
                 $this->setResult($result);
             } catch (Exception $e) {
                 $this->_logger->logException($e);

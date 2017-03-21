@@ -123,7 +123,9 @@ class Bitbull_Tooso_Client
                 $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $this->_storeCode, $message);
             }
 
-            throw new Bitbull_Tooso_Exception($message, 0);
+            if(!self::SUPPRESS_API_ERROR){
+                throw new Bitbull_Tooso_Exception($message, 0);
+            }
         }
 
         return $result;

@@ -68,7 +68,13 @@ class Bitbull_Tooso_Model_Search
 
                 Mage::getSingleton('core/session')->setToosoSearchId($result->getSearchId());
 
-                $this->setResult($result);
+                // Save rank collection based on Tooso response
+                //Mage::getSingleton('core/session')->setToosoRankCollection($result->getRankCollection());
+
+                if($result->isValid()){
+                    $this->setResult($result);
+                }
+
             } catch (Exception $e) {
                 $this->_logger->logException($e);
             }

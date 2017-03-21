@@ -44,8 +44,8 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
         if($this->isValid()){
             return $this->_response->Content->SearchId;
         }else{
-            if(isset($this->_response->Content) && isset($this->_response->Content->SearchId)){
-                return $this->_response->Content->SearchId;
+            if(isset($this->_response->SearchId)){
+                return $this->_response->SearchId;
             }else{
                 return self::FALLBACK_RESPONSE_SEARCH_ID;
             }
@@ -86,6 +86,16 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
         }else{
             return self::FALLBACK_RESPONSE_PARENT_SEARCH_ID;
         }
+    }
+
+    public function getRankCollection()
+    {
+        $rankCollection = array();
+        $results = $this->getResults();
+        foreach ($results as $key => $result) {
+            $rankCollection[$result] = $key;
+        }
+        return $rankCollection;
     }
 
 }

@@ -85,7 +85,21 @@ class Bitbull_Tooso_Model_Observer
         if($current_product) {
             $sku = $current_product->getSku();
             $toosoSearchId = Mage::getSingleton('core/session')->getToosoSearchId();
-            $rank = -1;//TODO find search rate from associative array SKU-rate
+
+            // Get rank collection based on Tooso response
+            /*
+            $toosoRankCollection = Mage::getSingleton('core/session')->getToosoRankCollection();
+            $rank = -1;
+            if($searchRankCollection != null && isset($toosoRankCollection[$sku])){
+                $rank = $toosoRankCollection[$sku];
+            }*/
+
+            // Get rank collection from search collection
+            $searchRankCollection = Mage::getSingleton('core/session')->getSearchRankCollection();
+            $rank = -1;
+            if($searchRankCollection != null && isset($searchRankCollection[$sku])){
+                $rank = $searchRankCollection[$sku];
+            }
 
             $tracking_url = $this->_client->getTrackingUrl(array(
                 "searchId" => $toosoSearchId,
@@ -101,6 +115,21 @@ class Bitbull_Tooso_Model_Observer
             $layout->getBlock('before_body_end')->append($block);
         }
 
+    }
+
+    /**
+     * Save rank collection with SKU and their position from collection
+     * @param  Varien_Event_Observer $observer
+     */
+    public function elaborateRankCollection(Varien_Event_Observer $observer){
+        $collection = Mage::registry('current_layer')->getProductCollection();
+        $rankCollection = array();
+        foreach ($collection as $key => $product) {
+            $sku = $product->getSku();
+            $rankCollection[$sku] = $key;
+        }
+
+        Mage::getSingleton('core/session')->setSearchRankCollection($rankCollection);
     }
 
 }

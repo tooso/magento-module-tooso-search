@@ -4,7 +4,7 @@
  * @package  Bitbull_Tooso
  * @author   Gennaro Vietri <gennaro.vietri@bitbull.it>
 */
-class Bitbull_Tooso_Search_Result
+class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
 {
     const FALLBACK_RESPONSE_TOTAL_TIME = 0;
     const FALLBACK_RESPONSE_SEARCH_ID = null;
@@ -12,48 +12,12 @@ class Bitbull_Tooso_Search_Result
     const FALLBACK_RESPONSE_ORIGINAL_SEARCH_STRING = "";
     const FALLBACK_RESPONSE_FIXED_SEARCH_STRING = "";
     const FALLBACK_RESPONSE_PARENT_SEARCH_ID = NULL;
-    const FALLBACK_RESPONSE_SUGGESTIONS = "";
 
-    protected $_response = null;
-
-    public function __construct($response = null)
+    public function __construct(Bitbull_Tooso_Response $response)
     {
         if ($response) {
-            $this->setResponse($response);
-        }
-    }
-
-    public function setResponse($response)
-    {
-        $this->_response = $response;
-    }
-
-    public function getResponse()
-    {
-        return $this->_response;
-    }
-
-    public function isValid()
-    {
-        return !isset($this->_response->ToosoError);
-    }
-
-    public function getErrorCode()
-    {
-        return $this->_response->Code;
-    }
-
-    public function getErrorDescription()
-    {
-        return $this->_response->ToosoError->Description;
-    }
-
-    public function getErrorDebugInfo()
-    {
-        if(isset($response->ToosoError->DebugInfo)){
-            return $this->_response->ToosoError->DebugInfo;
-        }else{
-            return null;
+            $rawResponse = $response->getResponse();
+            $this->setResponse($rawResponse);
         }
     }
 
@@ -124,12 +88,4 @@ class Bitbull_Tooso_Search_Result
         }
     }
 
-    public function getSuggestions()
-    {
-        if($this->isValid()){
-            return $this->_response->Content->Suggestions;
-        }else{
-            return self::FALLBACK_RESPONSE_SUGGESTIONS;
-        }
-    }
 }

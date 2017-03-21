@@ -111,7 +111,9 @@ class Bitbull_Tooso_Client
             (array)$extraParams
         );
 
-        $result = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+
+        $result = new Bitbull_Tooso_Search_Result($response);
 
         // In the early adopter phase, even a 0 result query need to be treated as an error
         if ($result->getTotalResults() == 0 && $typoCorrection) {
@@ -142,8 +144,9 @@ class Bitbull_Tooso_Client
             (array)$extraParams
         );
 
-        $result = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, $params);
+        $response = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, $params);
 
+        $result = new Bitbull_Tooso_Suggest_Result($response);
         return $result;
     }
 
@@ -170,11 +173,13 @@ class Bitbull_Tooso_Client
 
         $this->_logger->debug("Start uploading zipfile");
 
-        $result = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
+        $response = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
 
-        $this->_logger->debug("End uploading zipfile, raw response: " . print_r($result->getResponse(), true));
+        $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
 
         unlink($tmpZipFile);
+
+        $result = new Bitbull_Tooso_Index_Result($response);
 
         return $result;
     }
@@ -256,7 +261,7 @@ class Bitbull_Tooso_Client
 
         }else{
             $response = json_decode($output);
-            $result = new Bitbull_Tooso_Search_Result();
+            $result = new Bitbull_Tooso_Response();
             $result->setResponse($response);
 
             if ($httpStatusCode != 200) {

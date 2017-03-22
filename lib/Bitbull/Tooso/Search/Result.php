@@ -11,7 +11,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     const FALLBACK_RESPONSE_TOTAL_RESULTS = 0;
     const FALLBACK_RESPONSE_ORIGINAL_SEARCH_STRING = "";
     const FALLBACK_RESPONSE_FIXED_SEARCH_STRING = "";
-    const FALLBACK_RESPONSE_PARENT_SEARCH_ID = NULL;
+    const FALLBACK_RESPONSE_PARENT_SEARCH_ID = null;
 
     public function __construct(Bitbull_Tooso_Response $response)
     {
@@ -90,12 +90,16 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
 
     public function getRankCollection()
     {
-        $rankCollection = array();
-        $results = $this->getResults();
-        foreach ($results as $key => $result) {
-            $rankCollection[$result] = $key;
+        if($this->isValid()){
+            $rankCollection = array();
+            $results = $this->getResults();
+            foreach ($results as $key => $result) {
+                $rankCollection[$result] = $key;
+            }
+            return $rankCollection;
+        }else{
+            return array();
         }
-        return $rankCollection;
     }
 
 }

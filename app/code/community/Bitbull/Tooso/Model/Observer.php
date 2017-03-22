@@ -84,35 +84,29 @@ class Bitbull_Tooso_Model_Observer
         $current_product = Mage::registry('current_product');
         if($current_product) {
             $sku = $current_product->getSku();
-            $toosoSearchId = Mage::getSingleton('core/session')->getToosoSearchId();
+            $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
 
-            // Get rank collection based on Tooso response
-            /*
-            $toosoRankCollection = Mage::getSingleton('core/session')->getToosoRankCollection();
-            $rank = -1;
-            if($searchRankCollection != null && isset($toosoRankCollection[$sku])){
-                $rank = $toosoRankCollection[$sku];
-            }*/
+            if($toosoSearchId){
+                // Get rank collection from search collection
+                $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
+                $rank = -1;
+                if($searchRankCollection != null && isset($searchRankCollection[$sku])){
+                    $rank = $searchRankCollection[$sku];
+                }
 
-            // Get rank collection from search collection
-            $searchRankCollection = Mage::getSingleton('core/session')->getSearchRankCollection();
-            $rank = -1;
-            if($searchRankCollection != null && isset($searchRankCollection[$sku])){
-                $rank = $searchRankCollection[$sku];
+                $tracking_url = $this->_client->getTrackingUrl(array(
+                    "searchId" => $toosoSearchId,
+                    "resultId" => $sku,
+                    "rank" => $rank
+                ));
+
+                $layout = Mage::app()->getLayout();
+                $block = $layout->createBlock('core/text');
+                $block->setText(
+                    '<img style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
+                );
+                $layout->getBlock('before_body_end')->append($block);
             }
-
-            $tracking_url = $this->_client->getTrackingUrl(array(
-                "searchId" => $toosoSearchId,
-                "resultId" => $sku,
-                "rank" => $rank
-            ));
-
-            $layout = Mage::app()->getLayout();
-            $block = $layout->createBlock('core/text');
-            $block->setText(
-                '<img style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
-            );
-            $layout->getBlock('before_body_end')->append($block);
         }
 
     }
@@ -129,7 +123,7 @@ class Bitbull_Tooso_Model_Observer
             $rankCollection[$sku] = $key;
         }
 
-        Mage::getSingleton('core/session')->setSearchRankCollection($rankCollection);
+        Mage::helper('tooso/session')->setRankCollection($rankCollection);
     }
 
 }

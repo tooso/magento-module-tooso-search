@@ -8,7 +8,6 @@ class Bitbull_Tooso_Client
 {
     const HTTP_METHOD_GET = 'GET';
     const HTTP_METHOD_POST = 'POST';
-    const SUPPRESS_API_ERROR = true;
 
     /**
      * Base url for API calls
@@ -70,19 +69,30 @@ class Bitbull_Tooso_Client
     protected $_logger;
 
     /**
+     * @var Bitbull_Tooso_Storage_SessionInterface
+     */
+    protected $_sessionStorage;
+
+    /**
      * @param string $apiKey
      * @param string $apiBaseUrl
      * @param string $language
      * @param string $storeCode
      * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $apiBaseUrl, $language, $storeCode, Bitbull_Tooso_Log_LoggerInterface $logger)
+    public function __construct($apiKey, $apiBaseUrl, $language, $storeCode)
     {
         $this->_apiKey = $apiKey;
         $this->_baseUrl = $apiBaseUrl;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
+    }
 
+    /**
+     * @param Bitbull_Tooso_Log_LoggerInterface $reportSender
+     */
+    public function setLogger(Bitbull_Tooso_Log_LoggerInterface $logger)
+    {
         $this->_logger = $logger;
     }
 
@@ -92,6 +102,14 @@ class Bitbull_Tooso_Client
     public function setReportSender(Bitbull_Tooso_Log_SendInterface $reportSender)
     {
         $this->_reportSender = $reportSender;
+    }
+
+    /**
+     * @param Bitbull_Tooso_Storage_SessionInterface $sessionStorage
+     */
+    public function setSessionStorage(Bitbull_Tooso_Storage_SessionInterface $sessionStorage)
+    {
+        $this->_sessionStorage = $sessionStorage;
     }
 
     /**
@@ -111,21 +129,28 @@ class Bitbull_Tooso_Client
             (array)$extraParams
         );
 
-        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+        try {
+            $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+            $result = new Bitbull_Tooso_Search_Result($response);
 
-        $result = new Bitbull_Tooso_Search_Result($response);
+            // In the early adopter phase, even a 0 result query need to be treated as an error
+            if ($result->getTotalResults() == 0 && $typoCorrection) {
+                $message = 'No result found for query "' . $query . '""';
 
-        // In the early adopter phase, even a 0 result query need to be treated as an error
-        if ($result->getTotalResults() == 0 && $typoCorrection) {
-            $message = 'No result found for query "' . $query . '""';
+                if ($this->_reportSender) {
+                    $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $this->_storeCode, $message);
+                }
 
-            if ($this->_reportSender) {
-                $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $this->_storeCode, $message);
-            }
-
-            if(!self::SUPPRESS_API_ERROR){
                 throw new Bitbull_Tooso_Exception($message, 0);
             }
+
+        } catch (Bitbull_Tooso_Exception $e) {
+            $response = $e->getResponse();
+            if($response != null && $this->_sessionStorage){
+                $result = new Bitbull_Tooso_Search_Result($response);
+                $this->_sessionStorage->setSearchId($result->getSearchId());
+            }
+            throw $e;
         }
 
         return $result;
@@ -162,8 +187,10 @@ class Bitbull_Tooso_Client
     public function index($csvContent)
     {
         $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
-        
-        $this->_logger->debug("Temporary zip file: " . $tmpZipFile);
+
+        if($this->_logger){
+            $this->_logger->debug("Temporary zip file: " . $tmpZipFile);
+        }
         
         $zip = new ZipArchive;
         if ($zip->open($tmpZipFile, ZipArchive::CREATE)) {
@@ -173,11 +200,14 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception('Error creating zip file for reindex', 0);
         }
 
-        $this->_logger->debug("Start uploading zipfile");
+        if($this->_logger){
+            $this->_logger->debug("Start uploading zipfile");
+        }
 
         $response = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
-
-        $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
+        if($this->_logger){
+            $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
+        }
 
         unlink($tmpZipFile);
 
@@ -212,8 +242,10 @@ class Bitbull_Tooso_Client
     {
         $url = $this->_buildUrl($path, $params);
 
-        $this->_logger->debug("Performing API request to url: " . $url . " with method: " . $httpMethod);
-        $this->_logger->debug("Params: " . print_r($params, true));
+        if($this->_logger) {
+            $this->_logger->debug("Performing API request to url: " . $url . " with method: " . $httpMethod);
+            $this->_logger->debug("Params: " . print_r($params, true));
+        }
 
         $ch = curl_init();
 
@@ -249,7 +281,9 @@ class Bitbull_Tooso_Client
 
         curl_close($ch);
 
-        $this->_logger->debug("Raw response: " . print_r($output, true));
+        if($this->_logger) {
+            $this->_logger->debug("Raw response: " . print_r($output, true));
+        }
 
         if (false === $output) {
             
@@ -278,9 +312,9 @@ class Bitbull_Tooso_Client
                     $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
                 }
 
-                if(!self::SUPPRESS_API_ERROR){
-                    throw new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
-                }
+                $e = new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
+                $e->setResponse($result);
+                throw $e;
 
             } else if ($httpStatusCode == 200 && !$result->isValid()) {
 
@@ -292,11 +326,10 @@ class Bitbull_Tooso_Client
                     $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
                 }
 
-                if(!self::SUPPRESS_API_ERROR){
-                    $e = new Bitbull_Tooso_Exception($result->getErrorDescription(), $result->getErrorCode());
-                    $e->setDebugInfo($result->getErrorDebugInfo());
-                    throw $e;
-                }
+                $e = new Bitbull_Tooso_Exception($result->getErrorDescription(), $result->getErrorCode());
+                $e->setDebugInfo($result->getErrorDebugInfo());
+                $e->setResponse($result);
+                throw $e;
 
             }
 

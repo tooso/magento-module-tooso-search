@@ -7,7 +7,7 @@
 class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
 {
     const FALLBACK_RESPONSE_TOTAL_TIME = 0;
-    const FALLBACK_RESPONSE_SEARCH_ID = null;
+    const FALLBACK_RESPONSE_SEARCH_ID = -1;
     const FALLBACK_RESPONSE_TOTAL_RESULTS = 0;
     const FALLBACK_RESPONSE_ORIGINAL_SEARCH_STRING = "";
     const FALLBACK_RESPONSE_FIXED_SEARCH_STRING = "";

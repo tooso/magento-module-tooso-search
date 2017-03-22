@@ -65,7 +65,9 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function getFoundIds()
     {
-        if (!Mage::helper('tooso')->isSearchEnabled()) {
+        $products = Mage::helper('tooso')->getProducts();
+
+        if (!Mage::helper('tooso')->isSearchEnabled() || $products == null) {
             return parent::getFoundIds();
         }
 

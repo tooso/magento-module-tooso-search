@@ -132,6 +132,7 @@ class Bitbull_Tooso_Client
         try {
             $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
             $result = new Bitbull_Tooso_Search_Result($response);
+            $this->_sessionStorage->setSearchId($result->getSearchId());
 
             // In the early adopter phase, even a 0 result query need to be treated as an error
             if ($result->getTotalResults() == 0 && $typoCorrection) {

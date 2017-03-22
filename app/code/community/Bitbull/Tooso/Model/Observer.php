@@ -103,7 +103,7 @@ class Bitbull_Tooso_Model_Observer
                 $layout = Mage::app()->getLayout();
                 $block = $layout->createBlock('core/text');
                 $block->setText(
-                    '<img style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
+                    '<img id="tooso-tracking-pixel" style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
                 );
                 $layout->getBlock('before_body_end')->append($block);
             }

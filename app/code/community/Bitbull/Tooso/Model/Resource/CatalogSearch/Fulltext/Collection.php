@@ -22,9 +22,12 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
         Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
 
         $products = Mage::helper('tooso')->getProducts();
-        $this->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
-
-        return $this;
+        if($products != null){
+            $this->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
+            return $this;
+        }else{
+            return parent::addSearchFilter($query);
+        }
     }
 
     /**
@@ -61,7 +64,9 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function getFoundIds()
     {
-        if (!Mage::helper('tooso')->isSearchEnabled()) {
+        $products = Mage::helper('tooso')->getProducts();
+
+        if (!Mage::helper('tooso')->isSearchEnabled() || $products == null) {
             return parent::getFoundIds();
         }
 

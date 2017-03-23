@@ -83,6 +83,7 @@ class Bitbull_Tooso_Model_Observer
     {
         $current_product = Mage::registry('current_product');
         if($current_product) {
+            $this->_logger->debug('Tracking pixel: elaborating pixel..');
             $sku = $current_product->getSku();
             $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
 
@@ -92,6 +93,15 @@ class Bitbull_Tooso_Model_Observer
                 $rank = -1;
                 if($searchRankCollection != null && isset($searchRankCollection[$sku])){
                     $rank = $searchRankCollection[$sku];
+                }else{
+                    if($searchRankCollection == null){
+                        $this->_logger->debug('Tracking pixel: rank collection not found in session');
+                    }else{
+                        $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
+                        foreach ($searchRankCollection as $sku => $rank){
+                            $this->_logger->debug('Tracking pixel: '.$sku.' => '.$rank);
+                        }
+                    }
                 }
 
                 $tracking_url = $this->_client->getTrackingUrl(array(
@@ -99,6 +109,9 @@ class Bitbull_Tooso_Model_Observer
                     "resultId" => $sku,
                     "rank" => $rank
                 ));
+                $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
+                $this->_logger->debug('Tracking pixel: resultId '.$sku);
+                $this->_logger->debug('Tracking pixel: rank '.$rank);
 
                 $layout = Mage::app()->getLayout();
                 $block = $layout->createBlock('core/text');
@@ -106,6 +119,10 @@ class Bitbull_Tooso_Model_Observer
                     '<img id="tooso-tracking-pixel" style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
                 );
                 $layout->getBlock('before_body_end')->append($block);
+
+                $this->_logger->debug('Tracking pixel: pixel added into layout');
+            }else{
+                $this->_logger->debug('Tracking pixel: search id not found in session');
             }
         }
 
@@ -116,6 +133,7 @@ class Bitbull_Tooso_Model_Observer
      * @param  Varien_Event_Observer $observer
      */
     public function elaborateRankCollection(Varien_Event_Observer $observer){
+        $this->_logger->debug('Tracking pixel: elaborating rank collection..');
         $collection = Mage::registry('current_layer')->getProductCollection();
         $rankCollection = array();
         foreach ($collection as $key => $product) {
@@ -123,7 +141,12 @@ class Bitbull_Tooso_Model_Observer
             $rankCollection[$sku] = $key;
         }
 
+        if(sizeof($rankCollection) == 0){
+            $this->_logger->debug('Tracking pixel: rank collection empty');
+        }
+
         Mage::helper('tooso/session')->setRankCollection($rankCollection);
+        $this->_logger->debug('Tracking pixel: rank collection saved into session');
     }
 
 }

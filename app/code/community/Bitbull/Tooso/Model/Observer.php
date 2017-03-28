@@ -107,14 +107,21 @@ class Bitbull_Tooso_Model_Observer
                         }
                     }
 
+                    $order = Mage::helper('tooso/session')->getSearchOrder();
+                    if($order == null){
+                        $order = "relevance";
+                    }
+
                     $tracking_url = $this->_client->getResultTrackingUrl(array(
                         "searchId" => $toosoSearchId,
                         "resultId" => $sku,
-                        "rank" => $rank
+                        "rank" => $rank,
+                        "order" => $order,
                     ));
                     $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
                     $this->_logger->debug('Tracking pixel: resultId '.$sku);
                     $this->_logger->debug('Tracking pixel: rank '.$rank);
+                    $this->_logger->debug('Tracking pixel: order '.$order);
 
                     $layout = Mage::app()->getLayout();
                     $block = $layout->createBlock('core/text');

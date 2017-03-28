@@ -49,4 +49,24 @@ class Bitbull_Tooso_Helper_Session
         return Mage::getSingleton('core/session')->getRankCollection();
     }
 
+    /**
+     * Store Search Order into session
+     *
+     * @param string $value
+     */
+    public function setSearchOrder($value)
+    {
+        Mage::getSingleton('core/session')->setRankCollection($value);
+    }
+
+    /**
+     * Get Search Order from session
+     *
+     * @return string
+     */
+    public function getSearchOrder()
+    {
+        return Mage::getSingleton('core/session')->getRankCollection();
+    }
+
 }

@@ -40,6 +40,8 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function setOrder($attribute, $dir = 'desc')
     {
+        Mage::helper('tooso/session')->setSearchOrder($attribute.'_'.$dir);
+
         if (!Mage::helper('tooso')->isSearchEnabled()) {
             return parent::setOrder($attribute, $dir);
         }

@@ -225,9 +225,20 @@ class Bitbull_Tooso_Client
      * @param string $params tracking parameters
      * @return string tracking URL
      */
-    public function getTrackingUrl($params)
+    public function getResultTrackingUrl($params)
     {
         return $this->_buildUrl("/User/clickOnResult", $params);
+    }
+
+    /**
+     * Get Tracking URL
+     *
+     * @param string $params tracking parameters
+     * @return string tracking URL
+     */
+    public function getProductViewTrackingUrl($params)
+    {
+        return $this->_buildUrl("/User/productView", $params);
     }
 
     /**

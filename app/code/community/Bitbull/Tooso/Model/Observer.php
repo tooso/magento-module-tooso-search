@@ -83,47 +83,72 @@ class Bitbull_Tooso_Model_Observer
     {
         $current_product = Mage::registry('current_product');
         if($current_product) {
-            $this->_logger->debug('Tracking pixel: elaborating pixel..');
-            $sku = $current_product->getSku();
-            $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
 
-            if($toosoSearchId){
-                // Get rank collection from search collection
-                $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
-                $rank = -1;
-                if($searchRankCollection != null && isset($searchRankCollection[$sku])){
-                    $rank = $searchRankCollection[$sku];
-                }else{
-                    if($searchRankCollection == null){
-                        $this->_logger->debug('Tracking pixel: rank collection not found in session');
+            if(Mage::helper('tooso/tracking')->isLastUrlSearch()){ //request from search page
+
+                $this->_logger->debug('Tracking pixel: elaborating result tracking pixel..');
+                $sku = $current_product->getSku();
+                $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
+
+                if($toosoSearchId){
+                    // Get rank collection from search collection
+                    $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
+                    $rank = -1;
+                    if($searchRankCollection != null && isset($searchRankCollection[$sku])){
+                        $rank = $searchRankCollection[$sku];
                     }else{
-                        $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
-                        foreach ($searchRankCollection as $sku => $rank){
-                            $this->_logger->debug('Tracking pixel: '.$sku.' => '.$rank);
+                        if($searchRankCollection == null){
+                            $this->_logger->debug('Tracking pixel: rank collection not found in session');
+                        }else{
+                            $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
+                            foreach ($searchRankCollection as $sku => $rank){
+                                $this->_logger->debug('Tracking pixel: '.$sku.' => '.$rank);
+                            }
                         }
                     }
+
+                    $tracking_url = $this->_client->getResultTrackingUrl(array(
+                        "searchId" => $toosoSearchId,
+                        "resultId" => $sku,
+                        "rank" => $rank
+                    ));
+                    $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
+                    $this->_logger->debug('Tracking pixel: resultId '.$sku);
+                    $this->_logger->debug('Tracking pixel: rank '.$rank);
+
+                    $layout = Mage::app()->getLayout();
+                    $block = $layout->createBlock('core/text');
+                    $block->setText(Mage::helper('tooso/tracking')->getTrackingImageHTML($tracking_url));
+                    $layout->getBlock('before_body_end')->append($block);
+
+                    $this->_logger->debug('Tracking pixel: pixel added into layout');
+                }else{
+                    $this->_logger->debug('Tracking pixel: search id not found in session');
                 }
 
-                $tracking_url = $this->_client->getTrackingUrl(array(
-                    "searchId" => $toosoSearchId,
-                    "resultId" => $sku,
-                    "rank" => $rank
+            }else{ // request not from search page
+
+                $this->_logger->debug('Tracking pixel: elaborating product view tracking pixel..');
+
+                $sku = $current_product->getSku();
+                $profilingParams = Mage::helper('tooso')->getProfilingParams();
+
+                $tracking_url = $this->_client->getProductViewTrackingUrl(array(
+                    "sku" => $sku,
+                    "sessionId" => $profilingParams["sessionId"],
+                    "userId" => $profilingParams["userId"]
                 ));
-                $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
-                $this->_logger->debug('Tracking pixel: resultId '.$sku);
-                $this->_logger->debug('Tracking pixel: rank '.$rank);
+                $this->_logger->debug('Tracking pixel: sku '.$sku);
+                $this->_logger->debug('Tracking pixel: sessionId '.$profilingParams["sessionId"]);
+                $this->_logger->debug('Tracking pixel: userId '.$profilingParams["userId"]);
 
                 $layout = Mage::app()->getLayout();
                 $block = $layout->createBlock('core/text');
-                $block->setText(
-                    '<img id="tooso-tracking-pixel" style="height: 1px;width: 1px;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>'
-                );
+                $block->setText(Mage::helper('tooso/tracking')->getTrackingImageHTML($tracking_url));
                 $layout->getBlock('before_body_end')->append($block);
-
-                $this->_logger->debug('Tracking pixel: pixel added into layout');
-            }else{
-                $this->_logger->debug('Tracking pixel: search id not found in session');
             }
+        }else{
+            $this->_logger->debug('Tracking pixel: no product find in registry current_product');
         }
 
     }

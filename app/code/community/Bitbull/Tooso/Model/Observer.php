@@ -84,7 +84,7 @@ class Bitbull_Tooso_Model_Observer
         $current_product = Mage::registry('current_product');
         if($current_product) {
 
-            if(Mage::helper('tooso/tracking')->isLastUrlSearch()){ //request from search page
+            if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
 
                 $this->_logger->debug('Tracking pixel: elaborating result tracking pixel..');
                 $sku = $current_product->getSku();
@@ -182,6 +182,17 @@ class Bitbull_Tooso_Model_Observer
 
         Mage::helper('tooso/session')->setRankCollection($rankCollection);
         $this->_logger->debug('Tracking pixel: rank collection saved into session');
+    }
+
+    /**
+     * Clear searchId session variable if no longer used
+     * @param  Varien_Event_Observer $observer
+     */
+    public function clearSearchId(Varien_Event_Observer $observer){
+        $routeName = Mage::app()->getRequest()->getRouteName();
+        if($routeName != "catalog" && $routeName != "catalogsearch"){
+            Mage::helper('tooso/session')->clearSearchId();
+        }
     }
 
 }

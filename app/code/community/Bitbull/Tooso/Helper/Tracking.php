@@ -19,25 +19,13 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if last url is a search page
+     * Check if user is coming from a search page or not
      *
      * @return boolean
      */
-    public function isLastUrlSearch(){
-        $lastUrl = Mage::helper('core/http')->getHttpReferer();
-        $searchUrl =  Mage::helper('catalogsearch')->getResultUrl();
-
-        if($lastUrl && $searchUrl){
-            $lastUrlParsed = parse_url($lastUrl);
-            $searchUrlParsed = parse_url($searchUrl);
-
-            $lastUrlPath = str_replace("index/", "", $lastUrlParsed["path"]);
-            $searchUrlPath =  $searchUrlParsed["path"];
-
-            return $lastUrlPath == $searchUrlPath;
-        }else{
-            return false;
-        }
+    public function isUserComingFromSearch(){
+        $sessionId = Mage::helper('tooso/session')->getSearchId();
+        return $sessionId != null;
     }
 
 }

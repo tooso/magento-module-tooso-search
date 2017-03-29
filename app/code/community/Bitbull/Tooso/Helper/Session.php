@@ -30,6 +30,16 @@ class Bitbull_Tooso_Helper_Session
     }
 
     /**
+     * Clear Search ID from session
+     *
+     * @return string
+     */
+    public function clearSearchId()
+    {
+        return Mage::getSingleton('core/session')->unsToosoSearchId();
+    }
+
+    /**
      * Store Rank Collection into session
      *
      * @param string $value

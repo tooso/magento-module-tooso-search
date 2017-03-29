@@ -76,6 +76,15 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_layout_render_before_catalogsearch_result_index>
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_clear_search_id>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>clearSearchId</method>
+                    </tooso_clear_search_id>
+                </observers>
+            </controller_action_layout_render_before>
         </events>
         <template>
             <email>

@@ -36,7 +36,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function setRankCollection($value)
     {
-        Mage::getSingleton('core/session')->setRankCollection($value);
+        Mage::getSingleton('core/session')->setToosoRankCollection($value);
     }
 
     /**
@@ -46,7 +46,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function getRankCollection()
     {
-        return Mage::getSingleton('core/session')->getRankCollection();
+        return Mage::getSingleton('core/session')->getToosoRankCollection();
     }
 
     /**
@@ -56,7 +56,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function setSearchOrder($value)
     {
-        Mage::getSingleton('core/session')->setRankCollection($value);
+        Mage::getSingleton('core/session')->setToosoSearchOrder($value);
     }
 
     /**
@@ -66,7 +66,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function getSearchOrder()
     {
-        return Mage::getSingleton('core/session')->getRankCollection();
+        return Mage::getSingleton('core/session')->getToosoSearchOrder();
     }
 
 }

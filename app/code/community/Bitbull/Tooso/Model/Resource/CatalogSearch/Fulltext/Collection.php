@@ -47,17 +47,23 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
 
         Mage::helper('tooso/session')->setSearchOrder($attribute.'_'.$dir);
 
-        if ($attribute == 'relevance' || $attribute == 'position') {
-            $products = Mage::helper('tooso')->getProducts();
+        $products = Mage::helper('tooso')->getProducts();
+        if($products == null){
+            return parent::setOrder($attribute, $dir);
+        }else{
+            if ($attribute == 'relevance' || $attribute == 'position') {
+                $products = Mage::helper('tooso')->getProducts();
 
-            // If the order criteria is the relevance, we need to respect the order of products ids given by API call
-            if (sizeof($products) > 0) {
-                $this->getSelect()->order(new Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                // If the order criteria is the relevance, we need to respect the order of products ids given by API call
+                if (sizeof($products) > 0) {
+                    $this->getSelect()->order(new Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                }
+            } else {
+                parent::setOrder($attribute, $dir);
             }
-        } else {
-            parent::setOrder($attribute, $dir);
+            return $this;
         }
-        return $this;
+
     }
 
     /**

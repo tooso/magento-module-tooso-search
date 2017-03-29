@@ -8,6 +8,7 @@ class Bitbull_Tooso_Client
 {
     const HTTP_METHOD_GET = 'GET';
     const HTTP_METHOD_POST = 'POST';
+    const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
     /**
      * Base url for API calls
@@ -123,6 +124,10 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true, $extraParams = array())
     {
+        if(self::FORCE_ERROR){
+            $query = null;
+        }
+
         $path = '/Search/search';
         $params = array_merge(
             array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),

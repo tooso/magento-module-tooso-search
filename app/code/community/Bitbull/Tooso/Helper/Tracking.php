@@ -31,7 +31,10 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             $lastUrlParsed = parse_url($lastUrl);
             $searchUrlParsed = parse_url($searchUrl);
 
-            return $lastUrlParsed["path"] == $searchUrlParsed["path"];
+            $lastUrlPath = str_replace("index/", "", $lastUrlParsed["path"]);
+            $searchUrlPath =  $searchUrlParsed["path"];
+
+            return $lastUrlPath == $searchUrlPath;
         }else{
             return false;
         }

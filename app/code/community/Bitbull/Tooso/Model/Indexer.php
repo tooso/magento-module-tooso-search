@@ -6,6 +6,8 @@
 
 class Bitbull_Tooso_Model_Indexer
 {
+    const XML_PATH_INDEXER_STORES = 'tooso/indexer/stores_to_index';
+
     /**
      * Client for API comunication
      *
@@ -37,17 +39,17 @@ class Bitbull_Tooso_Model_Indexer
     */
     public function rebuildIndex()
     {
-        $data = $this->_getStoresByLang();
-        foreach ($data as $lang => $stores) {
+        try {
+            $stores = $this->_getStoreViews();
             foreach ($stores as $storeId) {
-                try {
-                    $this->_client->index($this->_getCsvContent($storeId));
-                } catch (Exception $e) {
-                    $this->_logger->logException($e);
-
-                    return false;
-                }
+                $this->_logger->debug("Indexer: indexing store ".$storeId);
+                //$this->_logger->debug($this->_getCsvContent($storeId));
+                $this->_client->index($this->_getCsvContent($storesView));
+                $this->_logger->debug("Indexer: store ".$storeId." index completed");
             }
+        } catch (Exception $e) {
+            $this->_logger->logException($e);
+            return false;
         }
 
         return true;
@@ -70,26 +72,6 @@ class Bitbull_Tooso_Model_Indexer
     */
     protected function _getCsvContent($storeId)
     {
-        /*
-        $this->_logger->debug('Start generating CSV content');
-
-        $model = Mage::getModel('importexport/export');
-
-        $this->_logger->debug('Export Model class: ' . get_class($model));
-
-        $model->setData(array(
-            'entity' => 'catalog_product',
-            'file_format' => 'tooso_csv',
-            'export_filter' => array(),
-        ));
-
-        $csvContent = $model->export();
-
-        $this->_logger->debug('End generating CSV content');
-
-        return $csvContent;*/
-
-        // Elenco di attributi standard di Magento da non tradurre
         $excludeAttributes = array(
             'image_label',
             'old_id',
@@ -98,23 +80,46 @@ class Bitbull_Tooso_Model_Indexer
             'uf_product_link',
             'url_path',
         );
+        $attributeTypes = array(
+            'text',
+            'textarea',
+            'multiselect',
+            'select',
+            'boolean',
+            'price'
+        );
+        /*
+         * Excluding:
+         *   'date'
+         *   'media_image'
+         *   'image'
+         *   'gallery'
+         */
 
-        $attributes = array('sku' => 'SKU');
-        $headers = array('sku' => 'sku');
+        $attributes = array(
+            'sku' => 'sku',
+            'name' => 'name',
+            'description' => 'description',
+            'short_description' => 'short_description',
+            'status' => 'status',
+            'availability' => 'availability'
+        );
+        $headers = $attributes;
 
-        // Recupero tutti gli attributi di tipo testo, cercando di escludere quelli di sistema
         $attributesCollection = Mage::getResourceModel('catalog/product_attribute_collection')
-            ->addFieldToFilter('frontend_input', array('in' => array('textarea', 'text')))
-            ->addFieldToFilter('backend_model', array('null' => true))
-            ->addFieldToFilter('backend_type', array('neq' => 'static'))
+            ->addFieldToFilter('frontend_input', array('in' => $excludeAttributeTypes))
+            ->addFieldToFilter('backend_type', array('in' => $excludeAttributeTypes))
             ->addFieldToFilter('attribute_code', array('nin' => $excludeAttributes))
         ;
 
         $productCollection = Mage::getModel('catalog/product')
             ->getCollection()
+            ->addAttributeToFilter('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
             ->addStoreFilter($storeId)
-            ->addAttributeToSelect('sku')
         ;
+        foreach ($attributes as $attributeCode => $attributeLabel){
+            $productCollection->addAttributeToSelect($attributeCode);
+        }
 
         foreach ($attributesCollection as $attribute) {
             $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendLabel();
@@ -122,8 +127,6 @@ class Bitbull_Tooso_Model_Indexer
 
             $productCollection->addAttributeToSelect($attribute->getAttributeCode());
 
-            // Occorre mettere in join esplicitamente gli attributi in base allo store id
-            // addStoreFilter sulla collection sembra impattare solo l'associazione prodotto <-> website
             $productCollection->joinAttribute(
                 $attribute->getAttributeCode(),
                 'catalog_product/' . $attribute->getAttributeCode(),
@@ -152,17 +155,28 @@ class Bitbull_Tooso_Model_Indexer
      * Get stores grouped by lang code
      * @return array stores
      */
-    protected function _getStoresByLang()
+    protected function _getStoreViews()
     {
+        $storesConfig = Mage::getStoreConfig(self::XML_PATH_INDEXER_STORES);
+
         $stores = array();
-        $collection = Mage::getModel('core/store')->getCollection();
-        foreach ($collection as $store) {
-            $lang= Mage::getStoreConfig('general/locale/code', $store->getId());
-            if (!isset($stores[$lang])) {
-                $stores[$lang] = array();
+        if($storesConfig == null){
+            $collection = Mage::getModel('core/store')->getCollection();
+            foreach ($collection as $store) {
+                $lang= Mage::getStoreConfig('general/locale/code', $store->getId());
+                if (!isset($stores[$lang])) {
+                    $stores[$lang] = array();
+                }
+                array_push($stores, $store->getId());
             }
-            array_push($stores[$lang], $store->getId());
+        }else{
+            $storesArrayConfig = explode(",", $storesConfig);
+            foreach ($storesArrayConfig as $store) {
+                array_push($stores, (int) $store);
+            }
         }
+
+        $this->_logger->debug("Indexer: using stores ".json_encode($stores));
 
         return $stores;
     }

@@ -27,9 +27,9 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH, $store);
     }
 
-    public function isIndexEnabled($store = null)
+    public function isIndexEnabled()
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX, $store);
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX);
     }
 
     public function getSuggestMaxResults($store = null)

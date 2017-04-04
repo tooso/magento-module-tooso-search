@@ -101,6 +101,25 @@
                         </debug_mode>
                     </fields>
                 </server>
+                <indexer translate="label">
+                    <label>Indexer Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <stores_to_index translate="title">
+                            <label>Store Views</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>tooso/indexer</source_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </stores_to_index>
+                    </fields>
+                </indexer>
                 <!--index translate="label">
                     <label>Index</label>
                     <frontend_type>text</frontend_type>

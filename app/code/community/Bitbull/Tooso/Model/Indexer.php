@@ -178,4 +178,11 @@ class Bitbull_Tooso_Model_Indexer
 
         return $this->_writer;
     }
+
+    /**
+     * Return stores for backend multiselect options
+     */
+    public function toOptionArray() {
+        return Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(false, true);
+    }
 }

@@ -7,7 +7,6 @@
 class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
 {
     const FALLBACK_RESPONSE_TOTAL_TIME = 0;
-    const FALLBACK_RESPONSE_SEARCH_ID = -1;
     const FALLBACK_RESPONSE_TOTAL_RESULTS = 0;
     const FALLBACK_RESPONSE_ORIGINAL_SEARCH_STRING = "";
     const FALLBACK_RESPONSE_FIXED_SEARCH_STRING = "";
@@ -41,15 +40,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
 
     public function getSearchId()
     {
-        if($this->isValid()){
-            return $this->_response->Content->SearchId;
-        }else{
-            if(isset($this->_response->SearchId)){
-                return $this->_response->SearchId;
-            }else{
-                return self::FALLBACK_RESPONSE_SEARCH_ID;
-            }
-        }
+        return $this->getObjectId();
     }
 
     public function getTotalResults()

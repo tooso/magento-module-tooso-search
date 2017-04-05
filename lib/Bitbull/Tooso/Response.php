@@ -25,6 +25,11 @@ class Bitbull_Tooso_Response
         return $this->_response;
     }
 
+    public function getObjectId()
+    {
+        return $this->_response->ObjectId;
+    }
+
     public function isValid()
     {
         return !isset($this->_response->ToosoError);
@@ -42,7 +47,7 @@ class Bitbull_Tooso_Response
 
     public function getErrorDebugInfo()
     {
-        if(isset($response->ToosoError->DebugInfo)){
+        if(isset($this->_response->ToosoError->DebugInfo)){
             return $this->_response->ToosoError->DebugInfo;
         }else{
             return null;

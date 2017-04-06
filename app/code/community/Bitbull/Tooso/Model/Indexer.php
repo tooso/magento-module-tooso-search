@@ -100,7 +100,8 @@ class Bitbull_Tooso_Model_Indexer
             'country_of_manufacture',
             'gift_message_available',
             'tax_class_id',
-            'tier_price'
+            'tier_price',
+            'custom_design'
         );
 
         /**
@@ -154,7 +155,7 @@ class Bitbull_Tooso_Model_Indexer
          * Dynamic columns
          */
         $headers = array_merge($attributes, array(
-            'variables' => 'variables',
+            'variants' => 'variants',
             'categories' => 'categories'
         ));
 
@@ -226,10 +227,10 @@ class Bitbull_Tooso_Model_Indexer
                 }
             }
 
-            // load product variables
-            $variables = $this->_getProductVariables($product);
-            if(sizeof($variables) > 0){
-                $row["variables"] = json_encode($variables);
+            // load product variants
+            $variants = $this->_getProductVariants($product);
+            if(sizeof($variants) > 0){
+                $row["variants"] = json_encode($variants);
             }
 
             // load product category
@@ -242,13 +243,13 @@ class Bitbull_Tooso_Model_Indexer
     }
 
     /**
-     * Return product variables object with associated products
+     * Return product variants object with associated products
      *
      * @param $product
      * @return array
      */
-    protected function _getProductVariables($product){
-        $variables = array();
+    protected function _getProductVariants($product){
+        $variants = array();
         if($product->getTypeId() == Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE) {
             $productAttributesOptions = $product->getTypeInstance(true)->getConfigurableOptions($product);
 
@@ -257,11 +258,11 @@ class Bitbull_Tooso_Model_Indexer
                 foreach ($productAttributeOption as $optionValues) {
                     $optionData = array();
                     $optionData[$optionValues['attribute_code']] = $optionValues['option_title'];
-                    $variables[$optionValues['sku']] = $optionData;
+                    $variants[$optionValues['sku']] = $optionData;
                 }
             }
         }
-        return $variables;
+        return $variants;
     }
 
     /**

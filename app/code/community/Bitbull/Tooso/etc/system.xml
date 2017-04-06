@@ -126,7 +126,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <comment><![CDATA[Use a local (var/log/tooso_index_%store id%.csv) file instead to send it]]></comment>
+                            <comment><![CDATA[Use a local file (var/log/tooso_index_%store id%.csv) instead to send it]]></comment>
                         </dry_run_mode>
                     </fields>
                 </indexer>

@@ -165,8 +165,11 @@ class Bitbull_Tooso_Model_Observer
      * @param  Varien_Event_Observer $observer
      */
     public function elaborateRankCollection(Varien_Event_Observer $observer){
+
         $this->_logger->debug('Tracking pixel: elaborating rank collection..');
-        $collection = Mage::registry('current_layer')->getProductCollection()->addAttributeToSelect('sku');
+        $collection = clone Mage::registry('current_layer')->getProductCollection();
+        //don't apply filters to this collection
+        $collection->addAttributeToSelect('sku');
         $rankCollection = array();
         $i = 0;
         foreach ($collection as $product) {
@@ -182,6 +185,7 @@ class Bitbull_Tooso_Model_Observer
 
         Mage::helper('tooso/session')->setRankCollection($rankCollection);
         $this->_logger->debug('Tracking pixel: rank collection saved into session');
+
     }
 
     /**

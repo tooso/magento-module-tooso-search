@@ -211,9 +211,13 @@ class Bitbull_Tooso_Model_Indexer
         $writer = $this->_getWriter();
         $writer->setHeaderCols($headers);
 
+        $this->_logger->debug("Indexer: found ".$productCollection->getSize()." products");
+
         // load attribute values
         foreach ($productCollection as $product) {
             $product->setStoreId($storeId);
+
+            $this->_logger->debug("Indexer: parsing ".$product->getSku()." product");
 
             $row = array();
             foreach ($attributes as $attributeCode => $frontendInput) {
@@ -259,6 +263,11 @@ class Bitbull_Tooso_Model_Indexer
                 }
             }
         }
+
+        if(sizeof($variants) > 0){
+            $this->_logger->debug("Indexer: parsing ".$product->getSku()." ".sizeof($variants)." variants");
+        }
+
         return $variants;
     }
 
@@ -286,6 +295,10 @@ class Bitbull_Tooso_Model_Indexer
             }
 
             array_push($categories, implode('/', $pathNames));
+        }
+
+        if(sizeof($categories) > 0){
+            $this->_logger->debug("Indexer: parsing ".$product->getSku()." ".sizeof($categories)." categories");
         }
 
         return $categories;

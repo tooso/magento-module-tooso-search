@@ -33,6 +33,9 @@ class Bitbull_Tooso_Model_Indexer
             foreach ($stores as $storeCode => $storeId) {
                 $storeLangCode = Mage::getStoreConfig('general/locale/code', $storeId);
                 $this->_logger->debug("Indexer: indexing store ".$storeCode." [".$storeLangCode."]");
+
+                $time_start = microtime(true);
+
                 if($this->_isDebugEnabled()){
                     $this->_logger->debug("Indexer: store output into debug file ");
                     $this->_writeDebugFile($this->_getCsvContent($storeId), $storeCode);
@@ -40,7 +43,22 @@ class Bitbull_Tooso_Model_Indexer
                     $client = Mage::helper('tooso')->getClient($storeCode, $storeLangCode);
                     $client->index($this->_getCsvContent($storeId));
                 }
-                $this->_logger->debug("Indexer: store ".$storeCode." index completed");
+
+                $time_end = microtime(true);
+                $execution_time_s = ($time_end - $time_start);
+                $execution_time_m = $execution_time_s/60;
+                $execution_time_h = $execution_time_m/60;
+
+                $execution_time = "";
+                if($execution_time_h > 1){
+                    $execution_time = round($execution_time_h, 3)."h";
+                }else if($execution_time_m > 1){
+                    $execution_time = round($execution_time_m, 3)."m";
+                }else{
+                    $execution_time = round($execution_time_s, 3)."s";
+                }
+
+                $this->_logger->debug("Indexer: store ".$storeCode." index completed in ".$execution_time);
             }
         } catch (Exception $e) {
             $this->_logger->logException($e);

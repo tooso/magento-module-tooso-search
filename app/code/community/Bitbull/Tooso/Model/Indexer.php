@@ -160,11 +160,15 @@ class Bitbull_Tooso_Model_Indexer
             'visibility'
         );
 
+        $limitAttributeCount = 40; //limit number of attributes
+
         // load custom attributes
         $attributesCollection = Mage::getResourceModel('catalog/product_attribute_collection')
             ->addFieldToFilter('backend_type', array('in' => $attributeBackendTypes))
             ->addFieldToFilter('frontend_input', array('in' => $attributeFrontendTypes))
             ->addFieldToFilter('attribute_code', array('nin' => $excludeAttributes))
+            ->setCurPage(1)
+            ->setPageSize($limitAttributeCount);
         ;
 
         // load store products visible individually and select system attributes

@@ -4,19 +4,15 @@
  * @package  Bitbull_Tooso
  * @author   Gennaro Vietri <gennaro.vietri@bitbull.it>
  */
-class Bitbull_Tooso_Index_Result
+class Bitbull_Tooso_Index_Result extends Bitbull_Tooso_Response
 {
-    protected $_response = null;
 
-    public function __construct($response = null)
+    public function __construct(Bitbull_Tooso_Response $response)
     {
         if ($response) {
-            $this->setResponse($response);
+            $rawResponse = $response->getResponse();
+            $this->setResponse($rawResponse);
         }
     }
 
-    public function setResponse($response)
-    {
-        $this->_response = $response;
-    }
 }

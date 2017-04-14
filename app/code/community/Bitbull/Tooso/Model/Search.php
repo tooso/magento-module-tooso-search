@@ -65,7 +65,11 @@ class Bitbull_Tooso_Model_Search
                 }
 
                 $result = $this->_client->search($query, $typoCorrection, $params);
-                $this->setResult($result);
+
+                if($result->isValid()){
+                    $this->setResult($result);
+                }
+
             } catch (Exception $e) {
                 $this->_logger->logException($e);
             }

@@ -95,14 +95,17 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @return Bitbull_Tooso_Client
     */
-    public function getClient()
+    public function getClient($storeCode = null, $language = null)
     {
         $apiKey = Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY);
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
-        $language = Mage::app()->getLocale()->getLocaleCode();
-        $storeCode = Mage::app()->getStore()->getCode();
-
         $logger = Mage::helper('tooso/log');
+        if($language == null){
+            $language = Mage::app()->getLocale()->getLocaleCode();
+        }
+        if($storeCode == null){
+            $storeCode = Mage::app()->getStore()->getCode();
+        }
 
         $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode, $logger);
 

@@ -11,13 +11,6 @@ class Bitbull_Tooso_Model_Indexer
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
-     * Client for API comunication
-     *
-     * @var Bitbull_Tooso_Client
-     */
-    protected $_client;
-
-    /**
      * @var Bitbull_Tooso_Helper_Log
      */
     protected $_logger = null;
@@ -25,8 +18,6 @@ class Bitbull_Tooso_Model_Indexer
 
     public function __construct()
     {
-        $this->_client = Mage::helper('tooso')->getClient();
-
         $this->_logger = Mage::helper('tooso/log');
     }
 
@@ -38,14 +29,16 @@ class Bitbull_Tooso_Model_Indexer
     public function rebuildIndex()
     {
         try {
-            $stores = $this->_getStoreViews();
+            $stores = $this->_getStores();
             foreach ($stores as $storeCode => $storeId) {
-                $this->_logger->debug("Indexer: indexing store ".$storeCode);
+                $storeLangCode = Mage::getStoreConfig('general/locale/code', $storeId);
+                $this->_logger->debug("Indexer: indexing store ".$storeCode." [".$storeLangCode."]");
                 if($this->_isDebugEnabled()){
                     $this->_logger->debug("Indexer: store output into debug file ");
                     $this->_writeDebugFile($this->_getCsvContent($storeId), $storeCode);
                 }else{
-                    $this->_client->index($this->_getCsvContent($storeId), $storeCode);
+                    $client = Mage::helper('tooso')->getClient($storeCode, $storeLangCode);
+                    $client->index($this->_getCsvContent($storeId));
                 }
                 $this->_logger->debug("Indexer: store ".$storeCode." index completed");
             }
@@ -298,12 +291,12 @@ class Bitbull_Tooso_Model_Indexer
      * Get stores grouped by lang code
      * @return array stores
      */
-    protected function _getStoreViews()
+    protected function _getStores()
     {
         $storesConfig = Mage::getStoreConfig(self::XML_PATH_INDEXER_STORES);
 
         $stores = array();
-        if($storesConfig == null){
+        if($storesConfig == null || $storesConfig == "0"){
             $collection = Mage::getModel('core/store')->getCollection();
             foreach ($collection as $store) {
                 $stores[$store->getCode()] = $store->getId();

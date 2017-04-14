@@ -62,7 +62,7 @@ class Bitbull_Tooso_Client
      * @var Bitbull_Tooso_Log_SendInterface
     */
     protected $_reportSender;
-    
+
     /**
      * @var Bitbull_Tooso_Log_LoggerInterface
     */
@@ -156,16 +156,15 @@ class Bitbull_Tooso_Client
      * Send data to index
      *
      * @param string $csvContent
-     * @param string $storeCode
      * @return Bitbull_Tooso_Index_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function index($csvContent, $storeCode)
+    public function index($csvContent)
     {
         $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
-        
+
         $this->_logger->debug("Temporary zip file: " . $tmpZipFile);
-        
+
         $zip = new ZipArchive;
         if ($zip->open($tmpZipFile, ZipArchive::CREATE)) {
             $zip->addFromString('magento_catalog.csv', $csvContent);
@@ -176,7 +175,7 @@ class Bitbull_Tooso_Client
 
         $this->_logger->debug("Start uploading zipfile");
 
-        $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array('storeCode' => $storeCode), $tmpZipFile, 300000);
+        $rawResponse = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
 
         $this->_logger->debug("End uploading zipfile, raw response: " . print_r($rawResponse, true));
 

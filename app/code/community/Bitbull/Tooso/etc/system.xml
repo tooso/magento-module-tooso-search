@@ -39,8 +39,8 @@
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
                             <comment><![CDATA[Enable/disable scheduled reindex process]]></comment>
                         </index>
                     </fields>
@@ -101,6 +101,35 @@
                         </debug_mode>
                     </fields>
                 </server>
+                <indexer translate="label">
+                    <label>Indexer Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <stores_to_index translate="title">
+                            <label>Store Views</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>tooso/indexer</source_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </stores_to_index>
+                        <dry_run_mode>
+                            <label>Dry run mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>32</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment><![CDATA[Use a local file (var/log/tooso_index_%store id%.csv) instead to send it]]></comment>
+                        </dry_run_mode>
+                    </fields>
+                </indexer>
                 <!--index translate="label">
                     <label>Index</label>
                     <frontend_type>text</frontend_type>

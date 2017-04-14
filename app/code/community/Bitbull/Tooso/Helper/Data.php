@@ -27,9 +27,9 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH, $store);
     }
 
-    public function isIndexEnabled($store = null)
+    public function isIndexEnabled()
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX, $store);
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX);
     }
 
     public function getSuggestMaxResults($store = null)
@@ -95,13 +95,16 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
      * 
      * @return Bitbull_Tooso_Client
     */
-    public function getClient()
+    public function getClient($storeCode = null, $language = null)
     {
         $apiKey = Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY);
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
-        $language = Mage::app()->getLocale()->getLocaleCode();
-        $storeCode = Mage::app()->getStore()->getCode();
-
+        if($language == null){
+            $language = Mage::app()->getLocale()->getLocaleCode();
+        }
+        if($storeCode == null){
+            $storeCode = Mage::app()->getStore()->getCode();
+        }
         $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode);
 
         $client->setLogger(Mage::helper('tooso/log'));

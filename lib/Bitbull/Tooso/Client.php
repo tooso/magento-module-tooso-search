@@ -63,7 +63,7 @@ class Bitbull_Tooso_Client
      * @var Bitbull_Tooso_Log_SendInterface
     */
     protected $_reportSender;
-    
+
     /**
      * @var Bitbull_Tooso_Log_LoggerInterface
     */

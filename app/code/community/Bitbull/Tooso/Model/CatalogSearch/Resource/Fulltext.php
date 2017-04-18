@@ -38,7 +38,12 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
         if (null == Mage::helper('tooso')->getProducts()) {
             
             try {
-                $search = Mage::getModel('tooso/search')->search($queryText, Mage::helper('tooso')->isTypoCorrectedSearch());
+                $typoCorrection = Mage::helper('tooso')->isTypoCorrectedSearch();
+                $latestSearchId = null;
+                if($typoCorrection == false){
+                    $latestSearchId = Mage::helper('tooso/session')->getSearchId();
+                }
+                $search = Mage::getModel('tooso/search')->search($queryText, $typoCorrection, $latestSearchId);
 
                 // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {

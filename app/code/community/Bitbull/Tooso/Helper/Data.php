@@ -89,6 +89,14 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true';
     }
+
+    /**
+     * @return string
+     */
+    public function getParentSearchId()
+    {
+        return Mage::app()->getRequest()->getParam('parentSearchId');
+    }
     
     /**
      * Create and configure a Tooso API Client instance

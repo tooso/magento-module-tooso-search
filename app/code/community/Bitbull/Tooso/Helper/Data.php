@@ -22,6 +22,8 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     protected $_products = null;
 
+    protected $_searchAlreadyDone = false;
+
     public function isSearchEnabled($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH, $store);
@@ -132,5 +134,21 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             'userId' => $userId,
             'sessionId' => $sessionId,
         );
+    }
+
+    /**
+     * Set SearchAlreadyDone to true
+     */
+
+    public function setSearchAlreadyDone(){
+        $this->_searchAlreadyDone = true;
+    }
+
+    /**
+     * @return boolean
+     */
+
+    public function getSearchAlreadyDone(){
+        return $this->_searchAlreadyDone;
     }
 }

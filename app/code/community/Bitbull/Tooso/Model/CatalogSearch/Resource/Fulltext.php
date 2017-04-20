@@ -43,39 +43,63 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                 // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {
 
-                    $products = array();
-                    foreach ($search->getProducts() as $product) {
-                        $products[] = $product['product_id'];
+                    if(!$search->isResultEmpty()){
+                        $products = array();
+                        foreach ($search->getProducts() as $product) {
+                            $products[] = $product['product_id'];
+                        }
+
+                        // Store products ids for later use them to build database query
+                        Mage::helper('tooso')->setProducts($products);
+
+                        // If this query was automatically typo-corrected, save in request scope the searchId for link
+                        // this query (the parent) with the following one forced as not typo-correct
+                        if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
+                            Mage::helper('tooso')->setSearchId($search->getSearchId());
+                        }
+
+                        // If this query was typo-corrected, build the link to the same query but with typo-correction disabled
+                        // and build the message that will be shown to the user
+                        if ($search->getFixedSearchString() && Mage::helper('catalogsearch')->getQueryText() == $search->getOriginalSearchString()) {
+
+                            $queryString = array(
+                                'q' => $search->getOriginalSearchString(),
+                                'typoCorrection' => 'false',
+                                Bitbull_Tooso_Model_Search::SEARCH_PARAM_PARENT_SEARCH_ID => Mage::helper('tooso')->getSearchId()
+                            );
+
+                            $message = sprintf(
+                                'Search instead for "<a href="%s">%s</a>"',
+                                Mage::getUrl('catalogsearch/result', array('_query' => $queryString)),
+                                $search->getOriginalSearchString()
+                            );
+                            Mage::helper('catalogsearch')->addNoteMessage($message);
+                            Mage::helper('tooso')->setFixedSearchString($search->getFixedSearchString());
+                        }
+                    }else{
+                        // If this query was typo-corrected, build the link to the same query but with typo-correction disabled
+                        // and build the message that will be shown to the user
+                        if ($search->getFixedSearchString() && Mage::helper('catalogsearch')->getQueryText() == $search->getOriginalSearchString()) {
+
+                            $queryString = array(
+                                'q' => $search->getOriginalSearchString(),
+                                'typoCorrection' => 'false',
+                                Bitbull_Tooso_Model_Search::SEARCH_PARAM_PARENT_SEARCH_ID => Mage::helper('tooso')->getSearchId()
+                            );
+
+                            $message = sprintf(
+                                'Search instead for "<a href="%s">%s</a>"',
+                                Mage::getUrl('catalogsearch/result', array('_query' => $queryString)),
+                                $search->getOriginalSearchString()
+                            );
+                            Mage::helper('catalogsearch')->addNoteMessage($message);
+                            Mage::helper('tooso')->setFixedSearchString($search->getFixedSearchString());
+
+                            return parent::prepareResult($object, $search->getFixedSearchString(), $query);
+                        }else{
+                            return parent::prepareResult($object, $queryText, $query);
+                        }
                     }
-
-                    // Store products ids for later use them to build database query
-                    Mage::helper('tooso')->setProducts($products);
-
-                    // If this query was automatically typo-corrected, save in request scope the searchId for link
-                    // this query (the parent) with the following one forced as not typo-correct
-                    if (Mage::helper('tooso')->isTypoCorrectedSearch()) {
-                        Mage::helper('tooso')->setSearchId($search->getSearchId());
-                    }
-
-                    // If this query was typo-corrected, build the link to the same query but with typo-correction disabled
-                    // and build the message that will be shown to the user
-                    if ($search->getFixedSearchString() && Mage::helper('catalogsearch')->getQueryText() == $search->getOriginalSearchString()) {
-
-                        $queryString = array(
-                            'q' => $search->getOriginalSearchString(),
-                            'typoCorrection' => 'false',
-                            Bitbull_Tooso_Model_Search::SEARCH_PARAM_PARENT_SEARCH_ID => Mage::helper('tooso')->getSearchId()
-                        );
-
-                        $message = sprintf(
-                            'Search instead for "<a href="%s">%s</a>"',
-                            Mage::getUrl('catalogsearch/result', array('_query' => $queryString)),
-                            $search->getOriginalSearchString()
-                        );
-                        Mage::helper('catalogsearch')->addNoteMessage($message);
-                        Mage::helper('tooso')->setFixedSearchString($search->getFixedSearchString());
-                    }
-
                 } else {
                     return parent::prepareResult($object, $queryText, $query);
                 }

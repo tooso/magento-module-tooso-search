@@ -142,6 +142,7 @@ class Bitbull_Tooso_Client
             }
 
             // In the early adopter phase, even a 0 result query need to be treated as an error
+            /*
             if ($result->getTotalResults() == 0 && $typoCorrection) {
                 $message = 'No result found for query "' . $query . '""';
 
@@ -150,7 +151,7 @@ class Bitbull_Tooso_Client
                 }
 
                 throw new Bitbull_Tooso_Exception($message, 0);
-            }
+            }*/
 
         } catch (Bitbull_Tooso_Exception $e) {
             $response = $e->getResponse();

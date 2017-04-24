@@ -99,9 +99,9 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
          * Custom indexer attributes
          */
         $this->_customAttributes = [
-            "is_in_stock" => 'is_in_stock',
-            "variants" => 'cariants',
-            "categories" => 'categories'
+            "is_in_stock" => 'Is in stock',
+            "variants" => 'Variants',
+            "categories" => 'Categories'
         ];
 
         /**

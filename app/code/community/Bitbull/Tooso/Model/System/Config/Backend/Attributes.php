@@ -13,7 +13,7 @@ class Bitbull_Tooso_Model_System_Config_Backend_Attributes extends Mage_Core_Mod
         $value = $this->getValue();
 
         if(sizeof($value) > $this->_limitAttributeCount){
-            Mage::throwException("Tooso Search Engine: Indexer has too many attributes");
+            Mage::throwException("Tooso Search Engine: Indexer has too many attributes, limit is ".$this->_limitAttributeCount);
             return;
         }
 

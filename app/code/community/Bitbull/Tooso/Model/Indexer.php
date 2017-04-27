@@ -12,6 +12,11 @@ class Bitbull_Tooso_Model_Indexer
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
+     * @var integer
+     */
+    protected $_productPagination = 15;
+
+    /**
      * @var Bitbull_Tooso_Helper_Log
      */
     protected $_logger = null;
@@ -193,32 +198,38 @@ class Bitbull_Tooso_Model_Indexer
         $writer->setHeaderCols($headers);
 
         $this->_logger->debug("Indexer: found ".$productCollection->getSize()." products");
+        
+        $productCollection->setPageSize($this->_productPagination);
+        $pages = $productCollection->getLastPageNumber();
+        for ($p = 1; $p <= $pages; $p++ ){
+            $productCollection->setCurPage($p);
+            $productCollection->load();
 
-        // load attribute values
-        foreach ($productCollection as $product) {
-            $product->setStoreId($storeId);
+            foreach ($productCollection as $product) {
+                $product->setStoreId($storeId);
 
-            $row = array();
-            $row["sku"] = $product->getSku();
+                $row = array();
+                $row["sku"] = $product->getSku();
 
-            foreach ($attributes as $attributeCode) {
-                if($attributeCode == 'variants'){
-                    $variants = $this->_getProductVariants($product);
-                    if(sizeof($variants) > 0){
-                        $row["variants"] = json_encode($variants);
-                    }
-                }elseif ($attributeCode == 'categories'){
-                    $row["categories"] = implode("|", $this->_getProductCategories($product));
-                }else{
-                    if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
-                        $row[$attributeCode] = $product->getAttributeText($attributeCode);
+                foreach ($attributes as $attributeCode) {
+                    if($attributeCode == 'variants'){
+                        $variants = $this->_getProductVariants($product);
+                        if(sizeof($variants) > 0){
+                            $row["variants"] = json_encode($variants);
+                        }
+                    }elseif ($attributeCode == 'categories'){
+                        $row["categories"] = implode("|", $this->_getProductCategories($product));
                     }else{
-                        $row[$attributeCode] = $product->getData($attributeCode);
+                        if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                            $row[$attributeCode] = $product->getAttributeText($attributeCode);
+                        }else{
+                            $row[$attributeCode] = $product->getData($attributeCode);
+                        }
                     }
                 }
+                $writer->writeRow($row);
             }
-
-            $writer->writeRow($row);
+            $productCollection->clear();
         }
 
         return $writer->getContents();

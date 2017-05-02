@@ -12,11 +12,6 @@ class Bitbull_Tooso_Model_Indexer
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
-     * @var integer
-     */
-    protected $_productPagination = 15;
-
-    /**
      * @var Bitbull_Tooso_Helper_Log
      */
     protected $_logger = null;
@@ -198,41 +193,61 @@ class Bitbull_Tooso_Model_Indexer
         $writer->setHeaderCols($headers);
 
         $this->_logger->debug("Indexer: found ".$productCollection->getSize()." products");
-        
-        $productCollection->setPageSize($this->_productPagination);
-        $pages = $productCollection->getLastPageNumber();
-        for ($p = 1; $p <= $pages; $p++ ){
-            $productCollection->setCurPage($p);
-            $productCollection->load();
 
-            foreach ($productCollection as $product) {
-                $product->setStoreId($storeId);
-
-                $row = array();
-                $row["sku"] = $product->getSku();
-
-                foreach ($attributes as $attributeCode) {
-                    if($attributeCode == 'variants'){
-                        $variants = $this->_getProductVariants($product);
-                        if(sizeof($variants) > 0){
-                            $row["variants"] = json_encode($variants);
-                        }
-                    }elseif ($attributeCode == 'categories'){
-                        $row["categories"] = implode("|", $this->_getProductCategories($product));
-                    }else{
-                        if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
-                            $row[$attributeCode] = $product->getAttributeText($attributeCode);
-                        }else{
-                            $row[$attributeCode] = $product->getData($attributeCode);
-                        }
-                    }
-                }
-                $writer->writeRow($row);
-            }
-            $productCollection->clear();
-        }
+        Mage::getSingleton('core/resource_iterator')->walk(
+            $productCollection->getSelect(),
+            array(
+                array($this, 'productCollectionWalker')
+            ),
+            array(
+                'storeId' => $storeId,
+                'attributes' => $attributes,
+                'attributesTypes' => $attributesTypes,
+                'preserveAttributeValue' => $preserveAttributeValue,
+                'writer' => $writer
+            )
+        );
 
         return $writer->getContents();
+    }
+
+    /**
+     * elaborate product collection row into CSV
+     *
+     * @param
+     */
+    public function productCollectionWalker($args){
+        $product = Mage::getModel('catalog/product');
+        $product->setData($args['row']);
+
+        $storeId = $args['storeId'];
+        $attributes = $args['attributes'];
+        $attributesTypes = $args['attributesTypes'];
+        $preserveAttributeValue = $args['preserveAttributeValue'];
+        $writer = $args['writer'];
+
+        $product->setStoreId($storeId);
+
+        $row = array();
+        $row["sku"] = $product->getSku();
+
+        foreach ($attributes as $attributeCode) {
+            if($attributeCode == 'variants'){
+                $variants = $this->_getProductVariants($product);
+                if(sizeof($variants) > 0){
+                    $row["variants"] = json_encode($variants);
+                }
+            }elseif ($attributeCode == 'categories'){
+                $row["categories"] = implode("|", $this->_getProductCategories($product));
+            }else{
+                if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                    $row[$attributeCode] = $product->getAttributeText($attributeCode);
+                }else{
+                    $row[$attributeCode] = $product->getData($attributeCode);
+                }
+            }
+        }
+        $writer->writeRow($row);
     }
 
     /**

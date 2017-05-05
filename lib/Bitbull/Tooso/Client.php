@@ -145,10 +145,6 @@ class Bitbull_Tooso_Client
             if ($result->getTotalResults() == 0 && $typoCorrection) {
                 $message = 'No result found for query "' . $query . '""';
 
-                if ($this->_reportSender) {
-                    $this->_reportSender->sendReport($this->_buildUrl($path, $params), self::HTTP_METHOD_GET, $this->_apiKey, $this->_language, $this->_storeCode, $message);
-                }
-
                 throw new Bitbull_Tooso_Exception($message, 0);
             }
 

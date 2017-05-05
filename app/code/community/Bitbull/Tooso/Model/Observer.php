@@ -117,6 +117,7 @@ class Bitbull_Tooso_Model_Observer
                         "resultId" => $sku,
                         "rank" => $rank,
                         "order" => $order,
+                        "isMobile" => Mage::helper('tooso/tracking')->isMobile()
                     ));
                     $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
                     $this->_logger->debug('Tracking pixel: resultId '.$sku);
@@ -143,7 +144,8 @@ class Bitbull_Tooso_Model_Observer
                 $tracking_url = $this->_client->getProductViewTrackingUrl(array(
                     "sku" => $sku,
                     "sessionId" => $profilingParams["sessionId"],
-                    "userId" => $profilingParams["userId"]
+                    "userId" => $profilingParams["userId"],
+                    "isMobile" => Mage::helper('tooso/tracking')->isMobile()
                 ));
                 $this->_logger->debug('Tracking pixel: sku '.$sku);
                 $this->_logger->debug('Tracking pixel: sessionId '.$profilingParams["sessionId"]);

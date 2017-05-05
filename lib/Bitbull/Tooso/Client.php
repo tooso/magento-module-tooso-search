@@ -52,7 +52,7 @@ class Bitbull_Tooso_Client
      *
      * @var int
      */
-    protected $_timeout = 2000;
+    protected $_timeout = 4000;
 
     /**
      * @var stdClass

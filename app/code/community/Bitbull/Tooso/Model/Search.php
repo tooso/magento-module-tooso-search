@@ -213,4 +213,18 @@ class Bitbull_Tooso_Model_Search
 
         return $this->_readAdapter;
     }
+
+    /**
+     * Return true if results length is equal to 0
+     *
+     * @return bool
+     */
+    public function isResultEmpty(){
+        if (!is_null($this->_result)) {
+            $products = $this->_result->getResults();
+            return sizeof($products) <= 0;
+        }else{
+            return false;
+        }
+    }
 }

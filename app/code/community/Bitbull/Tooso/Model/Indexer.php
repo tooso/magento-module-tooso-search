@@ -163,7 +163,7 @@ class Bitbull_Tooso_Model_Indexer
                 $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
                 $headers[$attributeCode] = $attributeCode;
 
-                $productCollection->addAttributeToSelect($attribute->getAttributeCode());
+                $productCollection->addAttributeToSelect($attribute->getAttributeCode(), 'inner');
 
                 $productCollection->joinAttribute(
                     $attribute->getAttributeCode(),
@@ -174,7 +174,7 @@ class Bitbull_Tooso_Model_Indexer
                     $storeId
                 );
             }else{
-                $productCollection->addAttributeToSelect($attributeCode);
+                $productCollection->addAttributeToSelect($attributeCode, 'inner');
             }
         }
 

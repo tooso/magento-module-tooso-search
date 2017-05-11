@@ -162,8 +162,9 @@ class Bitbull_Tooso_Model_Indexer
             $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
             $headers[$attributeCode] = $attributeCode;
 
-            $productCollection->addAttributeToSelect($attributeCode, 'inner');
+            $productCollection->addAttributeToSelect($attributeCode, 'left');
 
+            /*
             if(!in_array($attributeCode, $systemAttributes)){
                 $productCollection->joinAttribute(
                     $attributeCode,
@@ -173,7 +174,7 @@ class Bitbull_Tooso_Model_Indexer
                     'left',
                     $storeId
                 );
-            }
+            }*/
         }
 
         if(in_array('is_in_stock', $attributes)) {

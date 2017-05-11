@@ -158,23 +158,21 @@ class Bitbull_Tooso_Model_Indexer
         foreach ($attributesCollection as $attribute) {
 
             $attributeCode = $attribute->getAttributeCode();
+
+            $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
+            $headers[$attributeCode] = $attributeCode;
+
+            $productCollection->addAttributeToSelect($attributeCode, 'inner');
+
             if(!in_array($attributeCode, $systemAttributes)){
-
-                $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
-                $headers[$attributeCode] = $attributeCode;
-
-                $productCollection->addAttributeToSelect($attribute->getAttributeCode(), 'inner');
-
                 $productCollection->joinAttribute(
-                    $attribute->getAttributeCode(),
-                    'catalog_product/' . $attribute->getAttributeCode(),
+                    $attributeCode,
+                    'catalog_product/' . $attributeCode,
                     'entity_id',
                     null,
                     'left',
                     $storeId
                 );
-            }else{
-                $productCollection->addAttributeToSelect($attributeCode, 'inner');
             }
         }
 

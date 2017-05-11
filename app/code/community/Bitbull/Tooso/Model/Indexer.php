@@ -8,6 +8,7 @@ class Bitbull_Tooso_Model_Indexer
 {
     const XML_PATH_INDEXER_STORES = 'tooso/indexer/stores_to_index';
     const XML_PATH_INDEXER_DRY_RUN = 'tooso/indexer/dry_run_mode';
+    const XML_PATH_INDEXER_ATTRIBUTES = 'tooso/indexer/attributes_to_index';
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
@@ -15,10 +16,45 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected $_logger = null;
 
+    /**
+     * @var Bitbull_Tooso_Helper_Indexer
+     */
+    protected $_indexerHelper = null;
+
+    /**
+     * @var array
+     */
+    protected $_categories = null;
+
 
     public function __construct()
     {
         $this->_logger = Mage::helper('tooso/log');
+        $this->_indexerHelper = Mage::helper('tooso/indexer');
+
+        $this->_initCategories();
+    }
+
+    /**
+     * Build categories array with named path
+     *
+     */
+    protected function _initCategories()
+    {
+        $collection = Mage::getResourceModel('catalog/category_collection')->addNameToResult();
+
+        foreach ($collection as $category) {
+            $structure = preg_split('#/+#', $category->getPath());
+            $pathSize  = count($structure);
+            if ($pathSize > 1) {
+                $path = array();
+                for ($i = 1; $i < $pathSize; $i++) {
+                    $path[] = $collection->getItemById($structure[$i])->getName();
+                }
+                $this->_categories[$category->getId()] = implode('/', $path);
+            }
+
+        }
     }
 
     /**
@@ -87,88 +123,15 @@ class Bitbull_Tooso_Model_Indexer
     */
     protected function _getCsvContent($storeId)
     {
-        /**
-         * Exclude unused system attributes
-         */
-        $excludeAttributes = array(
-            'image_label',
-            'old_id',
-            'small_image_label',
-            'thumbnail_label',
-            'uf_product_link',
-            'url_path',
-            'custom_layout_update',
-            'recurring_profile',
-            'group_price',
-            'is_recurring',
-            'minimal_price',
-            'msrp',
-            'msrp_display_actual_price_type',
-            'msrp_enabled',
-            'options_container',
-            'page_layout',
-            'price_view',
-            'country_of_manufacture',
-            'gift_message_available',
-            'tax_class_id',
-            'tier_price',
-            'custom_design'
-        );
+        $systemAttributes = $this->_indexerHelper->getSystemAttributes();
 
-        /**
-         * Attribute frontend types to load
-         *
-         * Excluding:
-         *   'date'
-         *   'media_image'
-         *   'image'
-         *   'gallery'
-         */
-        $attributeFrontendTypes = array(
-            'text',
-            'textarea',
-            'multiselect',
-            'select',
-            'boolean',
-            'price'
-        );
+        $attributesTypes = array();
 
+        $attributes = explode(",", Mage::getStoreConfig(self::XML_PATH_INDEXER_ATTRIBUTES));
 
-        /**
-         * Attribute backend types to load
-         *
-         * Excluding:
-         *   'date',
-         *   'datetime',
-         *   'static'
-         */
-        $attributeBackendTypes = array(
-            'varchar',
-            'int',
-            'text',
-            'decimal',
-        );
-
-
-        /**
-         * System attribute to select (used also for CSV headers)
-         */
-        $attributes = array(
-            'sku' => 'sku',
-            'name' => 'name',
-            'description' => 'description',
-            'short_description' => 'short_description',
-            'status' => 'status',
-            'is_in_stock' => 'is_in_stock'
-        );
-
-        /**
-         * Dynamic columns
-         */
-        $headers = array_merge($attributes, array(
-            'variants' => 'variants',
-            'categories' => 'categories'
-        ));
+        $headers = array_merge(array(
+            'sku' => 'sku'
+        ), $attributes);
 
         /**
          * Not use getAttributeText to get value of data
@@ -178,16 +141,11 @@ class Bitbull_Tooso_Model_Indexer
             'visibility'
         );
 
-        $limitAttributeCount = 40; //limit number of attributes
+        $this->_logger->debug("Indexer: using attributes ".json_encode($attributes));
 
         // load custom attributes
         $attributesCollection = Mage::getResourceModel('catalog/product_attribute_collection')
-            ->addFieldToFilter('backend_type', array('in' => $attributeBackendTypes))
-            ->addFieldToFilter('frontend_input', array('in' => $attributeFrontendTypes))
-            ->addFieldToFilter('attribute_code', array('nin' => $excludeAttributes))
-            ->setCurPage(1)
-            ->setPageSize($limitAttributeCount);
-        ;
+            ->addFieldToFilter('attribute_code', array('in' => $attributes));
 
         // load store products visible individually and select system attributes
         $productCollection = Mage::getModel('catalog/product')
@@ -195,35 +153,38 @@ class Bitbull_Tooso_Model_Indexer
             ->addAttributeToFilter('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
             ->addStoreFilter($storeId)
         ;
-        foreach ($attributes as $attributeCode){
-            $productCollection->addAttributeToSelect($attributeCode);
-        }
 
         // load and select custom attributes
         foreach ($attributesCollection as $attribute) {
-            $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendInput();
-            $headers[$attribute->getAttributeCode()] = $attribute->getAttributeCode();
 
-            $productCollection->addAttributeToSelect($attribute->getAttributeCode());
+            $attributeCode = $attribute->getAttributeCode();
 
+            $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
+            $headers[$attributeCode] = $attributeCode;
 
-            $productCollection->joinAttribute(
-                $attribute->getAttributeCode(),
-                'catalog_product/' . $attribute->getAttributeCode(),
-                'entity_id',
-                null,
-                'left',
-                $storeId
-            );
+            $productCollection->addAttributeToSelect($attributeCode, 'inner');
+
+            if(!in_array($attributeCode, $systemAttributes)){
+                $productCollection->joinAttribute(
+                    $attributeCode,
+                    'catalog_product/' . $attributeCode,
+                    'entity_id',
+                    null,
+                    'left',
+                    $storeId
+                );
+            }
         }
 
-        $productCollection->joinField('is_in_stock',
-            'cataloginventory/stock_item',
-            'is_in_stock',
-            'product_id=entity_id',
-            '{{table}}.stock_id=1',
-            'left'
-        );
+        if(in_array('is_in_stock', $attributes)) {
+            $productCollection->joinField('is_in_stock',
+                'cataloginventory/stock_item',
+                'is_in_stock',
+                'product_id=entity_id',
+                '{{table}}.stock_id=1',
+                'left'
+            );
+        }
 
         // create new writer object
         $writer = $this->_getWriter();
@@ -231,34 +192,60 @@ class Bitbull_Tooso_Model_Indexer
 
         $this->_logger->debug("Indexer: found ".$productCollection->getSize()." products");
 
-        // load attribute values
-        foreach ($productCollection as $product) {
-            $product->setStoreId($storeId);
+        Mage::getSingleton('core/resource_iterator')->walk(
+            $productCollection->getSelect(),
+            array(
+                array($this, 'productCollectionWalker')
+            ),
+            array(
+                'storeId' => $storeId,
+                'attributes' => $attributes,
+                'attributesTypes' => $attributesTypes,
+                'preserveAttributeValue' => $preserveAttributeValue,
+                'writer' => $writer
+            )
+        );
 
-            $this->_logger->debug("Indexer: parsing ".$product->getSku()." product");
+        return $writer->getContents();
+    }
 
-            $row = array();
-            foreach ($attributes as $attributeCode => $frontendInput) {
-                if($frontendInput === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+    /**
+     * elaborate product collection row into CSV
+     *
+     * @param
+     */
+    public function productCollectionWalker($args){
+        $product = Mage::getModel('catalog/product');
+        $product->setData($args['row']);
+
+        $storeId = $args['storeId'];
+        $attributes = $args['attributes'];
+        $attributesTypes = $args['attributesTypes'];
+        $preserveAttributeValue = $args['preserveAttributeValue'];
+        $writer = $args['writer'];
+
+        $product->setStoreId($storeId);
+
+        $row = array();
+        $row["sku"] = $product->getSku();
+
+        foreach ($attributes as $attributeCode) {
+            if($attributeCode == 'variants'){
+                $variants = $this->_getProductVariants($product);
+                if(sizeof($variants) > 0){
+                    $row["variants"] = json_encode($variants);
+                }
+            }elseif ($attributeCode == 'categories'){
+                $row["categories"] = implode("|", $this->_getProductCategories($product));
+            }else{
+                if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
                     $row[$attributeCode] = $product->getAttributeText($attributeCode);
                 }else{
                     $row[$attributeCode] = $product->getData($attributeCode);
                 }
             }
-
-            // load product variants
-            $variants = $this->_getProductVariants($product);
-            if(sizeof($variants) > 0){
-                $row["variants"] = json_encode($variants);
-            }
-
-            // load product category
-            $row["categories"] = implode("|", $this->_getProductCategories($product));
-
-            $writer->writeRow($row);
         }
-
-        return $writer->getContents();
+        $writer->writeRow($row);
     }
 
     /**
@@ -296,23 +283,13 @@ class Bitbull_Tooso_Model_Indexer
      * @return array
      */
     protected function _getProductCategories($product){
+
         $categories = array();
 
         $categoriesIds = $product->getCategoryIds();
         foreach ($categoriesIds as $categoryId) {
-            $category = Mage::getModel('catalog/category')->load($categoryId);
-
-            // transform category path from collections of ids to names
-            $pathIds = explode('/', $category->getPath());
-            $pathNames = [];
-            foreach ($pathIds as $id) {
-                $relatedCategory = Mage::getModel('catalog/category')->load($id);
-                if ($relatedCategory) {
-                    array_push($pathNames, $relatedCategory->getName());
-                }
-            }
-
-            array_push($categories, implode('/', $pathNames));
+            if($this->_categories[$categoryId])
+                array_push($categories, $this->_categories[$categoryId]);
         }
 
         if(sizeof($categories) > 0){
@@ -392,12 +369,5 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected function _isDebugEnabled(){
         return Mage::getStoreConfigFlag(self::XML_PATH_INDEXER_DRY_RUN);
-    }
-
-    /**
-     * Return stores for backend multiselect options
-     */
-    public function toOptionArray() {
-        return Mage::getSingleton('adminhtml/system_store')->getStoreValuesForForm(false, true);
     }
 }

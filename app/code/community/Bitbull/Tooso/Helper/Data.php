@@ -159,4 +159,12 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getSearchAlreadyDone(){
         return $this->_searchAlreadyDone;
     }
+
+    /**
+     * Get product attributes
+     */
+
+    public function getAttributesToIndex(){
+
+    }
 }

@@ -151,6 +151,7 @@ class Bitbull_Tooso_Model_Indexer
         $productCollection = Mage::getModel('catalog/product')
             ->getCollection()
             ->addAttributeToFilter('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
+            ->setStoreId($storeId)
             ->addStoreFilter($storeId)
         ;
 

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Disable email report on empty query
+- Increase API response timeout
+- Fix pass parentId params when typo correction is disabled
+- Fix parentId params in "Search instead for" link
+
 ## [1.3.0]
 
 - Fixed fallback search in case of errors

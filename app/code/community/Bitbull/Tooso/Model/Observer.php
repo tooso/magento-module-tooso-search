@@ -165,17 +165,20 @@ class Bitbull_Tooso_Model_Observer
      * @param  Varien_Event_Observer $observer
      */
     public function elaborateRankCollection(Varien_Event_Observer $observer){
-
         $this->_logger->debug('Tracking pixel: elaborating rank collection..');
         $collection = clone Mage::registry('current_layer')->getProductCollection();
-        //don't apply filters to this collection
+
         $collection->addAttributeToSelect('sku');
         $rankCollection = array();
         $i = 0;
+        $curPage = (int) $collection->getCurPage();
+        $pageSize = (int) $collection->getPageSize();
+        $this->_logger->debug('Tracking pixel: rank collection page '.$curPage.' size '.$pageSize);
         foreach ($collection as $product) {
             $sku = $product->getSku();
-            $rankCollection[$sku] = $i;
-            $this->_logger->debug('Tracking pixel: rank collection '.$sku.' => '.$i);
+            $pos = $i + (($curPage-1) * $pageSize);
+            $rankCollection[$sku] = $pos;
+            $this->_logger->debug('Tracking pixel: rank collection '.$product->getName().' '.$sku.' => '.$pos);
             $i++;
         }
 

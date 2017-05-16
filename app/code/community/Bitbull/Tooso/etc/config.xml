@@ -68,14 +68,14 @@
                     </tooso_tracking_pixel>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
-            <controller_action_layout_render_before_catalogsearch_result_index>
+            <controller_action_postdispatch_catalogsearch_result_index>
                 <observers>
                     <tooso_elaborate_rank_collection>
                         <class>tooso/observer</class>
                         <method>elaborateRankCollection</method>
                     </tooso_elaborate_rank_collection>
                 </observers>
-            </controller_action_layout_render_before_catalogsearch_result_index>
+            </controller_action_postdispatch_catalogsearch_result_index>
             <controller_action_layout_render_before>
                 <observers>
                     <tooso_clear_search_id>

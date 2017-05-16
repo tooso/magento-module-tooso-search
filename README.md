@@ -32,6 +32,13 @@ Here is some additional info on how to add cron jobs with Cpanel and Plesk, whic
 
 If you can't access your server configuration, please ask your hosting provider to configure crontab for you.
 
+## External Dependencies
+
+[Mobile Detect](http://mobiledetect.net/)
+
+It is placed under `lib/Mobile` directory and the main class file is renamed from *Mobile_Detect* to *Detect*; 
+the class is globally reachable as `Mobile_Detect` 
+
 ## Installation Instructions
 
 You can install the extension with following methods:

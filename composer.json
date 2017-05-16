@@ -4,8 +4,7 @@
     "type": "magento-module",
     "description": "Tooso search integration for Magento",
     "require": {
-        "magento-hackathon/magento-composer-installer": "*",
-        "mobiledetect/mobiledetectlib": "^2.8"
+        "magento-hackathon/magento-composer-installer": "*"
     },
     "authors": [
         { "name": "Gennaro Vietri", "email": "gennaro.vietri@bitbull.it" }

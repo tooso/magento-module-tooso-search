@@ -25,7 +25,7 @@
  * @version     2.8.25
  */
 
-class Mobile_Detect
+class Bitbull_Mobile_Detect
 {
     /**
      * Mobile detection type.

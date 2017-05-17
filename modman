@@ -2,4 +2,4 @@ app/code/community/Bitbull/Tooso     app/code/community/Bitbull/Tooso
 app/etc/modules/Bitbull_Tooso.xml    app/etc/modules/Bitbull_Tooso.xml
 app/locale/en_US/template/email/tooso_alert.html    app/locale/en_US/template/email/tooso_alert.html
 lib/Bitbull/Tooso   lib/Bitbull/Tooso
-lib/Bitbull/Tooso   lib/Bitbull/Tooso
+lib/Bitbull/Mobile   lib/Bitbull/Mobile

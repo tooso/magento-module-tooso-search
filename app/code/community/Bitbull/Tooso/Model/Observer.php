@@ -202,4 +202,20 @@ class Bitbull_Tooso_Model_Observer
         }
     }
 
+    /**
+     * Track add to cart event
+     * @param Varien_Event_Observer $observer
+     */
+    public function trackAddToCart(Varien_Event_Observer $observer){
+        $productId = Mage::app()->getRequest()->getParam('product', null);
+
+        if($productId != null){
+            $product = Mage::getModel('catalog/product')->load($productId);
+            $profilingParams = Mage::helper('tooso')->getProfilingParams();
+            $sku = $product->getSku();
+
+            $this->_client->productAddedToCart($sku, $profilingParams);
+        }
+    }
+
 }

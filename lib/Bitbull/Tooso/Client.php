@@ -222,6 +222,26 @@ class Bitbull_Tooso_Client
     }
 
     /**
+     * Send product added to cart event
+     *
+     * @param string $sku Product SKU
+     * @param array $extraParams
+     * @return Bitbull_Tooso_Suggest_Result
+     */
+    public function productAddedToCart($sku, $extraParams)
+    {
+        $params = array_merge(
+            array('sku' => $sku),
+            (array)$extraParams
+        );
+
+        $response = $this->_doRequest('/User/addToCart', self::HTTP_METHOD_GET, $params);
+
+        $result = new Bitbull_Tooso_Suggest_Result($response);
+        return $result;
+    }
+
+    /**
      * Get Tracking URL
      *
      * @param string $params tracking parameters

@@ -85,6 +85,15 @@
                     </tooso_clear_search_id>
                 </observers>
             </controller_action_layout_render_before>
+            <controller_action_predispatch_checkout_cart_add>
+                <observers>
+                    <tooso_track_add_to_cart>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>trackAddToCart</method>
+                    </tooso_track_add_to_cart>
+                </observers>
+            </controller_action_predispatch_checkout_cart_add>
         </events>
         <template>
             <email>

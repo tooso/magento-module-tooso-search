@@ -101,7 +101,8 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
         $this->_customAttributes = [
             "is_in_stock" => 'Is in stock',
             "variants" => 'Variants',
-            "categories" => 'Categories'
+            "categories" => 'Categories',
+            "image" => "Image"
         ];
 
         /**
@@ -113,8 +114,7 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             'name' => 'name',
             'description' => 'description',
             'short_description' => 'short_description',
-            'status' => 'status',
-            'is_in_stock' => 'is_in_stock'
+            'status' => 'status'
         );
     }
 

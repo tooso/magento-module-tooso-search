@@ -123,8 +123,6 @@ class Bitbull_Tooso_Model_Indexer
     */
     protected function _getCsvContent($storeId)
     {
-        $systemAttributes = $this->_indexerHelper->getSystemAttributes();
-
         $attributesTypes = array();
 
         $attributes = explode(",", Mage::getStoreConfig(self::XML_PATH_INDEXER_ATTRIBUTES));
@@ -151,6 +149,7 @@ class Bitbull_Tooso_Model_Indexer
         $productCollection = Mage::getModel('catalog/product')
             ->getCollection()
             ->addAttributeToFilter('visibility', array('neq' => Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE))
+            ->setStoreId($storeId)
             ->addStoreFilter($storeId)
         ;
 
@@ -162,18 +161,8 @@ class Bitbull_Tooso_Model_Indexer
             $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
             $headers[$attributeCode] = $attributeCode;
 
-            $productCollection->addAttributeToSelect($attributeCode, 'inner');
+            $productCollection->addAttributeToSelect($attributeCode, 'left');
 
-            if(!in_array($attributeCode, $systemAttributes)){
-                $productCollection->joinAttribute(
-                    $attributeCode,
-                    'catalog_product/' . $attributeCode,
-                    'entity_id',
-                    null,
-                    'left',
-                    $storeId
-                );
-            }
         }
 
         if(in_array('is_in_stock', $attributes)) {
@@ -260,11 +249,11 @@ class Bitbull_Tooso_Model_Indexer
             $productAttributesOptions = $product->getTypeInstance(true)->getConfigurableOptions($product);
 
             foreach ($productAttributesOptions as $productAttributeOption) {
-                $configurableData[$product->getId()] = array();
                 foreach ($productAttributeOption as $optionValues) {
-                    $optionData = array();
-                    $optionData[$optionValues['attribute_code']] = $optionValues['option_title'];
-                    $variants[$optionValues['sku']] = $optionData;
+                    if(!isset($variants[$optionValues['sku']])){
+                        $variants[$optionValues['sku']] = array();
+                    }
+                    $variants[$optionValues['sku']][$optionValues['attribute_code']] = $optionValues['option_title'];
                 }
             }
         }

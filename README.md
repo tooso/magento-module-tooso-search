@@ -32,6 +32,15 @@ Here is some additional info on how to add cron jobs with Cpanel and Plesk, whic
 
 If you can't access your server configuration, please ask your hosting provider to configure crontab for you.
 
+## External Dependencies
+
+[Mobile Detect](http://mobiledetect.net/)
+
+It is placed under `lib/Bitbull/Mobile` directory, the main class file is renamed from *Mobile_Detect* to *Detect.php* 
+and class name is renamed to *Bitbull_Mobile_Detect*. 
+This prevent compatibility issues by other modules. 
+Mobile Detect class is globally reachable as `Bitbull_Mobile_Detect`. 
+
 ## Installation Instructions
 
 You can install the extension with following methods:

@@ -6,7 +6,7 @@
     "require": {
         "magento-hackathon/magento-composer-installer": "*"
     },
-    "authors": [ 
+    "authors": [
         { "name": "Gennaro Vietri", "email": "gennaro.vietri@bitbull.it" }
     ]
 }

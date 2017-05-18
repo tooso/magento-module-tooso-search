@@ -82,11 +82,12 @@ class Bitbull_Tooso_Model_Observer
     public function showTrackingPixel(Varien_Event_Observer $observer)
     {
         $current_product = Mage::registry('current_product');
-        if($current_product) {
+        if($current_product != null) {
 
             if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
 
                 $this->_logger->debug('Tracking pixel: elaborating result tracking pixel..');
+                $id = $current_product->getId();
                 $sku = $current_product->getSku();
                 $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
 
@@ -94,15 +95,15 @@ class Bitbull_Tooso_Model_Observer
                     // Get rank collection from search collection
                     $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
                     $rank = -1;
-                    if($searchRankCollection != null && isset($searchRankCollection[$sku])){
-                        $rank = $searchRankCollection[$sku];
+                    if($searchRankCollection != null && isset($searchRankCollection[$id])){
+                        $rank = $searchRankCollection[$id];
                     }else{
                         if($searchRankCollection == null){
                             $this->_logger->debug('Tracking pixel: rank collection not found in session');
                         }else{
                             $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
-                            foreach ($searchRankCollection as $sku => $rank){
-                                $this->_logger->debug('Tracking pixel: '.$sku.' => '.$rank);
+                            foreach ($searchRankCollection as $rankId => $rankPos){
+                                $this->_logger->debug('Tracking pixel: '.$rankId.' => '.$rankPos);
                             }
                         }
                     }
@@ -112,16 +113,15 @@ class Bitbull_Tooso_Model_Observer
                         $order = "relevance";
                     }
 
-                    $tracking_url = $this->_client->getResultTrackingUrl(array(
+                    $params = array(
                         "searchId" => $toosoSearchId,
                         "resultId" => $sku,
                         "rank" => $rank,
                         "order" => $order,
-                    ));
-                    $this->_logger->debug('Tracking pixel: searchId '.$toosoSearchId);
-                    $this->_logger->debug('Tracking pixel: resultId '.$sku);
-                    $this->_logger->debug('Tracking pixel: rank '.$rank);
-                    $this->_logger->debug('Tracking pixel: order '.$order);
+                        "isMobile" => Mage::helper('tooso/tracking')->isMobile()
+                    );
+                    $tracking_url = $this->_client->getResultTrackingUrl($params);
+                    $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
 
                     $layout = Mage::app()->getLayout();
                     $block = $layout->createBlock('core/text');
@@ -140,14 +140,14 @@ class Bitbull_Tooso_Model_Observer
                 $sku = $current_product->getSku();
                 $profilingParams = Mage::helper('tooso')->getProfilingParams();
 
-                $tracking_url = $this->_client->getProductViewTrackingUrl(array(
+                $params = array(
                     "sku" => $sku,
                     "sessionId" => $profilingParams["sessionId"],
-                    "userId" => $profilingParams["userId"]
-                ));
-                $this->_logger->debug('Tracking pixel: sku '.$sku);
-                $this->_logger->debug('Tracking pixel: sessionId '.$profilingParams["sessionId"]);
-                $this->_logger->debug('Tracking pixel: userId '.$profilingParams["userId"]);
+                    "userId" => $profilingParams["userId"],
+                    "isMobile" => Mage::helper('tooso/tracking')->isMobile()
+                );
+                $tracking_url = $this->_client->getProductViewTrackingUrl($params);
+                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
 
                 $layout = Mage::app()->getLayout();
                 $block = $layout->createBlock('core/text');
@@ -165,26 +165,29 @@ class Bitbull_Tooso_Model_Observer
      * @param  Varien_Event_Observer $observer
      */
     public function elaborateRankCollection(Varien_Event_Observer $observer){
+        $this->_logger->debug('Rank Collection: elaborating collection..');
+        $collection = Mage::registry('current_layer')->getProductCollection();
 
-        $this->_logger->debug('Tracking pixel: elaborating rank collection..');
-        $collection = clone Mage::registry('current_layer')->getProductCollection();
-        //don't apply filters to this collection
-        $collection->addAttributeToSelect('sku');
+        $collection->addAttributeToSelect('name');
         $rankCollection = array();
         $i = 0;
+        $curPage = (int) $collection->getCurPage();
+        $pageSize = (int) $collection->getPageSize();
+        $this->_logger->debug('Rank Collection: page '.$curPage.' size '.$pageSize);
         foreach ($collection as $product) {
-            $sku = $product->getSku();
-            $rankCollection[$sku] = $i;
-            $this->_logger->debug('Tracking pixel: rank collection '.$sku.' => '.$i);
+            $id = $product->getId();
+            $pos = $i + (($curPage-1) * $pageSize);
+            $rankCollection[$id] = $pos;
+            $this->_logger->debug('Rank Collection: ['.$id.'] '.$product->getName().' => '.$pos);
             $i++;
         }
 
         if(sizeof($rankCollection) == 0){
-            $this->_logger->debug('Tracking pixel: rank collection empty');
+            $this->_logger->debug('Rank Collection: collection empty');
         }
 
         Mage::helper('tooso/session')->setRankCollection($rankCollection);
-        $this->_logger->debug('Tracking pixel: rank collection saved into session');
+        $this->_logger->debug('Rank Collection: collection saved into session');
 
     }
 

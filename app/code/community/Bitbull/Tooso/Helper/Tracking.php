@@ -28,4 +28,14 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         return $sessionId != null;
     }
 
+    /**
+     * Detect if request comes from mobile device
+     *
+     * @return integer
+     */
+    public function isMobile(){
+        $detect = new Bitbull_Mobile_Detect();
+        return (int) $detect->isMobile();
+    }
+
 }

@@ -7,6 +7,7 @@ class Bitbull_Tooso_Model_Search
 {
     const SEARCH_PARAM_IP_ADDRESS = 'ip';
     const SEARCH_PARAM_PARENT_SEARCH_ID = 'parentSearchId';
+    const SEARCH_PARAM_IS_MOBILE = 'isMobile';
 
     /**
      * Client for API comunication
@@ -59,6 +60,7 @@ class Bitbull_Tooso_Model_Search
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();
                 $params[self::SEARCH_PARAM_IP_ADDRESS] = Mage::helper('core/http')->getRemoteAddr();
+                $params[self::SEARCH_PARAM_IS_MOBILE] = Mage::helper('tooso/tracking')->isMobile();
 
                 if (!is_null($parentSearchId)) {
                     $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;

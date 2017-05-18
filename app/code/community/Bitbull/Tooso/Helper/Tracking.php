@@ -15,7 +15,18 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getTrackingImageHTML($tracking_url)
     {
-        return '<img id="tooso-tracking-pixel" style="height: 1;width: 1;position: fixed;left: -99999px;" src="'.$tracking_url.'"></img>';
+        return "
+            <!-- Tooso tracking pixel -->
+            <script type='text/javascript'>
+                var trackingScript = document.createElement('script');
+                trackingScript.type = 'text/javascript';
+                trackingScript.src = '$tracking_url';
+                document.getElementsByTagName('body')[0].appendChild(trackingScript);
+            </script>
+            <noscript>
+                <img id='tooso-tracking-pixel' style='display:none' src='$tracking_url'>
+            </noscript>
+        ";
     }
 
     /**

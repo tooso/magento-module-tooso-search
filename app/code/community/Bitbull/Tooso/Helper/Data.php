@@ -36,7 +36,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getSuggestMaxResults($store = null)
     {
-        return Mage::getConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
+        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
     }
 
     /**

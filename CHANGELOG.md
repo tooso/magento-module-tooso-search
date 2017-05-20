@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improve indexer performance
 - Fix product rank tracking
 - Added isMobile tracking
+- Fix suggestions max_results
 
 ## [1.3.0]
 

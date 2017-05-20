@@ -124,9 +124,7 @@ class Bitbull_Tooso_Model_Observer
                     $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
 
                     $layout = Mage::app()->getLayout();
-                    $block = $layout->createBlock('core/text');
-                    $block->setText(Mage::helper('tooso/tracking')->getTrackingImageHTML($tracking_url));
-                    $block->setCacheLifetime(null);
+                    $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($tracking_url);
                     $layout->getBlock('before_body_end')->append($block);
 
                     $this->_logger->debug('Tracking pixel: pixel added into layout');
@@ -151,9 +149,7 @@ class Bitbull_Tooso_Model_Observer
                 $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
 
                 $layout = Mage::app()->getLayout();
-                $block = $layout->createBlock('core/text');
-                $block->setText(Mage::helper('tooso/tracking')->getTrackingImageHTML($tracking_url));
-                $block->setCacheLifetime(null);
+                $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($tracking_url);
                 $layout->getBlock('before_body_end')->append($block);
             }
         }else{

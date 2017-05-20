@@ -8,25 +8,15 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 {
 
     /**
-     * Get Tracking Pixel
+     * Create TrackingPixel Block
      *
-     * @param string $tracking_url
-     * @return strin
      */
-    public function getTrackingImageHTML($tracking_url)
-    {
-        return "
-            <!-- Tooso tracking pixel -->
-            <script type='text/javascript'>
-                var trackingScript = document.createElement('script');
-                trackingScript.type = 'text/javascript';
-                trackingScript.src = '$tracking_url';
-                document.getElementsByTagName('body')[0].appendChild(trackingScript);
-            </script>
-            <noscript>
-                <img id='tooso-tracking-pixel' style='display:none' src='$tracking_url'>
-            </noscript>
-        ";
+    public function getTrackingPixelBlock($tracking_url){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/trackingPixel');
+        $block->setTrackingURL($tracking_url);
+        $block->setCacheLifetime(null);
+        return $block;
     }
 
     /**

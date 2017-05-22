@@ -5,7 +5,7 @@
  * @author   Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Model_PageCache_Container_TrackingPixel extends Enterprise_PageCache_Model_Container_Welcome
+class Bitbull_Tooso_Model_PageCache_Container_TrackingPixel extends Enterprise_PageCache_Model_Container_Abstract
 {
     /**
      * Override _saveCache method to prevent caching

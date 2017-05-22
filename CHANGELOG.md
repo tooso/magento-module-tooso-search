@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix product rank tracking
 - Added isMobile tracking
 - Fix suggestions max_results
+- Removed autocomplete num_of_results in frontend
 
 ## [1.3.0]
 

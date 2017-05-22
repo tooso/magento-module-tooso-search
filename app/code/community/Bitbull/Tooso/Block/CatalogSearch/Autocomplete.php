@@ -21,7 +21,7 @@ class Bitbull_Tooso_Block_CatalogSearch_Autocomplete extends Mage_CatalogSearch_
                 $_data = array(
                     'title' => $item->getQueryText(),
                     'row_class' => (++$counter)%2?'odd':'even',
-                    'num_of_results' => $item->getNumResults()
+                    //'num_of_results' => $item->getNumResults()
                 );
 
                 if ($item->getQueryText() == $query) {

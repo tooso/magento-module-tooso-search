@@ -10,12 +10,13 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     /**
      * Create TrackingPixel Block
      *
+     * @param $product_id
+     * @return Bitbull_Tooso_Block_TrackingPixel
      */
-    public function getTrackingPixelBlock($tracking_url){
+    public function getTrackingPixelBlock($product_id){
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/trackingPixel');
-        $block->setTrackingURL($tracking_url);
-        $block->setCacheLifetime(null);
+        $block->setProductID($product_id);
         return $block;
     }
 

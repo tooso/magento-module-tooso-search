@@ -6,33 +6,44 @@
 
 class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
 {
-    protected $_tracking_url = null;
+    const SCRIPT_ENDPOINT = '/tooso/tracking/pixel/';
+
+    /**
+     * @var Bitbull_Tooso_Helper_Log
+     */
+    protected $_logger = null;
+
+    /**
+     * @var null|integer
+     */
+    protected $_product_id = null;
+
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->_logger = Mage::helper('tooso/log');
+
+        $this->setBlockId('tooso_tracking_pixel');
+        $this->setCacheKey(uniqid());
+        $this->addCacheTag(array(
+            Mage::app()->getStore()->getId(),
+            Mage_Catalog_Model_Product::CACHE_TAG
+        ));
+    }
 
     protected function _toHtml()
     {
-        ob_start();
-        ?>
-
-        <!-- Tooso tracking pixel -->
-        <script type='text/javascript'>
-            var trackingScript = document.createElement('script');
-            trackingScript.type = 'text/javascript';
-            trackingScript.src = '<?=$this->_tracking_url?>';
-            document.getElementsByTagName('body')[0].appendChild(trackingScript);
-        </script>
-        <noscript>
-            <img id='tooso-tracking-pixel' style='display:none' src='<?=$this->_tracking_url?>'>
-        </noscript>
-
-        <?php
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        return $output;
+        if($this->_product_id == null){
+            $this->_logger->warn('Tracking script: product_id not set');
+            return;
+        }
+        $url = self::SCRIPT_ENDPOINT."product/".$this->_product_id;
+        $this->_logger->debug('Tracking script: added tracking script');
+        return "<script async type='text/javascript' src='".$url."'></script>";
     }
 
-    public function setTrackingURL($tracking_url)
-    {
-        $this->_tracking_url = $tracking_url;
+    public function setProductID($id){
+        $this->_product_id = $id;
     }
 }

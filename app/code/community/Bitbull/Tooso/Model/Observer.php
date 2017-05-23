@@ -76,86 +76,18 @@ class Bitbull_Tooso_Model_Observer
     }
 
     /**
-     * Add conversion pixel on the end of product page
+     * Add tracking script that point to controller action endpoint
      * @param  Varien_Event_Observer $observer
      */
-    public function showTrackingPixel(Varien_Event_Observer $observer)
-    {
+    public function includeTrackingScript(Varien_Event_Observer $observer){
         $current_product = Mage::registry('current_product');
         if($current_product != null) {
-
-            if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
-
-                $this->_logger->debug('Tracking pixel: elaborating result tracking pixel..');
-                $id = $current_product->getId();
-                $sku = $current_product->getSku();
-                $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
-
-                if($toosoSearchId){
-                    // Get rank collection from search collection
-                    $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
-                    $rank = -1;
-                    if($searchRankCollection != null && isset($searchRankCollection[$id])){
-                        $rank = $searchRankCollection[$id];
-                    }else{
-                        if($searchRankCollection == null){
-                            $this->_logger->debug('Tracking pixel: rank collection not found in session');
-                        }else{
-                            $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
-                            foreach ($searchRankCollection as $rankId => $rankPos){
-                                $this->_logger->debug('Tracking pixel: '.$rankId.' => '.$rankPos);
-                            }
-                        }
-                    }
-
-                    $order = Mage::helper('tooso/session')->getSearchOrder();
-                    if($order == null){
-                        $order = "relevance";
-                    }
-
-                    $params = array(
-                        "searchId" => $toosoSearchId,
-                        "resultId" => $sku,
-                        "rank" => $rank,
-                        "order" => $order,
-                        "isMobile" => Mage::helper('tooso/tracking')->isMobile()
-                    );
-                    $tracking_url = $this->_client->getResultTrackingUrl($params);
-                    $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-
-                    $layout = Mage::app()->getLayout();
-                    $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($tracking_url);
-                    $layout->getBlock('before_body_end')->append($block);
-
-                    $this->_logger->debug('Tracking pixel: pixel added into layout');
-                }else{
-                    $this->_logger->debug('Tracking pixel: search id not found in session');
-                }
-
-            }else{ // request not from search page
-
-                $this->_logger->debug('Tracking pixel: elaborating product view tracking pixel..');
-
-                $sku = $current_product->getSku();
-                $profilingParams = Mage::helper('tooso')->getProfilingParams();
-
-                $params = array(
-                    "sku" => $sku,
-                    "sessionId" => $profilingParams["sessionId"],
-                    "userId" => $profilingParams["userId"],
-                    "isMobile" => Mage::helper('tooso/tracking')->isMobile()
-                );
-                $tracking_url = $this->_client->getProductViewTrackingUrl($params);
-                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-
-                $layout = Mage::app()->getLayout();
-                $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($tracking_url);
-                $layout->getBlock('before_body_end')->append($block);
-            }
+            $layout = Mage::app()->getLayout();
+            $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($current_product->getId());
+            $layout->getBlock('before_body_end')->append($block);
         }else{
-            $this->_logger->debug('Tracking pixel: no product find in registry current_product');
+            $this->_logger->debug('Tracking script: product not found in request');
         }
-
     }
 
     /**

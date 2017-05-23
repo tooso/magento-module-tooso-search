@@ -68,4 +68,16 @@ class Bitbull_Tooso_Helper_Log
             $this->log($message, Zend_Log::DEBUG);
         }
     }
+
+    /**
+     * @param string $message
+     */
+    public function warn($message)
+    {
+        $debugMode = $this->isDebugModeEnabled();
+
+        if ($debugMode) {
+            $this->log($message, Zend_Log::WARN);
+        }
+    }
 }

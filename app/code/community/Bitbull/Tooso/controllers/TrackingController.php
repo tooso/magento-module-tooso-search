@@ -108,17 +108,15 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         // Render script
         ?>
-
+        
         var trackingScript = document.createElement('script');
         trackingScript.type = 'text/javascript';
         trackingScript.src = '<?=$tracking_url?>';
         document.getElementsByTagName('body')[0].appendChild(trackingScript);
 
-        //test
-
-        alert("<?=$sku?>");
-
         <?php
+
+        $this->_logger->debug('Tracking pixel: pixel added into page');
     }
 
 }

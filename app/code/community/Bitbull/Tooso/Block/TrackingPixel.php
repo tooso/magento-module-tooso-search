@@ -25,7 +25,6 @@ class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
         $this->_logger = Mage::helper('tooso/log');
 
         $this->setBlockId('tooso_tracking_pixel');
-        $this->setCacheKey(uniqid());
         $this->addCacheTag(array(
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG

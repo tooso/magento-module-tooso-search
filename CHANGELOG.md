@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix parentId params in "Search instead for" link
 - Added backend attributes options
 - Improve indexer performance
+- Fix product rank tracking
+- Added isMobile tracking
+- Fix suggestions max_results
+- Removed autocomplete num_of_results in frontend
 
 ## [1.3.0]
 

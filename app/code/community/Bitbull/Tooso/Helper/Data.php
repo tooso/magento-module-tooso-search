@@ -10,6 +10,8 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_INDEX = 'tooso/active/index';
 
+    const XML_PATH_ENABLE_TRACKING = 'tooso/active/tracking';
+
     const XML_PATH_SUGGEST_MAX_RESULTS = 'tooso/suggest/max_results';
 
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
@@ -32,6 +34,11 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function isIndexEnabled()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX);
+    }
+
+    public function isTrackingEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_TRACKING, $store);
     }
 
     public function getSuggestMaxResults($store = null)

@@ -81,6 +81,10 @@ class Bitbull_Tooso_Model_Observer
      */
     public function showTrackingPixel(Varien_Event_Observer $observer)
     {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
         $current_product = Mage::registry('current_product');
         if($current_product != null) {
 
@@ -164,7 +168,12 @@ class Bitbull_Tooso_Model_Observer
      * Save rank collection with SKU and their position from collection
      * @param  Varien_Event_Observer $observer
      */
-    public function elaborateRankCollection(Varien_Event_Observer $observer){
+    public function elaborateRankCollection(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
         $this->_logger->debug('Rank Collection: elaborating collection..');
         $collection = Mage::registry('current_layer')->getProductCollection();
 
@@ -195,7 +204,12 @@ class Bitbull_Tooso_Model_Observer
      * Clear searchId session variable if no longer used
      * @param  Varien_Event_Observer $observer
      */
-    public function clearSearchId(Varien_Event_Observer $observer){
+    public function clearSearchId(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isSearchEnabled()){
+            return;
+        }
+
         $routeName = Mage::app()->getRequest()->getRouteName();
         if($routeName != "catalog" && $routeName != "catalogsearch"){
             Mage::helper('tooso/session')->clearSearchId();
@@ -206,9 +220,13 @@ class Bitbull_Tooso_Model_Observer
      * Track add to cart event
      * @param Varien_Event_Observer $observer
      */
-    public function trackAddToCart(Varien_Event_Observer $observer){
-        $productId = Mage::app()->getRequest()->getParam('product', null);
+    public function trackAddToCart(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
 
+        $productId = Mage::app()->getRequest()->getParam('product', null);
         if($productId != null){
             $product = Mage::getModel('catalog/product')->load($productId);
             $profilingParams = Mage::helper('tooso')->getProfilingParams();

@@ -7,6 +7,7 @@ class Bitbull_Tooso_Model_Search
 {
     const SEARCH_PARAM_IP_ADDRESS = 'ip';
     const SEARCH_PARAM_PARENT_SEARCH_ID = 'parentSearchId';
+    const SEARCH_PARAM_IS_MOBILE = 'isMobile';
 
     /**
      * Client for API comunication
@@ -59,13 +60,18 @@ class Bitbull_Tooso_Model_Search
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();
                 $params[self::SEARCH_PARAM_IP_ADDRESS] = Mage::helper('core/http')->getRemoteAddr();
+                $params[self::SEARCH_PARAM_IS_MOBILE] = Mage::helper('tooso/tracking')->isMobile();
 
                 if (!is_null($parentSearchId)) {
                     $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;
                 }
 
                 $result = $this->_client->search($query, $typoCorrection, $params);
-                $this->setResult($result);
+
+                if($result->isValid()){
+                    $this->setResult($result);
+                }
+
             } catch (Exception $e) {
                 $this->_logger->logException($e);
             }
@@ -208,5 +214,19 @@ class Bitbull_Tooso_Model_Search
         }
 
         return $this->_readAdapter;
+    }
+
+    /**
+     * Return true if results length is equal to 0
+     *
+     * @return bool
+     */
+    public function isResultEmpty(){
+        if (!is_null($this->_result)) {
+            $products = $this->_result->getResults();
+            return sizeof($products) <= 0;
+        }else{
+            return false;
+        }
     }
 }

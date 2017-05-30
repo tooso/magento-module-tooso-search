@@ -11,6 +11,11 @@ class Bitbull_Tooso_Exception extends Exception
     */
     protected $_debugInfo = null;
 
+    /**
+     * @var Bitbull_Tooso_Response
+     */
+    protected $_response = null;
+
     public function setDebugInfo($debugInfo)
     {
         $this->_debugInfo = $debugInfo;
@@ -19,5 +24,15 @@ class Bitbull_Tooso_Exception extends Exception
     public function getDebugInfo()
     {
         return $this->_debugInfo;
+    }
+
+    public function setResponse(Bitbull_Tooso_Response $response)
+    {
+        $this->_response = $response;
+    }
+
+    public function getResponse()
+    {
+        return $this->_response;
     }
 }

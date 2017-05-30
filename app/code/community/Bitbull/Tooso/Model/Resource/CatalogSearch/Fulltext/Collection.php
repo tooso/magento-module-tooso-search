@@ -15,18 +15,25 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function addSearchFilter($query)
     {
-        if (!Mage::helper('tooso')->isSearchEnabled()) {
-            return parent::addSearchFilter($query);
-        }
+        if(method_exists('Mage_CatalogSearch_Model_Resource_Fulltext_Collection', 'getFoundIds')){ //Magento version >= 1.9.3.1
 
-        Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
-
-        $products = Mage::helper('tooso')->getProducts();
-        if($products != null){
-            $this->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
-            return $this;
-        }else{
             return parent::addSearchFilter($query);
+
+        }else{ // Magento version < 1.9.3.1
+
+            if (!Mage::helper('tooso')->isSearchEnabled()) {
+                return parent::addSearchFilter($query);
+            }
+
+            Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
+
+            $products = Mage::helper('tooso')->getProducts();
+            if($products != null){
+                $this->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
+                return $this;
+            }else{
+                return parent::addSearchFilter($query);
+            }
         }
     }
 
@@ -39,21 +46,30 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function setOrder($attribute, $dir = 'desc')
     {
+
         if (!Mage::helper('tooso')->isSearchEnabled()) {
             return parent::setOrder($attribute, $dir);
         }
 
-        if ($attribute == 'relevance' || $attribute == 'position') {
-            $products = Mage::helper('tooso')->getProducts();
+        Mage::helper('tooso/session')->setSearchOrder($attribute.'_'.$dir);
 
-            // If the order criteria is the relevance, we need to respect the order of products ids given by API call
-            if (sizeof($products) > 0) {
-                $this->getSelect()->order(new Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+        $products = Mage::helper('tooso')->getProducts();
+        if($products == null){
+            return parent::setOrder($attribute, $dir);
+        }else{
+            if ($attribute == 'relevance' || $attribute == 'position') {
+                $products = Mage::helper('tooso')->getProducts();
+
+                // If the order criteria is the relevance, we need to respect the order of products ids given by API call
+                if (sizeof($products) > 0) {
+                    $this->getSelect()->order(new Zend_Db_Expr('FIELD(e.entity_id, ' . implode(',', $products) . ')'));
+                }
+            } else {
+                parent::setOrder($attribute, $dir);
             }
-        } else {
-            parent::setOrder($attribute, $dir);
+            return $this;
         }
-        return $this;
+
     }
 
     /**
@@ -64,6 +80,7 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
      */
     public function getFoundIds()
     {
+        Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
         $products = Mage::helper('tooso')->getProducts();
 
         if (!Mage::helper('tooso')->isSearchEnabled() || $products == null) {
@@ -71,11 +88,7 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
         }
 
         if (is_null($this->_foundData)) {
-            /** @var Mage_CatalogSearch_Model_Fulltext $preparedResult */
-            $preparedResult = Mage::getSingleton('catalogsearch/fulltext');
-            $preparedResult->prepareResult();
-            $productsIds = Mage::helper('tooso')->getProducts();
-            $this->_foundData = $productsIds ? array_flip($productsIds) : array();
+            $this->_foundData = $products ? array_flip($products) : array();
         }
         if (isset($this->_orders[self::RELEVANCE_ORDER_NAME])) {
             $this->_resortFoundDataByRelevance();

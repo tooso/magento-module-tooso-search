@@ -10,6 +10,8 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_INDEX = 'tooso/active/index';
 
+    const XML_PATH_ENABLE_TRACKING = 'tooso/active/tracking';
+
     const XML_PATH_SUGGEST_MAX_RESULTS = 'tooso/suggest/max_results';
 
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
@@ -22,19 +24,26 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     protected $_products = null;
 
+    protected $_searchAlreadyDone = false;
+
     public function isSearchEnabled($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SEARCH, $store);
     }
 
-    public function isIndexEnabled($store = null)
+    public function isIndexEnabled()
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX, $store);
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_INDEX);
+    }
+
+    public function isTrackingEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_TRACKING, $store);
     }
 
     public function getSuggestMaxResults($store = null)
     {
-        return Mage::getConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
+        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
     }
 
     /**
@@ -89,24 +98,35 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return Mage::app()->getRequest()->getParam('typoCorrection', 'true') == 'true';
     }
+
+    /**
+     * @return string
+     */
+    public function getParentSearchId()
+    {
+        return Mage::app()->getRequest()->getParam('parentSearchId');
+    }
     
     /**
      * Create and configure a Tooso API Client instance
      * 
      * @return Bitbull_Tooso_Client
     */
-    public function getClient()
+    public function getClient($storeCode = null, $language = null)
     {
         $apiKey = Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY);
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
-        $language = Mage::app()->getLocale()->getLocaleCode();
-        $storeCode = Mage::app()->getStore()->getCode();
+        if($language == null){
+            $language = Mage::app()->getLocale()->getLocaleCode();
+        }
+        if($storeCode == null){
+            $storeCode = Mage::app()->getStore()->getCode();
+        }
+        $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode);
 
-        $logger = Mage::helper('tooso/log');
-
-        $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode, $logger);
-
+        $client->setLogger(Mage::helper('tooso/log'));
         $client->setReportSender(Mage::helper('tooso/log_send'));
+        $client->setSessionStorage(Mage::helper('tooso/session'));
 
         return $client;
     }
@@ -129,5 +149,29 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             'userId' => $userId,
             'sessionId' => $sessionId,
         );
+    }
+
+    /**
+     * Set SearchAlreadyDone to true
+     */
+
+    public function setSearchAlreadyDone(){
+        $this->_searchAlreadyDone = true;
+    }
+
+    /**
+     * @return boolean
+     */
+
+    public function getSearchAlreadyDone(){
+        return $this->_searchAlreadyDone;
+    }
+
+    /**
+     * Get product attributes
+     */
+
+    public function getAttributesToIndex(){
+
     }
 }

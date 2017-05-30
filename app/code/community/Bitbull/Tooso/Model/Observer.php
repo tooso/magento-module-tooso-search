@@ -10,10 +10,13 @@ class Bitbull_Tooso_Model_Observer
      * @var Bitbull_Tooso_Helper_Log
      */
     protected $_logger = null;
+    protected $_client = null;
 
     public function __construct()
     {
         $this->_logger = Mage::helper('tooso/log');
+
+        $this->_client = Mage::helper('tooso')->getClient();
     }
 
     /**
@@ -71,4 +74,98 @@ class Bitbull_Tooso_Model_Observer
             }
         }
     }
+
+    /**
+     * Add tracking script that point to controller action endpoint
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includeTrackingScript(Varien_Event_Observer $observer){
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+        $current_product = Mage::registry('current_product');
+        if($current_product != null) {
+            $layout = Mage::app()->getLayout();
+            $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($current_product->getId());
+            $layout->getBlock('before_body_end')->append($block);
+        }else{
+            $this->_logger->debug('Tracking script: product not found in request');
+        }
+    }
+
+    /**
+     * Save rank collection with SKU and their position from collection
+     * @param  Varien_Event_Observer $observer
+     */
+    public function elaborateRankCollection(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        $this->_logger->debug('Rank Collection: elaborating collection..');
+        $collection = Mage::registry('current_layer')->getProductCollection();
+
+        $collection->addAttributeToSelect('name');
+        $rankCollection = array();
+        $i = 0;
+        $curPage = (int) $collection->getCurPage();
+        $pageSize = (int) $collection->getPageSize();
+        $this->_logger->debug('Rank Collection: page '.$curPage.' size '.$pageSize);
+        foreach ($collection as $product) {
+            $id = $product->getId();
+            $pos = $i + (($curPage-1) * $pageSize);
+            $rankCollection[$id] = $pos;
+            $this->_logger->debug('Rank Collection: ['.$id.'] '.$product->getName().' => '.$pos);
+            $i++;
+        }
+
+        if(sizeof($rankCollection) == 0){
+            $this->_logger->debug('Rank Collection: collection empty');
+        }
+
+        Mage::helper('tooso/session')->setRankCollection($rankCollection);
+        $this->_logger->debug('Rank Collection: collection saved into session');
+
+    }
+
+    /**
+     * Clear searchId session variable if no longer used
+     * @param  Varien_Event_Observer $observer
+     */
+    public function clearSearchId(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isSearchEnabled()){
+            return;
+        }
+
+        $routeName = Mage::app()->getRequest()->getRouteName();
+        if($routeName != "catalog" && $routeName != "catalogsearch"){
+            Mage::helper('tooso/session')->clearSearchId();
+        }
+    }
+
+    /**
+     * Track add to cart event
+     * @param Varien_Event_Observer $observer
+     */
+    public function trackAddToCart(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        $productId = Mage::app()->getRequest()->getParam('product', null);
+        if($productId != null){
+            $product = Mage::getModel('catalog/product')->load($productId);
+            $profilingParams = Mage::helper('tooso')->getProfilingParams();
+            $sku = $product->getSku();
+
+            $this->_client->productAddedToCart($sku, $profilingParams);
+            $this->_logger->debug('Cart Traking: '.$sku.' added to cart');
+        }else{
+            $this->_logger->debug('Cart Traking: can\'t find product param');
+        }
+    }
+
 }

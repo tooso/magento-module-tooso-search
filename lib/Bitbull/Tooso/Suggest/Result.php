@@ -4,24 +4,25 @@
  * @package  Bitbull_Tooso
  * @author   Gennaro Vietri <gennaro.vietri@bitbull.it>
  */
-class Bitbull_Tooso_Suggest_Result
+class Bitbull_Tooso_Suggest_Result extends Bitbull_Tooso_Response
 {
-    protected $_response = null;
+    const FALLBACK_RESPONSE_SUGGESTIONS = "";
 
-    public function __construct($response = null)
+    public function __construct(Bitbull_Tooso_Response $response = null)
     {
         if ($response) {
-            $this->setResponse($response);
+            $rawResponse = $response->getResponse();
+            $this->setResponse($rawResponse);
         }
-    }
-
-    public function setResponse($response)
-    {
-        $this->_response = $response;
     }
 
     public function getSuggestions()
     {
-        return $this->_response->Content->Suggestions;
+        if($this->isValid()){
+            return $this->_response->Content->Suggestions;
+        }else{
+            return self::FALLBACK_RESPONSE_SUGGESTIONS;
+        }
     }
+
 }

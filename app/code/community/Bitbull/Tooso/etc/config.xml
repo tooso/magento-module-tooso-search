@@ -60,6 +60,41 @@
                     </tooso_search_results_breadcrumbs>
                 </observers>
             </core_block_abstract_to_html_before>
+            <controller_action_postdispatch_catalogsearch_result_index>
+                <observers>
+                    <tooso_elaborate_rank_collection>
+                        <class>tooso/observer</class>
+                        <method>elaborateRankCollection</method>
+                    </tooso_elaborate_rank_collection>
+                </observers>
+            </controller_action_postdispatch_catalogsearch_result_index>
+            <http_response_send_before>
+                <observers>
+                    <tooso_clear_search_id>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>clearSearchId</method>
+                    </tooso_clear_search_id>
+                </observers>
+            </http_response_send_before>
+            <checkout_cart_add_product_complete>
+                <observers>
+                    <tooso_track_add_to_cart>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>trackAddToCart</method>
+                    </tooso_track_add_to_cart>
+                </observers>
+            </checkout_cart_add_product_complete>
+            <controller_action_layout_render_before_catalog_product_view>
+                <observers>
+                    <tooso_tracking_pixel>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>includeTrackingScript</method>
+                    </tooso_tracking_pixel>
+                </observers>
+            </controller_action_layout_render_before_catalog_product_view>
         </events>
         <template>
             <email>
@@ -103,6 +138,9 @@
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>
             </server>
+            <indexer>
+                <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
+            </indexer>
             <suggest>
                 <max_results>10</max_results>
             </suggest>
@@ -120,4 +158,15 @@
             </tooso_reindex>
         </jobs>
     </crontab>
+    <frontend>
+        <routers>
+            <tooso>
+                <use>standard</use>
+                <args>
+                    <module>Bitbull_Tooso</module>
+                    <frontName>tooso</frontName>
+                </args>
+            </tooso>
+        </routers>
+    </frontend>
 </config>

@@ -60,14 +60,6 @@
                     </tooso_search_results_breadcrumbs>
                 </observers>
             </core_block_abstract_to_html_before>
-            <controller_action_layout_render_before_catalog_product_view>
-                <observers>
-                    <tooso_tracking_pixel>
-                        <class>tooso/observer</class>
-                        <method>showTrackingPixel</method>
-                    </tooso_tracking_pixel>
-                </observers>
-            </controller_action_layout_render_before_catalog_product_view>
             <controller_action_postdispatch_catalogsearch_result_index>
                 <observers>
                     <tooso_elaborate_rank_collection>
@@ -76,7 +68,7 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_postdispatch_catalogsearch_result_index>
-            <controller_action_layout_render_before>
+            <http_response_send_before>
                 <observers>
                     <tooso_clear_search_id>
                         <type>singleton</type>
@@ -84,7 +76,7 @@
                         <method>clearSearchId</method>
                     </tooso_clear_search_id>
                 </observers>
-            </controller_action_layout_render_before>
+            </http_response_send_before>
             <checkout_cart_add_product_complete>
                 <observers>
                     <tooso_track_add_to_cart>
@@ -94,6 +86,15 @@
                     </tooso_track_add_to_cart>
                 </observers>
             </checkout_cart_add_product_complete>
+            <controller_action_layout_render_before_catalog_product_view>
+                <observers>
+                    <tooso_tracking_pixel>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>includeTrackingScript</method>
+                    </tooso_tracking_pixel>
+                </observers>
+            </controller_action_layout_render_before_catalog_product_view>
         </events>
         <template>
             <email>
@@ -157,4 +158,15 @@
             </tooso_reindex>
         </jobs>
     </crontab>
+    <frontend>
+        <routers>
+            <tooso>
+                <use>standard</use>
+                <args>
+                    <module>Bitbull_Tooso</module>
+                    <frontName>tooso</frontName>
+                </args>
+            </tooso>
+        </routers>
+    </frontend>
 </config>

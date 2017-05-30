@@ -1,20 +1,22 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 - Disable email report on empty query
 - Increase API response timeout
+- Improve indexer performance
+- Removed autocomplete num_of_results in frontend
+- Added backend attributes options
+- Added backend option to disable tracking features
+- Added isMobile tracking
 - Fix pass parentId params when typo correction is disabled
 - Fix parentId params in "Search instead for" link
-- Added backend attributes options
-- Improve indexer performance
 - Fix product rank tracking
-- Added isMobile tracking
 - Fix suggestions max_results
-- Removed autocomplete num_of_results in frontend
+- Fix tracking pixel compatibility with FPC
 
 ## [1.3.0]
 

@@ -109,7 +109,7 @@ Send an email to info@tooso.ai to request your APIKEY
 ### Set your API KEY: 
 1. Under __API Configuration__
 * Insert your API key into __API key__ field
-* Insert __http://v{apiVersionWithNoDot}.api.tooso.ai/__ into __API base url__ field. The current supported version is 1, so the placeholder {apiVersionWithNoDot} should be replaced by 1.
+* Insert __http://v{apiVersionWithNoDot}.api.tooso.ai__ into __API base url__ field. The current supported version is 1, so the placeholder {apiVersionWithNoDot} should be replaced by 1.
 * __Send report__: __YES__ to send a report to Tooso when an API error occourred	
 * __Force logging__:  __YES__ to force logging to {{base_dir}}/var/log/tooso_search.log even when logging is disabled
 * __Debug mode__:  __Yes__ to enable more verbose logging for debug purpose

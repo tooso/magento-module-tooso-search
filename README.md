@@ -45,18 +45,6 @@ Mobile Detect class is globally reachable as `Bitbull_Mobile_Detect`.
 
 You can install the extension with following methods:
 
-### Through Magento Connect
-
-1. Log in to your Admin Panel, navigate through System -> Magento Connect -> Magento Connect Manager, then login to the Magento Connect Manager with your admin username and password:
-![Login](./docs/login.jpg)
-2. In the Extension tab >> Install New Extensions, paste the extension key into the install field and click **Install** button:
-![Installation](./docs/install.jpg)
-3. The "Extension dependencies" appears: your package is in Ready to install status. Click to **Proceed**:
-![Proceed](./docs/proceed.jpg)
-4. Wait untill you get the successful installation notification:
-![Complete notification](./docs/complete-notification.jpg)
-5. Click Refresh to finish.
-
 ### Copying files manually
 
 Copy all files and directories recursively from `src` directory into your document root.

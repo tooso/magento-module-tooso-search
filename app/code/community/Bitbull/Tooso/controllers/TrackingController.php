@@ -97,24 +97,24 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         }
 
         // Prevent browser cache
-        header('Expires: 0');
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Pragma: no-cache');
-        header('Cache-Control: post-check=0, pre-check=0');
+        $this->getResponse()->setHeader('Expires', '0');
+        $this->getResponse()->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        $this->getResponse()->setHeader('Pragma','no-cache');
+        $this->getResponse()->setHeader('Cache-Control', 'post-check=0, pre-check=0');
 
         // Set javascript content type
 
-        header('Content-Type: application/javascript');
+        $this->getResponse()->setHeader('Content-type', 'application/javascript');
 
-        // Render script
-        ?>
-        
-        var trackingScript = document.createElement('script');
-        trackingScript.type = 'text/javascript';
-        trackingScript.src = '<?=$tracking_url?>';
-        document.getElementsByTagName('body')[0].appendChild(trackingScript);
-
-        <?php
+        // Response script
+        $js_script="
+            var trackingScript = document.createElement('script');
+            trackingScript.type = 'text/javascript';
+            trackingScript.src = '$tracking_url';
+            trackingScript.id = 'tooso-tracking-pixel';
+            document.getElementsByTagName('body')[0].appendChild(trackingScript);
+        ";
+        $this->getResponse()->setBody($js_script);
 
         $this->_logger->debug('Tracking pixel: pixel added into page');
     }

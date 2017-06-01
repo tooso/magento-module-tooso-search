@@ -39,7 +39,7 @@ class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
         }
         $url = self::SCRIPT_ENDPOINT."product/".$this->_product_id;
         $this->_logger->debug('Tracking script: added tracking script');
-        return "<script async type='text/javascript' src='".$url."'></script>";
+        return "<script id='tooso-tracking-script' async type='text/javascript' src='".$url."'></script>";
     }
 
     public function setProductID($id){

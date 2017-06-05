@@ -16,6 +16,8 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
 
+    const XML_PATH_SERVER_SECRETKEY = 'tooso/server/secret_key';
+
     const XML_PATH_SERVER_API_BASEURL = 'tooso/server/api_base_url';
 
     protected $_fixedSearchString = null;
@@ -115,14 +117,19 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getClient($storeCode = null, $language = null)
     {
         $apiKey = Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY);
+        $secretKey = Mage::getStoreConfig(self::XML_PATH_SERVER_SECRETKEY);
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
         if($language == null){
             $language = Mage::app()->getLocale()->getLocaleCode();
+            /*
+            if(strpos($language, "_") !== false){
+                $language = explode("_", $language)[0];
+            }*/
         }
         if($storeCode == null){
             $storeCode = Mage::app()->getStore()->getCode();
         }
-        $client = new Bitbull_Tooso_Client($apiKey, $apiBaseUrl, $language, $storeCode);
+        $client = new Bitbull_Tooso_Client($apiKey, $secretKey, $apiBaseUrl, $language, $storeCode);
 
         $client->setLogger(Mage::helper('tooso/log'));
         $client->setReportSender(Mage::helper('tooso/log_send'));
@@ -148,6 +155,10 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         return array(
             'userId' => $userId,
             'sessionId' => $sessionId,
+            'ip' => '',
+            'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
+            'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
+            'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()
         );
     }
 

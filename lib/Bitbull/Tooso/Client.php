@@ -10,6 +10,9 @@ class Bitbull_Tooso_Client
     const HTTP_METHOD_POST = 'POST';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
+    const INDEX_DOC_TYPE = 0;
+    const INDEX_EXTENSION = "csv";
+
     /**
      * Base url for API calls
      *
@@ -37,6 +40,13 @@ class Bitbull_Tooso_Client
      * @var string
      */
     protected $_storeCode;
+
+    /**
+     * Secret API key
+     *
+     * @var null|string
+     */
+    protected $_secretKey;
 
     /**
      * Timeout for API connection wait
@@ -81,9 +91,10 @@ class Bitbull_Tooso_Client
      * @param string $storeCode
      * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $apiBaseUrl, $language, $storeCode)
+    public function __construct($apiKey, $secretKey, $apiBaseUrl, $language, $storeCode)
     {
         $this->_apiKey = $apiKey;
+        $this->_secretKey = $secretKey;
         $this->_baseUrl = $apiBaseUrl;
         $this->_language = $language;
         $this->_storeCode = $storeCode;
@@ -128,7 +139,7 @@ class Bitbull_Tooso_Client
             $query = null;
         }
 
-        $path = '/Search/search';
+        $path = '/search';
         $params = array_merge(
             array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
             (array)$extraParams
@@ -171,12 +182,13 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10, $extraParams = array())
     {
+        $path = '/suggest';
         $params = array_merge(
             array('query' => $query, 'limit' => $limit),
             (array)$extraParams
         );
 
-        $response = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, $params);
+        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 
         $result = new Bitbull_Tooso_Suggest_Result($response);
         return $result;
@@ -209,7 +221,13 @@ class Bitbull_Tooso_Client
             $this->_logger->debug("Start uploading zipfile");
         }
 
-        $response = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
+        $path = '/index';
+        $params = array([
+            "docType" => self::INDEX_DOC_TYPE,
+            "extension" => self::INDEX_EXTENSION,
+            "secretKey" => $this->_secretKey
+        ]);
+        $response = $this->_doRequest($path, self::HTTP_METHOD_POST, $params, $tmpZipFile, 300000);
         if($this->_logger){
             $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
         }
@@ -230,12 +248,13 @@ class Bitbull_Tooso_Client
      */
     public function productAddedToCart($sku, $extraParams)
     {
+        $path = '/addToCart';
         $params = array_merge(
             array('sku' => $sku),
             (array)$extraParams
         );
 
-        $response = $this->_doRequest('/User/addToCart', self::HTTP_METHOD_GET, $params);
+        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 
         $result = new Bitbull_Tooso_Suggest_Result($response);
         return $result;
@@ -249,7 +268,8 @@ class Bitbull_Tooso_Client
      */
     public function getResultTrackingUrl($params)
     {
-        return $this->_buildUrl("/User/clickOnResult", $params);
+        $path = '/feedback';
+        return $this->_buildUrl($path, $params);
     }
 
     /**
@@ -260,7 +280,8 @@ class Bitbull_Tooso_Client
      */
     public function getProductViewTrackingUrl($params)
     {
-        return $this->_buildUrl("/User/productView", $params);
+        $path = '/productView';
+        return $this->_buildUrl("productView", $params);
     }
 
     /**

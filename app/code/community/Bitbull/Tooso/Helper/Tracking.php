@@ -40,4 +40,34 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         return (int) $detect->isMobile();
     }
 
+    /**
+     * Get client remote address, if server is behind proxy use forwarded http
+     *
+     * @return string
+     */
+    public function getRemoteAddr(){
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[count($ips) - 1]);
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
+
+    /**
+     * Get last page visited
+     */
+    public function getLastPage(){
+        return Mage::getSingleton('core/session')->getLastUrl();
+    }
+
+    /**
+     * Get current page
+     */
+    public function getCurrentPage(){
+        return Mage::helper('core/url')->getCurrentUrl();
+    }
+
 }

@@ -161,9 +161,9 @@ class Bitbull_Tooso_Model_Observer
             $sku = $product->getSku();
 
             $this->_client->productAddedToCart($sku, $profilingParams);
-            $this->_logger->debug('Cart Traking: '.$sku.' added to cart');
+            $this->_logger->debug('Cart Tracking: '.$sku.' added to cart');
         }else{
-            $this->_logger->debug('Cart Traking: can\'t find product param');
+            $this->_logger->debug('Cart Tracking: can\'t find product param');
         }
     }
 

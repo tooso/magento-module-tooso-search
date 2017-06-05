@@ -155,9 +155,8 @@ class Bitbull_Tooso_Model_Observer
             return;
         }
 
-        $productId = Mage::app()->getRequest()->getParam('product', null);
-        if($productId != null){
-            $product = Mage::getModel('catalog/product')->load($productId);
+        $product = $observer->getEvent()->getProduct();
+        if($product != null){
             $profilingParams = Mage::helper('tooso')->getProfilingParams();
             $sku = $product->getSku();
 

@@ -155,16 +155,15 @@ class Bitbull_Tooso_Model_Observer
             return;
         }
 
-        $productId = Mage::app()->getRequest()->getParam('product', null);
-        if($productId != null){
-            $product = Mage::getModel('catalog/product')->load($productId);
+        $product = $observer->getEvent()->getProduct();
+        if($product != null){
             $profilingParams = Mage::helper('tooso')->getProfilingParams();
             $sku = $product->getSku();
 
             $this->_client->productAddedToCart($sku, $profilingParams);
-            $this->_logger->debug('Cart Traking: '.$sku.' added to cart');
+            $this->_logger->debug('Cart Tracking: '.$sku.' added to cart');
         }else{
-            $this->_logger->debug('Cart Traking: can\'t find product param');
+            $this->_logger->debug('Cart Tracking: can\'t find product param');
         }
     }
 

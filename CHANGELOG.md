@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Tracking product views using simple product instead of configurable one
+
 ## [2.0.1]
 - Get base url to point correct controller endpoint
 

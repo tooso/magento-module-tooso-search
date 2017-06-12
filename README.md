@@ -45,18 +45,6 @@ Mobile Detect class is globally reachable as `Bitbull_Mobile_Detect`.
 
 You can install the extension with following methods:
 
-### Through Magento Connect
-
-1. Log in to your Admin Panel, navigate through System -> Magento Connect -> Magento Connect Manager, then login to the Magento Connect Manager with your admin username and password:
-![Login](./docs/login.jpg)
-2. In the Extension tab >> Install New Extensions, paste the extension key into the install field and click **Install** button:
-![Installation](./docs/install.jpg)
-3. The "Extension dependencies" appears: your package is in Ready to install status. Click to **Proceed**:
-![Proceed](./docs/proceed.jpg)
-4. Wait untill you get the successful installation notification:
-![Complete notification](./docs/complete-notification.jpg)
-5. Click Refresh to finish.
-
 ### Copying files manually
 
 Copy all files and directories recursively from `src` directory into your document root.
@@ -91,13 +79,6 @@ Finally, you can launch the command `composer update` inside your project root d
 
 Regardless the method you choose, after installation you need to clear the cache and logout from the admin panel and then login again.
 
-## Module Configuration
-
-1. Access the extension configuration under System -> Configuration -> Tooso Search Engine.
-2. Insert your API key into __API key__ field under __API Configuration__ and enable Tooso Search setting to __Yes__ the field __Enable Search__ under __Active Tooso__.
-3. If you are in the Early Adopter phase, it's highly advisable to leave enabled __Send report__ and __Force logging__ configurations under __API Configuration__. This will give to the Tooso support team more information for help you troubleshoot in case of errors.
-**Please note:** to be able to send report to Tooso, your Magento installation need to be able to send email.
-
 ## Customize reindex flow
 
 By default, the catalog reindex process start every 15 minutes. This is done through the standard Magento cron framework (more info [here](http://www.webguys.de/magento-1/tuerchen-08-magento-cron-demystified)).
@@ -119,3 +100,42 @@ You can customize the frequency of reindex schedule editing the file `app/code/c
 ```
 
 you can change the value of node `<cron_expr>` using any standard [cron expression](https://en.wikipedia.org/wiki/Cron#CRON_expression).
+
+## Module Configuration
+
+### Request your API KEY
+Send an email to info@tooso.ai to request your APIKEY
+
+### Set your API KEY: 
+1. Under __API Configuration__
+* Insert your API key into __API key__ field
+* Insert __http://v{apiVersionWithNoDot}.api.tooso.ai__ into __API base url__ field. The current supported version is 1, so the placeholder {apiVersionWithNoDot} should be replaced by 1.
+* __Send report__: __YES__ to send a report to Tooso when an API error occourred	
+* __Force logging__:  __YES__ to force logging to {{base_dir}}/var/log/tooso_search.log even when logging is disabled
+* __Debug mode__:  __Yes__ to enable more verbose logging for debug purpose
+2. Save configuration
+* If you are in the Early Adopter phase, it's highly advisable to leave enabled __Send report__ and __Force logging__ configurations under __API Configuration__. This will give to the Tooso support team more information for help you troubleshoot in case of errors.
+**Please note:** to be able to send report to Tooso, your Magento installation need to be able to send email.
+![API configuration](./docs/apiconfiguration.png)
+
+### Integrate your catalog
+1. Access the extension configuration under System -> Configuration -> Tooso Search Engine.
+2. Under __Activate Tooso__ set the parameters as follow:
+* Enable Search: __NO__
+* Enable Indexing: __YES__
+* Enable Tracking: __NO__
+3. Save configuration
+![Integrate your catalog](./docs/indexing.png)
+
+### Activate your Search Bar and your tracking
+Once your catalog has been integrated with Tooso, you will get a notification from a member of Tooso’s team and you can enable the search and the tracking
+1. Access the extension configuration under System -> Configuration -> Tooso Search Engine.
+2. Under __Activate Tooso__ set the parameters as follow:
+* Enable Search: __YES__
+* Enable Indexing: __YES__
+* Enable Tracking: __YES__
+3. Save configuration
+![Seaching and Tracking](./docs/searchingtracking.png)
+
+**IMPORTANT**: For any question about our early adopters program, reach out anytime to our CCO mattia.pavoni@tooso.ai; for technical enquiries, ping directly our CTO jacopo.tagliabue@tooso.ai. 
+

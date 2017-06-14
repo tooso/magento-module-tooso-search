@@ -64,7 +64,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
                 $params = array(
                     "searchId" => $toosoSearchId,
-                    "resultId" => $sku,
+                    "objectId" => $sku,
                     "rank" => $rank,
                     "order" => $order,
                     "isMobile" => Mage::helper('tooso/tracking')->isMobile()

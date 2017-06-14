@@ -250,7 +250,7 @@ class Bitbull_Tooso_Client
     {
         $path = '/addToCart';
         $params = array_merge(
-            array('sku' => $sku),
+            array('objectId' => $sku),
             (array)$extraParams
         );
 

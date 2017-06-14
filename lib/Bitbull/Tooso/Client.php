@@ -281,7 +281,7 @@ class Bitbull_Tooso_Client
     public function getProductViewTrackingUrl($params)
     {
         $path = '/productView';
-        return $this->_buildUrl("productView", $params);
+        return $this->_buildUrl($path, $params);
     }
 
     /**
@@ -416,7 +416,12 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception($message, 0);
         }
 
-        $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
+        $baseUrl = $this->_baseUrl;
+        if(substr($baseUrl, -1) != '/'){
+            $baseUrl .= '/';
+        }
+
+        $url = $baseUrl . $this->_apiKey . $path;
 
         $queryString = array(
             'language=' . $this->_language,

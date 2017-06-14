@@ -85,7 +85,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
             $profilingParams = Mage::helper('tooso')->getProfilingParams();
 
             $params = array(
-                "sku" => $sku,
+                "objectId" => $sku,
                 "sessionId" => $profilingParams["sessionId"],
                 "userId" => $profilingParams["userId"],
                 "isMobile" => Mage::helper('tooso/tracking')->isMobile()

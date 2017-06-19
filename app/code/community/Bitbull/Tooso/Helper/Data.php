@@ -146,8 +146,10 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return array(
+            'ip' => Mage::helper('core/http')->getRemoteAddr(),
             'userId' => $userId,
             'sessionId' => $sessionId,
+            'isMobile' => Mage::helper('tooso/tracking')->isMobile()
         );
     }
 

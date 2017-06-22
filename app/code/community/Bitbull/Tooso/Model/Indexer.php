@@ -175,6 +175,16 @@ class Bitbull_Tooso_Model_Indexer
             );
         }
 
+        if(in_array('qty', $attributes)){
+            $productCollection->joinField('qty',
+                'cataloginventory/stock_item',
+                'qty',
+                'product_id=entity_id',
+                '{{table}}.stock_id=1',
+                'left'
+            );
+        }
+
         // create new writer object
         $writer = $this->_getWriter();
         $writer->setHeaderCols($headers);

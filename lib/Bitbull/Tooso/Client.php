@@ -253,6 +253,9 @@ class Bitbull_Tooso_Client
             $trackingParams,
             (array)$extraParams
         );
+        if($this->_logger) {
+            $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
+        }
         return $this->_buildUrl("/User/clickOnResult", $params);
     }
 
@@ -268,6 +271,9 @@ class Bitbull_Tooso_Client
             $trackingParams,
             (array)$extraParams
         );
+        if($this->_logger) {
+            $this->_logger->debug('Tracking pixel: Params: ' . print_r($params, true));
+        }
         return $this->_buildUrl("/User/productView", $params);
     }
 

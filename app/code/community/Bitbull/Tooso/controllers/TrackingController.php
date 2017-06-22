@@ -69,7 +69,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     "rank" => $rank,
                     "order" => $order
                 );
-                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
+
                 $tracking_url = $this->_client->getResultTrackingUrl($params, $profilingParams);
 
             }else{
@@ -87,7 +87,6 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                 "sku" => $sku
             );
 
-            $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
             $tracking_url = $this->_client->getProductViewTrackingUrl($params, $profilingParams);
 
         }

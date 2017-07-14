@@ -261,12 +261,12 @@ class Bitbull_Tooso_Client
     }
 
     /**
-     * Get Tracking URL
+     * Tracking result
      *
      * @param string $params tracking parameters
-     * @return string tracking URL
+     * @return Bitbull_Tooso_Response
      */
-    public function getResultTrackingUrl($trackingParams, $extraParams)
+    public function resultTracking($trackingParams, $extraParams)
     {
         $path = '/feedback';
         $params = array_merge(
@@ -277,12 +277,12 @@ class Bitbull_Tooso_Client
     }
 
     /**
-     * Get Tracking URL
+     * Tracking product view
      *
      * @param string $params tracking parameters
-     * @return string tracking URL
+     * @return Bitbull_Tooso_Response
      */
-    public function getProductViewTrackingUrl($trackingParams, $extraParams)
+    public function productViewTracking($trackingParams, $extraParams)
     {
         $path = '/productView';
         $params = array_merge(

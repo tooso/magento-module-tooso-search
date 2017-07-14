@@ -70,6 +70,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     "order" => $order
                 );
                 $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
+
                 $tracking_url = $this->_client->getResultTrackingUrl($params, $profilingParams);
 
             }else{

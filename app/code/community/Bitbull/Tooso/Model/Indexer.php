@@ -165,11 +165,10 @@ class Bitbull_Tooso_Model_Indexer
 
         }
 
-        if(in_array('is_in_stock', $attributes)) {
-            $productCollection->joinField('is_in_stock',
-                'cataloginventory/stock_item',
-                'is_in_stock',
+        if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
+            $productCollection->joinTable('cataloginventory/stock_item',
                 'product_id=entity_id',
+                ['is_in_stock', 'qty'],
                 '{{table}}.stock_id=1',
                 'left'
             );

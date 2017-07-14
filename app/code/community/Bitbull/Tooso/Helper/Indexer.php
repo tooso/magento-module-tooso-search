@@ -102,7 +102,8 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             "is_in_stock" => 'Is in stock',
             "variants" => 'Variants',
             "categories" => 'Categories',
-            "image" => "Image"
+            "image" => "Image",
+            "qty" => "Stock Quantity"
         ];
 
         /**

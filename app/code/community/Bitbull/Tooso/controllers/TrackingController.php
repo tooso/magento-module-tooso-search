@@ -19,25 +19,28 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         $this->_client = Mage::helper('tooso')->getClient();
     }
 
-    public function pixelAction() {
+    /**
+     * Tracking product view
+     */
+    public function productAction() {
 
-        $product_id = $this->getRequest()->getParam('product');
-        if($product_id == null){
+        $productId = $this->getRequest()->getParam('id');
+        if($productId == null){
             $this->_logger->warn('Tracking: product param not found');
             return;
         }
 
-        $current_product = Mage::getModel('catalog/product')->load($product_id);
-        if($current_product == null){
-            $this->_logger->warn('Tracking: product not found with id '.$product_id);
+        $currentProduct = Mage::getModel('catalog/product')->load($productId);
+        if($currentProduct == null){
+            $this->_logger->warn('Tracking: product not found with id '.$productId);
             return;
         }
 
         if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
 
             $this->_logger->debug('Tracking: elaborating result tracking pixel..');
-            $id = $current_product->getId();
-            $sku = $current_product->getSku();
+            $id = $currentProduct->getId();
+            $sku = $currentProduct->getSku();
             $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
 
             if($toosoSearchId){
@@ -62,7 +65,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     $order = "relevance";
                 }
 
-                $profilingParams = Mage::helper('tooso')->getProfilingParams();
+                $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
                 $params = array(
                     "searchId" => $toosoSearchId,
                     "objectId" => $sku,
@@ -82,8 +85,8 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
             $this->_logger->debug('Tracking: elaborating product view tracking pixel..');
 
-            $sku = $current_product->getSku();
-            $profilingParams = Mage::helper('tooso')->getProfilingParams();
+            $sku = $currentProduct->getSku();
+            $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
             $params = array(
                 "objectId" => $sku
             );
@@ -92,6 +95,32 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         }
 
+        $this->_setEmptyScriptResponse();
+        $this->_logger->debug('Tracking: product pixel added into page');
+    }
+
+    /**
+     * Tracking page view
+     */
+    public function pageAction(){
+        $currentPageIdentifier = $this->getRequest()->getParam('current');
+        $lastPageIdentifier = $this->getRequest()->getParam('last');
+
+        $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+        $params = array(
+            "lastPage" => urldecode($lastPageIdentifier),
+            "currentPage" => urldecode($currentPageIdentifier)
+        );
+        $this->_client->pageViewTracking($params, $profilingParams);
+
+        $this->_logger->debug('Tracking: page pixel added into page');
+        $this->_setEmptyScriptResponse();
+    }
+
+    /**
+     * Response with
+     */
+    protected function _setEmptyScriptResponse(){
         // Prevent browser cache
         $this->getResponse()->setHeader('Expires', '0');
         $this->getResponse()->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
@@ -103,8 +132,6 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         // Response with empty script
         $this->getResponse()->setBody("");
-
-        $this->_logger->debug('Tracking: pixel added into page');
     }
 
 }

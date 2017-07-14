@@ -246,18 +246,15 @@ class Bitbull_Tooso_Client
      * @param array $extraParams
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function productAddedToCart($sku, $extraParams)
+    public function productAddedToCart($trackingParams, $extraParams)
     {
         $path = '/addToCart';
         $params = array_merge(
-            array('objectId' => $sku),
+            $trackingParams,
             (array)$extraParams
         );
 
-        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-
-        $result = new Bitbull_Tooso_Suggest_Result($response);
-        return $result;
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
 
     /**
@@ -273,7 +270,7 @@ class Bitbull_Tooso_Client
             $trackingParams,
             (array)$extraParams
         );
-        return $this->_buildUrl($path, $params);
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
 
     /**
@@ -289,7 +286,23 @@ class Bitbull_Tooso_Client
             $trackingParams,
             (array)$extraParams
         );
-        return $this->_buildUrl($path, $params);
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+    }
+
+    /**
+     * Tracking page view
+     *
+     * @param string $params tracking parameters
+     * @return Bitbull_Tooso_Response
+     */
+    public function pageViewTracking($trackingParams, $extraParams)
+    {
+        $path = '/pageView';
+        $params = array_merge(
+            $trackingParams,
+            (array)$extraParams
+        );
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
 
     /**

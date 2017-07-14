@@ -76,21 +76,35 @@ class Bitbull_Tooso_Model_Observer
     }
 
     /**
-     * Add tracking script that point to controller action endpoint
+     * Add product tracking script that point to relative controller action endpoint
      * @param  Varien_Event_Observer $observer
      */
-    public function includeTrackingScript(Varien_Event_Observer $observer){
+    public function includeProductTrackingScript(Varien_Event_Observer $observer){
         if(!Mage::helper('tooso')->isTrackingEnabled()){
             return;
         }
-        $current_product = Mage::registry('current_product');
-        if($current_product != null) {
+        $currentProduct = Mage::registry('current_product');
+        if($currentProduct != null) {
             $layout = Mage::app()->getLayout();
-            $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($current_product->getId());
+            $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
             $layout->getBlock('before_body_end')->append($block);
         }else{
             $this->_logger->debug('Tracking script: product not found in request');
         }
+    }
+
+    /**
+     * Add page tracking script that point to relative controller action endpoint
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includePageTrackingScript(Varien_Event_Observer $observer){
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+        $layout = Mage::app()->getLayout();
+        $currentPageID = Mage::getSingleton('cms/page')->getIdentifier();
+        $block = Mage::helper('tooso/tracking')->getPageTrackingPixelBlock($currentPageID);
+        $layout->getBlock('before_body_end')->append($block);
     }
 
     /**
@@ -157,10 +171,12 @@ class Bitbull_Tooso_Model_Observer
 
         $product = $observer->getEvent()->getProduct();
         if($product != null){
-            $profilingParams = Mage::helper('tooso')->getProfilingParams();
             $sku = $product->getSku();
-
-            $this->_client->productAddedToCart($sku, $profilingParams);
+            $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+            $params = array(
+                'objectId' => $sku
+            );
+            $this->_client->productAddedToCart($params, $profilingParams);
             $this->_logger->debug('Cart Tracking: '.$sku.' added to cart');
         }else{
             $this->_logger->debug('Cart Tracking: can\'t find product param');

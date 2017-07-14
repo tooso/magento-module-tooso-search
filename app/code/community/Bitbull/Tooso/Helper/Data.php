@@ -141,7 +141,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @return array
     */
-    public function getProfilingParams()
+    public function getProfilingParams($full = true)
     {
         $customerSession = Mage::getSingleton('customer/session');
         $sessionId = Mage::getSingleton('core/session')->getSessionId();
@@ -152,15 +152,24 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             $userId = $sessionId;
         }
 
-        return array(
+        $params = array(
             'ip' => Mage::helper('core/http')->getRemoteAddr(),
             'userId' => $userId,
-            'sessionId' => $sessionId,
-            'ip' => Mage::helper('tooso/tracking')->getRemoteAddr(),
-            'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
-            'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
-            'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()
+            'sessionId' => $sessionId
         );
+
+        if($full){
+            $params = array_merge(
+                $params,
+                array(
+                    'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
+                    'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
+                    'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()
+                )
+            );
+        }
+
+        return $params;
     }
 
     /**

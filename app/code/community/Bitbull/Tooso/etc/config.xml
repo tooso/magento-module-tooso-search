@@ -88,13 +88,22 @@
             </checkout_cart_add_product_complete>
             <controller_action_layout_render_before_catalog_product_view>
                 <observers>
-                    <tooso_tracking_pixel>
+                    <tooso_tracking_pixel_product>
                         <type>singleton</type>
                         <class>tooso/observer</class>
-                        <method>includeTrackingScript</method>
-                    </tooso_tracking_pixel>
+                        <method>includeProductTrackingScript</method>
+                    </tooso_tracking_pixel_product>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_tracking_pixel_page>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>includePageTrackingScript</method>
+                    </tooso_tracking_pixel_page>
+                </observers>
+            </controller_action_layout_render_before>
         </events>
         <template>
             <email>

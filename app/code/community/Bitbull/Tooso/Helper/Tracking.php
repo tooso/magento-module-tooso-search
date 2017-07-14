@@ -8,15 +8,29 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 {
 
     /**
-     * Create TrackingPixel Block
+     * Create Product TrackingPixel Block
      *
      * @param $product_id
      * @return Bitbull_Tooso_Block_TrackingPixel
      */
-    public function getTrackingPixelBlock($product_id){
+    public function getProductTrackingPixelBlock($product_id){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/trackingPixel');
+        $block = $layout->createBlock('tooso/trackingPixel_product');
         $block->setProductID($product_id);
+        return $block;
+    }
+
+    /**
+     * Create Page TrackingPixel Block
+     *
+     * @param $product_id
+     * @return Bitbull_Tooso_Block_TrackingPixel
+     */
+    public function getPageTrackingPixelBlock($page_id){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/trackingPixel_page');
+        $block->setCurrentPage($this->getCurrentPage());
+        $block->setLastPage($this->getLastPage());
         return $block;
     }
 
@@ -60,7 +74,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      * Get last page visited
      */
     public function getLastPage(){
-        return Mage::getSingleton('core/session')->getLastUrl();
+        return Mage::app()->getRequest()->getServer('HTTP_REFERER');
     }
 
     /**

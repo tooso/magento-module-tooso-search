@@ -13,6 +13,8 @@ class Bitbull_Tooso_Client
     const INDEX_DOC_TYPE = 0;
     const INDEX_EXTENSION = "csv";
 
+    const ARRAY_VALUES_SEPARATOR = ',';
+
     /**
      * Base url for API calls
      *
@@ -303,6 +305,40 @@ class Bitbull_Tooso_Client
             (array)$extraParams
         );
         return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+    }
+
+    /**
+     * Checkout page view
+     *
+     * @param string $objectIds skus
+     * @param string $prices prices
+     * @param string $qtys quantities
+     * @return Bitbull_Tooso_Response
+     */
+    public function checkoutTracking($objectIds, $prices, $qtys, $extraParams)
+    {
+        if(is_array($objectIds) && is_array($prices) && is_array($qtys)){
+            if(sizeof($objectIds) == sizeof($prices) && sizeof($objectIds) == sizeof($qtys)){
+
+                $trackingParams = array(
+                    'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $objectIds),
+                    'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
+                    'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
+                );
+
+                $path = '/checkOut';
+                $params = array_merge(
+                    $trackingParams,
+                    (array)$extraParams
+                );
+                return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+
+            }else{
+                throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must have the same length');
+            }
+        }else{
+            throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must be array');
+        }
     }
 
     /**

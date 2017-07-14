@@ -38,7 +38,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
 
-            $this->_logger->debug('Tracking: elaborating result tracking pixel..');
+            $this->_logger->debug('Tracking: elaborating result..');
             $id = $currentProduct->getId();
             $sku = $currentProduct->getSku();
             $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
@@ -72,7 +72,6 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     "rank" => $rank,
                     "order" => $order
                 );
-                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
 
                 $this->_client->resultTracking($params, $profilingParams);
 
@@ -83,7 +82,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         }else{ // request not from search page
 
-            $this->_logger->debug('Tracking: elaborating product view tracking pixel..');
+            $this->_logger->debug('Tracking: elaborating product view..');
 
             $sku = $currentProduct->getSku();
             $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
@@ -95,8 +94,8 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         }
 
+        $this->_logger->debug('Tracking: tracked product view '.$sku);
         $this->_setEmptyScriptResponse();
-        $this->_logger->debug('Tracking: product pixel added into page');
     }
 
     /**
@@ -113,7 +112,32 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         );
         $this->_client->pageViewTracking($params, $profilingParams);
 
-        $this->_logger->debug('Tracking: page pixel added into page');
+        $this->_logger->debug('Tracking: tracked page view '.$currentPageIdentifier);
+        $this->_setEmptyScriptResponse();
+    }
+
+    /**
+     * Tracking checkout success page
+     */
+    public function checkoutAction(){
+        $orderId = $this->getRequest()->getParam('order');
+        $order = Mage::getSingleton('sales/order')->loadByIncrementId($orderId);
+
+        $objectIds = array();
+        $prices = array();
+        $qtys = array();
+
+        $items = $order->getAllItems();
+        foreach ($items as $item) {
+            array_push($objectIds, $item->getSku());
+            array_push($prices, $item->getPrice());
+            array_push($qtys, $item->getQtyOrdered());
+        }
+
+        $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+        $this->_client->checkoutTracking($objectIds, $prices, $qtys, $profilingParams);
+
+        $this->_logger->debug('Tracking: tracked checkout order '.$orderId);
         $this->_setEmptyScriptResponse();
     }
 

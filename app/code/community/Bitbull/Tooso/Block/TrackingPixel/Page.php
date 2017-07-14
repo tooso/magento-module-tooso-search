@@ -30,7 +30,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Page extends Mage_Core_Block_Template
 
         $this->_logger = Mage::helper('tooso/log');
 
-        $this->setBlockId('tooso_tracking_pixel');
+        $this->setBlockId('tooso_tracking_pixel_page');
         $this->addCacheTag(array(
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG
@@ -49,7 +49,6 @@ class Bitbull_Tooso_Block_TrackingPixel_Page extends Mage_Core_Block_Template
             $url .= "&last=".urlencode($this->_lastPage);
         }
 
-        $this->_logger->debug('Tracking script: added tracking script');
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

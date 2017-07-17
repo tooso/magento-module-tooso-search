@@ -98,7 +98,7 @@ class Bitbull_Tooso_Client
         $this->_apiKey = $apiKey;
         $this->_secretKey = $secretKey;
         $this->_baseUrl = $apiBaseUrl;
-        $this->_language = $language;
+        $this->_language = strtolower($language);
         $this->_storeCode = $storeCode;
     }
 

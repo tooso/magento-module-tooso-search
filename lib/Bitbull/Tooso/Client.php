@@ -320,6 +320,11 @@ class Bitbull_Tooso_Client
         if(is_array($objectIds) && is_array($prices) && is_array($qtys)){
             if(sizeof($objectIds) == sizeof($prices) && sizeof($objectIds) == sizeof($qtys)){
 
+                // Parse eventually float value in quantities to integer
+                for($i = 0; $i < sizeof($qtys); $i++){
+                    $qtys[$i] = intval($qtys[$i]);
+                }
+
                 $trackingParams = array(
                     'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $objectIds),
                     'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),

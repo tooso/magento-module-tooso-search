@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 - Tracking product views using simple product instead of configurable one
+- Added stock quantity into indexer exported CSV
+- Added tracking IP param
+- Tracking API called using S2S approach
 
 ## [2.0.1]
 - Get base url to point correct controller endpoint

@@ -247,8 +247,15 @@ class Bitbull_Tooso_Client
      * @param string $params tracking parameters
      * @return string tracking URL
      */
-    public function getResultTrackingUrl($params)
+    public function getResultTrackingUrl($trackingParams, $extraParams)
     {
+        $params = array_merge(
+            $trackingParams,
+            (array)$extraParams
+        );
+        if($this->_logger) {
+            $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
+        }
         return $this->_buildUrl("/User/clickOnResult", $params);
     }
 
@@ -258,8 +265,15 @@ class Bitbull_Tooso_Client
      * @param string $params tracking parameters
      * @return string tracking URL
      */
-    public function getProductViewTrackingUrl($params)
+    public function getProductViewTrackingUrl($trackingParams, $extraParams)
     {
+        $params = array_merge(
+            $trackingParams,
+            (array)$extraParams
+        );
+        if($this->_logger) {
+            $this->_logger->debug('Tracking pixel: Params: ' . print_r($params, true));
+        }
         return $this->_buildUrl("/User/productView", $params);
     }
 

@@ -62,15 +62,15 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     $order = "relevance";
                 }
 
+                $profilingParams = Mage::helper('tooso')->getProfilingParams();
                 $params = array(
                     "searchId" => $toosoSearchId,
                     "resultId" => $sku,
                     "rank" => $rank,
-                    "order" => $order,
-                    "isMobile" => Mage::helper('tooso/tracking')->isMobile()
+                    "order" => $order
                 );
-                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-                $tracking_url = $this->_client->getResultTrackingUrl($params);
+
+                $tracking_url = $this->_client->getResultTrackingUrl($params, $profilingParams);
 
             }else{
                 $this->_logger->warn('Tracking pixel: search id not found in session');
@@ -83,16 +83,11 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
             $sku = $current_product->getSku();
             $profilingParams = Mage::helper('tooso')->getProfilingParams();
-
             $params = array(
-                "sku" => $sku,
-                "sessionId" => $profilingParams["sessionId"],
-                "userId" => $profilingParams["userId"],
-                "isMobile" => Mage::helper('tooso/tracking')->isMobile()
+                "sku" => $sku
             );
 
-            $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-            $tracking_url = $this->_client->getProductViewTrackingUrl($params);
+            $tracking_url = $this->_client->getProductViewTrackingUrl($params, $profilingParams);
 
         }
 

@@ -76,7 +76,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         $product = $observer->getEvent()->getProduct();
         if($product != null){
             $sku = $product->getSku();
-            $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+            $profilingParams = Mage::helper('tooso')->getProfilingParams();
             $params = array(
                 'objectId' => $sku
             );

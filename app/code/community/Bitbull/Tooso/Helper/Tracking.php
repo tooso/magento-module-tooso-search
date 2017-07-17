@@ -16,6 +16,8 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function getProductTrackingPixelBlock($productId){
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/trackingPixel_product');
+        $block->setCurrentPage($this->getCurrentPage());
+        $block->setLastPage($this->getLastPage());
         $block->setProductID($productId);
         return $block;
     }
@@ -42,6 +44,8 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function getCheckoutTrackingPixelBlock($orderId){
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/trackingPixel_checkout');
+        $block->setCurrentPage($this->getCurrentPage());
+        $block->setLastPage($this->getLastPage());
         $block->setOrderId($orderId);
         return $block;
     }

@@ -4,8 +4,9 @@
  * @author Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Block_TrackingPixel_Product extends Mage_Core_Block_Template
+class Bitbull_Tooso_Block_TrackingPixel_Product extends Bitbull_Tooso_Block_TrackingPixel
 {
+    const BLOCK_ID = 'tooso_tracking_pixel_page';
     const SCRIPT_ID = 'tooso-tracking-product';
     const SCRIPT_ENDPOINT = '/tooso/tracking/product/';
 
@@ -19,26 +20,13 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Mage_Core_Block_Template
      */
     protected $_productId = null;
 
-    public function _construct()
-    {
-        parent::_construct();
-
-        $this->_logger = Mage::helper('tooso/log');
-
-        $this->setBlockId('tooso_tracking_pixel_product');
-        $this->addCacheTag(array(
-            Mage::app()->getStore()->getId(),
-            Mage_Catalog_Model_Product::CACHE_TAG
-        ));
-    }
-
     protected function _toHtml()
     {
         if($this->_productId == null){
             $this->_logger->warn('Tracking script: product_id not set');
             return;
         }
-        $url = self::SCRIPT_ENDPOINT."id/".$this->_productId;
+        $url = self::SCRIPT_ENDPOINT."id/".$this->_productId.'/'.$this->_getPageParams();
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

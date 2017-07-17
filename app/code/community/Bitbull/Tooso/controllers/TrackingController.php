@@ -65,7 +65,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
                     $order = "relevance";
                 }
 
-                $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+                $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
                 $params = array(
                     "searchId" => $toosoSearchId,
                     "objectId" => $sku,
@@ -85,7 +85,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
             $this->_logger->debug('Tracking: elaborating product view..');
 
             $sku = $currentProduct->getSku();
-            $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+            $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
             $params = array(
                 "objectId" => $sku
             );
@@ -102,17 +102,13 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
      * Tracking page view
      */
     public function pageAction(){
-        $currentPageIdentifier = $this->getRequest()->getParam('current');
-        $lastPageIdentifier = $this->getRequest()->getParam('last');
 
-        $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
-        $params = array(
-            "lastPage" => urldecode($lastPageIdentifier),
-            "currentPage" => urldecode($currentPageIdentifier)
-        );
+        $pages = $this->_getPageParams();
+        $profilingParams = Mage::helper('tooso')->getProfilingParams($pages);
+        $params = array();
         $this->_client->pageViewTracking($params, $profilingParams);
 
-        $this->_logger->debug('Tracking: tracked page view '.$currentPageIdentifier);
+        $this->_logger->debug('Tracking: tracked page view '.$pages['currentPage']);
         $this->_setEmptyScriptResponse();
     }
 
@@ -134,7 +130,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
             array_push($qtys, $item->getQtyOrdered());
         }
 
-        $profilingParams = Mage::helper('tooso')->getProfilingParams(false);
+        $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
         $this->_client->checkoutTracking($objectIds, $prices, $qtys, $profilingParams);
 
         $this->_logger->debug('Tracking: tracked checkout order '.$orderId);
@@ -142,7 +138,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
     }
 
     /**
-     * Response with
+     * Response with empty script
      */
     protected function _setEmptyScriptResponse(){
         // Prevent browser cache
@@ -156,6 +152,19 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         // Response with empty script
         $this->getResponse()->setBody("");
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getPageParams(){
+        $currentPageIdentifier = base64_decode($this->getRequest()->getParam('currentPage'));
+        $lastPageIdentifier = base64_decode($this->getRequest()->getParam('lastPage'));
+
+        return array(
+            'lastPage' => $currentPageIdentifier,
+            'currentPage' => $lastPageIdentifier
+        );
     }
 
 }

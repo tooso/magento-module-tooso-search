@@ -137,11 +137,14 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $client;
     }
-    
+
     /**
+     * Get profiling parameters
+     *
+     * @param null|array $override
      * @return array
-    */
-    public function getProfilingParams($full = true)
+     */
+    public function getProfilingParams($override = null)
     {
         $customerSession = Mage::getSingleton('customer/session');
         $sessionId = Mage::getSingleton('core/session')->getSessionId();
@@ -155,18 +158,16 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $params = array(
             'ip' => Mage::helper('core/http')->getRemoteAddr(),
             'userId' => $userId,
-            'sessionId' => $sessionId
+            'sessionId' => $sessionId,
+            'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
+            'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
+            'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()
         );
 
-        if($full){
-            $params = array_merge(
-                $params,
-                array(
-                    'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
-                    'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
-                    'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()
-                )
-            );
+        if($override != null && is_array($override)){
+            foreach ($override as $key => $value){
+                $params[$key] = $value;
+            }
         }
 
         return $params;

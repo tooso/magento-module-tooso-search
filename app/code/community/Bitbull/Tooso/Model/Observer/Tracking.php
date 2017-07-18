@@ -18,12 +18,19 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
         $currentProduct = Mage::registry('current_product');
         if($currentProduct != null) {
+
             $layout = Mage::app()->getLayout();
-            $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
+            if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){
+                $block = Mage::helper('tooso/tracking')->getResultTrackingPixelBlock($currentProduct->getId());
+                $this->_logger->debug('Tracking result: added tracking script');
+            }else{
+                $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
+                $this->_logger->debug('Tracking product: added tracking script');
+            }
             $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
-            $this->_logger->debug('Tracking product: added tracking script');
+
         }else{
-            $this->_logger->warn('Tracking product view: product not found in request');
+            $this->_logger->warn('Tracking product: product not found in request');
         }
     }
 
@@ -56,7 +63,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             $layout = Mage::app()->getLayout();
             $block = Mage::helper('tooso/tracking')->getCheckoutTrackingPixelBlock($orderId);
             $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
-            $this->_logger->debug('Tracking cart: added tracking script');
+            $this->_logger->debug('Tracking checkout: added tracking script');
         }else{
             $this->_logger->warn('Tracking checkout: can\'t find order id in session');
         }
@@ -77,13 +84,10 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         if($product != null){
             $sku = $product->getSku();
             $profilingParams = Mage::helper('tooso')->getProfilingParams();
-            $params = array(
-                'objectId' => $sku
-            );
-            $this->_client->productAddedToCart($params, $profilingParams);
-            $this->_logger->debug('Tracking cart: added tracking script');
+            $this->_client->productAddedToCart($sku, $profilingParams);
+            $this->_logger->debug('Tracking cart: tracked '.$sku);
         }else{
-            $this->_logger->warn('Tracking cart: can\'t find product param');
+            $this->_logger->warn('Tracking cart: product param not found');
         }
     }
 

@@ -95,7 +95,7 @@
                     </tooso_tracking_pixel_page>
                 </observers>
             </controller_action_layout_render_before>
-            <controller_action_layout_render_before_checkout_onepage_success>
+            <controller_action_layout_render_before_checkouttester_index_success>
                 <observers>
                     <tooso_track_checkout>
                         <type>singleton</type>
@@ -103,7 +103,7 @@
                         <method>trackCheckout</method>
                     </tooso_track_checkout>
                 </observers>
-            </controller_action_layout_render_before_checkout_onepage_success>
+            </controller_action_layout_render_before_checkouttester_index_success>
             <checkout_cart_add_product_complete>
                 <observers>
                     <tooso_track_add_to_cart>

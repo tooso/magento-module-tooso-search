@@ -151,7 +151,11 @@ class Bitbull_Tooso_Client
             $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
             $result = new Bitbull_Tooso_Search_Result($response);
             if ($this->_sessionStorage) {
-                $this->_sessionStorage->setSearchId($result->getSearchId());
+                $searchId = $result->getSearchId();
+                $this->_sessionStorage->setSearchId($searchId);
+                if($this->_logger){
+                    $this->_logger->debug('Session: set search id to '.$searchId);
+                }
             }
 
             // In the early adopter phase, even a 0 result query need to be treated as an error
@@ -166,7 +170,11 @@ class Bitbull_Tooso_Client
             $response = $e->getResponse();
             if($response != null && $this->_sessionStorage){
                 $result = new Bitbull_Tooso_Search_Result($response);
-                $this->_sessionStorage->setSearchId($result->getSearchId());
+                $searchId = $result->getSearchId();
+                $this->_sessionStorage->setSearchId($searchId);
+                if($this->_logger){
+                    $this->_logger->debug('Session: set search id to '.$searchId);
+                }
             }
             throw $e;
         }
@@ -244,16 +252,18 @@ class Bitbull_Tooso_Client
     /**
      * Send product added to cart event
      *
-     * @param string $sku Product SKU
-     * @param array $extraParams
+     * @param string $sku product sku
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function productAddedToCart($trackingParams, $extraParams)
+    public function productAddedToCart($sku, $profilingParams)
     {
         $path = '/addToCart';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                'objectId' => $sku
+            ),
+            (array)$profilingParams
         );
 
         return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
@@ -262,15 +272,24 @@ class Bitbull_Tooso_Client
     /**
      * Tracking result
      *
-     * @param string $params tracking parameters
+     * @param string $searchId search ID
+     * @param string $sku product SKU
+     * @param string $rank result position
+     * @param array $order search order
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Response
      */
-    public function resultTracking($trackingParams, $extraParams)
+    public function resultTracking($searchId, $sku, $rank, $order, $profilingParams)
     {
         $path = '/feedback';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                "searchId" => $searchId,
+                "objectId" => $sku,
+                "rank" => $rank,
+                "order" => $order
+            ),
+            (array)$profilingParams
         );
         return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
@@ -278,15 +297,18 @@ class Bitbull_Tooso_Client
     /**
      * Tracking product view
      *
-     * @param string $params tracking parameters
+     * @param string $sku product SKU
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Response
      */
-    public function productViewTracking($trackingParams, $extraParams)
+    public function productViewTracking($sku, $profilingParams)
     {
         $path = '/productView';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                'objectId' => $sku
+            ),
+            (array)$profilingParams
         );
         return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
@@ -294,15 +316,20 @@ class Bitbull_Tooso_Client
     /**
      * Tracking page view
      *
-     * @param string $params tracking parameters
+     * @param string $currentPage current page
+     * @param string $lastPage last page
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Response
      */
-    public function pageViewTracking($trackingParams, $extraParams)
+    public function pageViewTracking($currentPage, $lastPage, $profilingParams)
     {
         $path = '/pageView';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                'currentPage' => $currentPage,
+                'lastPage' => $lastPage
+            ),
+            (array)$profilingParams
         );
         return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
@@ -310,31 +337,29 @@ class Bitbull_Tooso_Client
     /**
      * Checkout page view
      *
-     * @param string $objectIds skus
-     * @param string $prices prices
-     * @param string $qtys quantities
+     * @param array $skus skus
+     * @param array $prices prices
+     * @param array $qtys quantities
      * @return Bitbull_Tooso_Response
      */
-    public function checkoutTracking($objectIds, $prices, $qtys, $extraParams)
+    public function checkoutTracking($skus, $prices, $qtys, $trackingParams)
     {
-        if(is_array($objectIds) && is_array($prices) && is_array($qtys)){
-            if(sizeof($objectIds) == sizeof($prices) && sizeof($objectIds) == sizeof($qtys)){
+        if(is_array($skus) && is_array($prices) && is_array($qtys)){
+            if(sizeof($skus) == sizeof($prices) && sizeof($skus) == sizeof($qtys)){
 
                 // Parse eventually float value in quantities to integer
                 for($i = 0; $i < sizeof($qtys); $i++){
                     $qtys[$i] = intval($qtys[$i]);
                 }
 
-                $trackingParams = array(
-                    'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $objectIds),
-                    'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
-                    'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
-                );
-
                 $path = '/checkOut';
                 $params = array_merge(
-                    $trackingParams,
-                    (array)$extraParams
+                    array(
+                        'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $skus),
+                        'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
+                        'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
+                    ),
+                    (array)$trackingParams
                 );
                 return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 

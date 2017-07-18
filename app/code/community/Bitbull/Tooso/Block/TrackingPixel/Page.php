@@ -13,12 +13,11 @@ class Bitbull_Tooso_Block_TrackingPixel_Page extends Bitbull_Tooso_Block_Trackin
     protected function _toHtml()
     {
         if($this->_currentPage == null){
-            $this->_logger->warn('Tracking script: _currentPage not set');
+            $this->_logger->warn('Tracking page view: _currentPage not set');
             return;
         }
 
         $url = self::SCRIPT_ENDPOINT.$this->_getPageParams();
-
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

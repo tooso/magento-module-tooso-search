@@ -140,7 +140,7 @@ class Bitbull_Tooso_Model_Observer
         }
 
         $routeName = Mage::app()->getRequest()->getRouteName();
-        if($routeName != "catalog" && $routeName != "catalogsearch"){
+        if($routeName != "catalog" && $routeName != "catalogsearch" && $routeName != "tooso"){
             Mage::helper('tooso/session')->clearSearchId();
         }
     }

@@ -510,9 +510,12 @@ class Bitbull_Tooso_Client
 
         $url = $baseUrl . $this->_apiKey . $path;
 
+        $language = $this->_language;
+        if($language == null){
+            $language = $this->_storeCode;
+        }
         $queryString = array(
-            'language=' . $this->_language,
-            'storeCode=' . $this->_storeCode,
+            'language=' . $language
         );
 
         foreach ($params as $key => $value) {

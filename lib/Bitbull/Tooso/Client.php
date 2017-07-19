@@ -232,11 +232,11 @@ class Bitbull_Tooso_Client
         }
 
         $path = '/index';
-        $params = array([
+        $params = array(
             "docType" => self::INDEX_DOC_TYPE,
             "extension" => self::INDEX_EXTENSION,
             "secretKey" => $this->_secretKey
-        ]);
+        );
         $response = $this->_doRequest($path, self::HTTP_METHOD_POST, $params, $tmpZipFile, 300000);
         if($this->_logger){
             $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
@@ -493,6 +493,8 @@ class Bitbull_Tooso_Client
     */
     protected function _buildUrl($path, $params)
     {
+        $this->_logger->log(print_r($params, true));
+
         if (filter_var($this->_baseUrl, FILTER_VALIDATE_URL) === false) {
             $message = 'API base URL missing or invalid: "' . $this->_baseUrl . '"';
 

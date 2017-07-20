@@ -521,7 +521,7 @@ class Bitbull_Tooso_Client
         );
 
         foreach ($params as $key => $value) {
-            $queryString[] = $key . '=' . $value;
+            $queryString[] = $key . '=' . urlencode($value);
         }
 
         $url .= '?' . implode('&', $queryString);

@@ -25,7 +25,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Bitbull_Tooso_Block_Tra
         }
 
         $order = Mage::getSingleton('sales/order')->loadByIncrementId($this->_orderId);
-        if($order == null){
+        if($order->getId() == null){
             $this->_logger->warn('Tracking checkout: order not found with id '.$this->_orderId);
             return;
         }

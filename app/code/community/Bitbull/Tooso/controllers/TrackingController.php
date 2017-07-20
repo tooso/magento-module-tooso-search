@@ -105,21 +105,27 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         $orderId = $this->getRequest()->getParam('order');
         $order = Mage::getSingleton('sales/order')->loadByIncrementId($orderId);
 
-        $objectIds = array();
-        $prices = array();
-        $qtys = array();
+        if($order->getId() != null){
+            $objectIds = array();
+            $prices = array();
+            $qtys = array();
 
-        $items = $order->getAllItems();
-        foreach ($items as $item) {
-            array_push($objectIds, $item->getSku());
-            array_push($prices, $item->getPrice());
-            array_push($qtys, $item->getQtyOrdered());
+            $items = $order->getAllItems();
+            foreach ($items as $item) {
+                array_push($objectIds, $item->getSku());
+                array_push($prices, $item->getPrice());
+                array_push($qtys, $item->getQtyOrdered());
+            }
+
+            $profilingParams = Mage::helper('tooso')->getProfilingParams();
+            $this->_client->checkoutTracking($objectIds, $prices, $qtys, $profilingParams);
+
+            $this->_logger->debug('Tracking: tracked checkout order '.$orderId);
+        }else{
+            $this->_logger->warn('Tracking: checkout with id '.$orderId.' not exist');
         }
 
-        $profilingParams = Mage::helper('tooso')->getProfilingParams();
-        $this->_client->checkoutTracking($objectIds, $prices, $qtys, $profilingParams);
 
-        $this->_logger->debug('Tracking: tracked checkout order '.$orderId);
         $this->_setEmptyScriptResponse();
     }
 

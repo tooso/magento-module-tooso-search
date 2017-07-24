@@ -6,9 +6,9 @@
 
 class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
 {
-    const BLOCK_ID = 'tooso_tracking_pixel_page';
+    const BLOCK_ID = 'tooso_tracking_pixel';
     const SCRIPT_ID = 'tooso-tracking-script';
-    const SCRIPT_ENDPOINT = '/tooso/tracking/';
+    const SCRIPT_ENDPOINT = 'tooso/tracking/';
 
     /**
      * @var Bitbull_Tooso_Helper_Log
@@ -36,12 +36,26 @@ class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG
         ));
+        $this->addData(array(
+            'cache_lifetime' => null,
+        ));
     }
 
     protected function _toHtml()
     {
         return;
     }
+
+    /**
+     * Get cache identifier
+     *
+     * @return string
+     */
+    protected function _getCacheId()
+    {
+        return strtoupper(self::BLOCK_ID);
+    }
+
 
     /**
      * @param $url string
@@ -66,5 +80,12 @@ class Bitbull_Tooso_Block_TrackingPixel extends Mage_Core_Block_Template
             $url .= "/lastPage/".base64_encode($this->_lastPage);
         }
         return $url;
+    }
+
+    /**
+     * @param $id
+     */
+    public function setObjectID($id){
+
     }
 }

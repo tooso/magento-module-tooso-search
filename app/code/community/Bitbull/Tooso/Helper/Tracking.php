@@ -23,21 +23,6 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Create Search result TrackingPixel Block
-     *
-     * @param $productId
-     * @return Bitbull_Tooso_Block_TrackingPixel
-     */
-    public function getResultTrackingPixelBlock($productId){
-        $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/trackingPixel_result');
-        $block->setCurrentPage($this->getCurrentPage());
-        $block->setLastPage($this->getLastPage());
-        $block->setProductID($productId);
-        return $block;
-    }
-
-    /**
      * Create Page TrackingPixel Block
      *
      * @return Bitbull_Tooso_Block_TrackingPixel

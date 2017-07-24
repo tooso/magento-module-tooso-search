@@ -20,13 +20,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         if($currentProduct != null) {
 
             $layout = Mage::app()->getLayout();
-            if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){
-                $block = Mage::helper('tooso/tracking')->getResultTrackingPixelBlock($currentProduct->getId());
-                $this->_logger->debug('Tracking result: added tracking script');
-            }else{
-                $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
-                $this->_logger->debug('Tracking product: added tracking script');
-            }
+            $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
             $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
 
         }else{

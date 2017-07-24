@@ -8,7 +8,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Page extends Bitbull_Tooso_Block_Trackin
 {
     const BLOCK_ID = 'tooso_tracking_pixel_page';
     const SCRIPT_ID = 'tooso-tracking-page';
-    const SCRIPT_ENDPOINT = '/tooso/tracking/page/';
+    const SCRIPT_ENDPOINT = 'tooso/tracking/page/';
 
     protected function _toHtml()
     {
@@ -17,7 +17,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Page extends Bitbull_Tooso_Block_Trackin
             return;
         }
 
-        $url = self::SCRIPT_ENDPOINT.$this->_getPageParams();
+        $url = Mage::getBaseUrl().self::SCRIPT_ENDPOINT.$this->_getPageParams();
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

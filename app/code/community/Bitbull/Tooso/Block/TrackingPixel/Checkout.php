@@ -8,7 +8,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Bitbull_Tooso_Block_Tra
 {
     const BLOCK_ID = 'tooso_tracking_pixel_checkout';
     const SCRIPT_ID = 'tooso-tracking-checkout';
-    const SCRIPT_ENDPOINT = '/tooso/tracking/checkout/';
+    const SCRIPT_ENDPOINT = 'tooso/tracking/checkout/';
     const ARRAY_VALUES_SEPARATOR = ',';
 
     /**
@@ -20,8 +20,13 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Bitbull_Tooso_Block_Tra
     protected function _toHtml()
     {
         if($this->_orderId == null){
-            $this->_logger->warn('Tracking checkout: _orderId not set');
-            return;
+            $this->_logger->warn('Tracking checkout: _orderId not set, getting from session');
+            $idFromSession = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+            if($idFromSession == null){
+                $this->_logger->warn('Tracking checkout: can\'t find order id in session');
+                return;
+            }
+            $this->_orderId = $idFromSession;
         }
 
         $order = Mage::getSingleton('sales/order')->loadByIncrementId($this->_orderId);
@@ -44,7 +49,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Bitbull_Tooso_Block_Tra
         $pricesStr = implode(self::ARRAY_VALUES_SEPARATOR, $prices);
         $qtysStr = implode(self::ARRAY_VALUES_SEPARATOR, $qtys);
 
-        $url = self::SCRIPT_ENDPOINT."skus/$skusStr/prices/$pricesStr/qtys/$qtysStr".'/'.$this->_getPageParams();
+        $url =  Mage::getBaseUrl().self::SCRIPT_ENDPOINT."skus/$skusStr/prices/$pricesStr/qtys/$qtysStr".'/'.$this->_getPageParams();
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <placeholders>
+        <tooso_tracking_pixel_checkout>
+            <block>tooso/trackingPixel_checkout</block>
+            <placeholder>tooso_tracking_pixel_checkout</placeholder>
+            <container>Bitbull_Tooso_Model_BlockContainer</container>
+            <cache_lifetime>0</cache_lifetime>
+        </tooso_tracking_pixel_checkout>
+        <tooso_tracking_pixel_product>
+            <block>tooso/trackingPixel_product</block>
+            <placeholder>tooso_tracking_pixel_product</placeholder>
+            <container>Bitbull_Tooso_Model_BlockContainer</container>
+            <cache_lifetime>0</cache_lifetime>
+        </tooso_tracking_pixel_product>
+    </placeholders>
+</config>

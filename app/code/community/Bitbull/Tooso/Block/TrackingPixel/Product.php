@@ -64,7 +64,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Bitbull_Tooso_Block_Trac
                 $order = "relevance";
             }
 
-            $url = Mage::getBaseUrl().self::RESULT_SCRIPT_ID."sku/$sku/rank/$rank/order/$order".'/'.$this->_getPageParams();
+            $url = Mage::getBaseUrl().self::RESULT_SCRIPT_ENDPOINT."sku/$sku/rank/$rank/order/$order".'/'.$this->_getPageParams();
             return "<script id='".self::RESULT_SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
         }else{
             $this->_logger->debug('Tracking product: elaborating product view..');

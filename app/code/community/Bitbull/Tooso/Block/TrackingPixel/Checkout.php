@@ -38,7 +38,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Bitbull_Tooso_Block_Tra
         $skus = array();
         $prices = array();
         $qtys = array();
-        $items = $order->getAllItems();
+        $items = $order->getAllVisibleItems();
         foreach ($items as $item) {
             array_push($skus, $item->getSku());
             array_push($prices, $item->getPrice());

@@ -10,7 +10,7 @@ class Bitbull_Tooso_Client
     const HTTP_METHOD_POST = 'POST';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
-    const INDEX_DOC_TYPE = 0;
+    const INDEX_DOC_TYPE = 1;
     const INDEX_EXTENSION = "csv";
 
     const ARRAY_VALUES_SEPARATOR = ',';

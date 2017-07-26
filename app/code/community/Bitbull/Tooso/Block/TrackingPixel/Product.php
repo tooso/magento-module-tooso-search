@@ -17,7 +17,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Mage_Core_Block_Template
     /**
      * @var null|integer
      */
-    protected $_product_id = null;
+    protected $_productId = null;
 
     public function _construct()
     {
@@ -30,20 +30,41 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Mage_Core_Block_Template
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG
         ));
+        $this->addData(array(
+            'cache_lifetime' => null,
+        ));
     }
 
     protected function _toHtml()
     {
-        if($this->_product_id == null){
+        if($this->_productId == null){
             $this->_logger->warn('Tracking script: product_id not set');
             return;
         }
-        $url = Mage::getBaseUrl().self::SCRIPT_ENDPOINT."id/".$this->_product_id;
+        $url = Mage::getBaseUrl().self::SCRIPT_ENDPOINT."id/".$this->_productId;
         $this->_logger->debug('Tracking script: added tracking script');
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 
     public function setProductID($id){
-        $this->_product_id = $id;
+        $this->_productId = $id;
+    }
+
+    /**
+     * Get Cache Key Info
+     * @return array
+     */
+    public function getCacheKeyInfo()
+    {
+        $info = parent::getCacheKeyInfo();
+        $info['object_id'] = $this->_productId;
+        return $info;
+    }
+
+    /**
+     * @param $id
+     */
+    public function setObjectID($id){
+        $this->setProductID($id);
     }
 }

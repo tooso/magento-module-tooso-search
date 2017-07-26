@@ -30,13 +30,21 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Mage_Core_Block_Templat
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG
         ));
+        $this->addData(array(
+            'cache_lifetime' => null,
+        ));
     }
 
     protected function _toHtml()
     {
         if($this->_orderId == null){
-            $this->_logger->warn('Tracking script: _orderId not set');
-            return;
+            $this->_logger->warn('Tracking checkout: _orderId not set, getting from session');
+            $idFromSession = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+            if($idFromSession == null){
+                $this->_logger->warn('Tracking checkout: can\'t find order id in session');
+                return;
+            }
+            $this->_orderId = $idFromSession;
         }
 
         $url =  Mage::getBaseUrl().self::SCRIPT_ENDPOINT."order/".$this->_orderId;
@@ -44,9 +52,26 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Mage_Core_Block_Templat
     }
 
     /**
+     * Get cache identifier
+     *
+     * @return string
+     */
+    protected function _getCacheId()
+    {
+        return strtoupper(self::BLOCK_ID);
+    }
+
+    /**
      * @param $orderId string
      */
     public function setOrderId($orderId){
         $this->_orderId = $orderId;
+    }
+
+    /**
+     * @param $id
+     */
+    public function setObjectID($id){
+
     }
 }

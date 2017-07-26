@@ -110,7 +110,7 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
             $prices = array();
             $qtys = array();
 
-            $items = $order->getAllItems();
+            $items = $order->getAllVisibleItems();
             foreach ($items as $item) {
                 array_push($objectIds, $item->getSku());
                 array_push($prices, $item->getPrice());

@@ -7,7 +7,7 @@
 class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Mage_Core_Block_Template
 {
     const SCRIPT_ID = 'tooso-tracking-checkout';
-    const SCRIPT_ENDPOINT = '/tooso/tracking/checkout/';
+    const SCRIPT_ENDPOINT = 'tooso/tracking/checkout/';
 
     /**
      * @var Bitbull_Tooso_Helper_Log
@@ -39,7 +39,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Mage_Core_Block_Templat
             return;
         }
 
-        $url = self::SCRIPT_ENDPOINT."order/".$this->_orderId;
+        $url =  Mage::getBaseUrl().self::SCRIPT_ENDPOINT."order/".$this->_orderId;
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

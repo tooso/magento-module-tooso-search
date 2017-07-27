@@ -51,13 +51,24 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Create Clear Search ID block
+     *
+     * @return Bitbull_Tooso_Block_ClearSearchID
+     */
+    public function getClearSearchIDBlock(){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/clearSearchId');
+        return $block;
+    }
+
+    /**
      * Check if user is coming from a search page or not
      *
      * @return boolean
      */
     public function isUserComingFromSearch(){
-        $sessionId = Mage::helper('tooso/session')->getSearchId();
-        return $sessionId != null;
+        $searchId = Mage::helper('tooso/session')->getSearchId();
+        return $searchId != null && $searchId != "";
     }
 
     /**

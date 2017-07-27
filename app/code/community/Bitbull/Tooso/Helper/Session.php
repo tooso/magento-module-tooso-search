@@ -16,7 +16,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function setSearchId($value)
     {
-        Mage::getSingleton('core/session')->setToosoSearchId($value);
+        Mage::getSingleton('core/cookie')->set('ToosoSearchId', $value, null, null, null, null, false);
     }
 
     /**
@@ -26,17 +26,7 @@ class Bitbull_Tooso_Helper_Session
      */
     public function getSearchId()
     {
-        return Mage::getSingleton('core/session')->getToosoSearchId();
-    }
-
-    /**
-     * Clear Search ID from session
-     *
-     * @return string
-     */
-    public function clearSearchId()
-    {
-        return Mage::getSingleton('core/session')->unsToosoSearchId();
+        return Mage::getSingleton('core/cookie')->get('ToosoSearchId');
     }
 
     /**

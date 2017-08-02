@@ -137,6 +137,8 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
+
         if(self::FORCE_ERROR){
             $query = null;
         }
@@ -192,6 +194,7 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
         $path = '/suggest';
         $params = array_merge(
             array('query' => $query, 'limit' => $limit),

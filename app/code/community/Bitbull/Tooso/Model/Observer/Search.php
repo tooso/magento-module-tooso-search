@@ -93,9 +93,13 @@ class Bitbull_Tooso_Model_Observer_Search extends Bitbull_Tooso_Model_Observer
         $routeName = Mage::app()->getRequest()->getRouteName();
         $exclude = array("catalog", "catalogsearch", "enterprise_pagecache");
         if(!in_array($routeName, $exclude)){
-            $layout = Mage::app()->getLayout();
             $block = Mage::helper('tooso/tracking')->getClearSearchIDBlock();
-            $layout->getBlock('before_body_end')->append($block);
+            $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+            if($parentBlock){
+                $parentBlock->append($block);
+            }else{
+                $this->_logger->warn('Cannot add ClearSearchId block, parent container not found');
+            }
         }
     }
 

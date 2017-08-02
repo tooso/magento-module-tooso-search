@@ -6,6 +6,16 @@
  */
 class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 {
+    const CONTAINER_BLOCK = 'before_body_end';
+
+    /**
+     * Get block to append tracking script and cookies managers
+     *
+     */
+    public function getScriptContainerBlock(){
+        $layout = Mage::app()->getLayout();
+        return $layout->getBlock(self::CONTAINER_BLOCK);
+    }
 
     /**
      * Create Product TrackingPixel Block

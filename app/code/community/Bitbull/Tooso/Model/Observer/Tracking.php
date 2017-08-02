@@ -6,8 +6,6 @@
  */
 class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 {
-    const CONTAINER_BLOCK = 'before_body_end';
-
     /**
      * Add product tracking script that point to relative controller action endpoint
      * @param  Varien_Event_Observer $observer
@@ -19,9 +17,14 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         $currentProduct = Mage::registry('current_product');
         if($currentProduct != null) {
 
-            $layout = Mage::app()->getLayout();
             $block = Mage::helper('tooso/tracking')->getProductTrackingPixelBlock($currentProduct->getId());
-            $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
+            $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+            if($parentBlock){
+                $parentBlock->append($block);
+                $this->_logger->debug('Tracking product: added tracking script');
+            }else{
+                $this->_logger->warn('Cannot add ProductTrackingPixel block, parent container not found');
+            }
 
         }else{
             $this->_logger->warn('Tracking product: product not found in request');
@@ -36,10 +39,14 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         if(!Mage::helper('tooso')->isTrackingEnabled()){
             return;
         }
-        $layout = Mage::app()->getLayout();
         $block = Mage::helper('tooso/tracking')->getPageTrackingPixelBlock();
-        $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
-        $this->_logger->debug('Tracking page view: added tracking script');
+        $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+        if($parentBlock){
+            $parentBlock->append($block);
+            $this->_logger->debug('Tracking page view: added tracking script');
+        }else{
+            $this->_logger->warn('Cannot add PageTrackingPixel block, parent container not found');
+        }
     }
 
     /**
@@ -54,10 +61,14 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 
         $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
         if($orderId != null){
-            $layout = Mage::app()->getLayout();
             $block = Mage::helper('tooso/tracking')->getCheckoutTrackingPixelBlock($orderId);
-            $layout->getBlock(self::CONTAINER_BLOCK)->append($block);
-            $this->_logger->debug('Tracking checkout: added tracking script');
+            $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+            if($parentBlock){
+                $parentBlock->append($block);
+                $this->_logger->debug('Tracking checkout: added tracking script');
+            }else{
+                $this->_logger->warn('Cannot add CheckoutTrackingPixel block, parent container not found');
+            }
         }else{
             $this->_logger->warn('Tracking checkout: can\'t find order id in session');
         }

@@ -77,7 +77,7 @@ class Bitbull_Tooso_Model_Suggest
         if (!is_null($this->_result)) {
             $results = $this->_result->getSuggestions();
 
-            foreach ($results as $suggestedString => $occurrence) {
+            foreach ($results as $occurrence => $suggestedString) {
                 $suggestions[] = new Varien_Object(array(
                     'query_text' => $suggestedString,
                     'num_results' => (int)$occurrence

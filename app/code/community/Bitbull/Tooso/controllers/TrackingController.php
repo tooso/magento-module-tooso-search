@@ -19,104 +19,133 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         $this->_client = Mage::helper('tooso')->getClient();
     }
 
-    public function pixelAction() {
+    /**
+     * Tracking product view
+     */
+    public function productAction() {
 
-        $product_id = $this->getRequest()->getParam('product');
-        if($product_id == null){
-            $this->_logger->warn('Tracking pixel: product param not found');
+        $sku = $this->getRequest()->getParam('sku');
+        if($sku == null){
+            $this->_logger->warn('Tracking product: product sku param not found');
             return;
         }
 
-        $current_product = Mage::getModel('catalog/product')->load($product_id);
-        if($current_product == null){
-            $this->_logger->warn('Tracking pixel: product not found with id '.$product_id);
+        $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
+        $this->_client->productViewTracking($sku, $profilingParams);
+        $this->_logger->debug('Tracking product: tracked search result '.$sku);
+        $this->_setEmptyScriptResponse();
+        return;
+    }
+
+    /**
+     * Tracking result action
+     */
+    public function resultAction(){
+        $sku = $this->getRequest()->getParam('sku');
+        if($sku == null){
+            $this->_logger->warn('Tracking result: product sku param not found');
             return;
         }
 
-        if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){ //request from search page
-
-            $this->_logger->debug('Tracking pixel: elaborating result tracking pixel..');
-            $id = $current_product->getId();
-            $sku = $current_product->getSku();
-            $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
-
-            if($toosoSearchId){
-                // Get rank collection from search collection
-                $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
-                $rank = -1;
-                if($searchRankCollection != null && isset($searchRankCollection[$id])){
-                    $rank = $searchRankCollection[$id];
-                }else{
-                    if($searchRankCollection == null){
-                        $this->_logger->debug('Tracking pixel: rank collection not found in session');
-                    }else{
-                        $this->_logger->debug('Tracking pixel: sku not found in rank collection, printing..');
-                        foreach ($searchRankCollection as $rankId => $rankPos){
-                            $this->_logger->debug('Tracking pixel: '.$rankId.' => '.$rankPos);
-                        }
-                    }
-                }
-
-                $order = Mage::helper('tooso/session')->getSearchOrder();
-                if($order == null){
-                    $order = "relevance";
-                }
-
-                $params = array(
-                    "searchId" => $toosoSearchId,
-                    "resultId" => $sku,
-                    "rank" => $rank,
-                    "order" => $order,
-                    "isMobile" => Mage::helper('tooso/tracking')->isMobile()
-                );
-                $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-                $tracking_url = $this->_client->getResultTrackingUrl($params);
-
-            }else{
-                $this->_logger->warn('Tracking pixel: search id not found in session');
-                return;
-            }
-
-        }else{ // request not from search page
-
-            $this->_logger->debug('Tracking pixel: elaborating product view tracking pixel..');
-
-            $sku = $current_product->getSku();
-            $profilingParams = Mage::helper('tooso')->getProfilingParams();
-
-            $params = array(
-                "sku" => $sku,
-                "sessionId" => $profilingParams["sessionId"],
-                "userId" => $profilingParams["userId"],
-                "isMobile" => Mage::helper('tooso/tracking')->isMobile()
-            );
-
-            $this->_logger->debug('Tracking pixel: Params: '. print_r($params, true));
-            $tracking_url = $this->_client->getProductViewTrackingUrl($params);
-
+        $rank = $this->getRequest()->getParam('rank');
+        if($rank == null){
+            $rank = -1;
         }
 
+        $order = $this->getRequest()->getParam('order');
+        if($order == null){
+            $order = "relevance";
+        }
+
+        $toosoSearchId = Mage::helper('tooso/session')->getSearchId();
+        if($toosoSearchId){
+            $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
+            $this->_client->resultTracking($toosoSearchId, $sku, $rank, $order, $profilingParams);
+            $this->_logger->debug('Tracking result: tracked search result '.$sku);
+            $this->_setEmptyScriptResponse();
+            return;
+        }else{
+            $this->_logger->warn('Tracking result: search id not found in session');
+            return;
+        }
+    }
+
+    /**
+     * Tracking page view
+     */
+    public function pageAction(){
+        $currentPageIdentifier = base64_decode($this->getRequest()->getParam('currentPage'));
+        $lastPageIdentifier = base64_decode($this->getRequest()->getParam('lastPage'));
+
+        $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
+        $this->_client->pageViewTracking($currentPageIdentifier, $lastPageIdentifier, $profilingParams);
+
+        $this->_logger->debug('Tracking page view: tracked page view '.$currentPageIdentifier);
+        $this->_setEmptyScriptResponse();
+        return;
+    }
+
+    /**
+     * Tracking checkout success page
+     */
+    public function checkoutAction(){
+
+        $delimiter = Bitbull_Tooso_Block_TrackingPixel_Checkout::ARRAY_VALUES_SEPARATOR;
+
+        $skusStr = $this->getRequest()->getParam('skus');
+        $skus = array();
+        if($skusStr != null){
+            $skus = explode($delimiter, $skusStr);
+        }
+
+        $pricesStr = $this->getRequest()->getParam('prices');
+        $prices = array();
+        if($pricesStr != null){
+            $prices = explode($delimiter, $pricesStr);
+        }
+
+        $qtysStr = $this->getRequest()->getParam('qtys');
+        $qtys = array();
+        if($qtysStr != null){
+            $qtys = explode($delimiter, $qtysStr);
+        }
+
+        $profilingParams = Mage::helper('tooso')->getProfilingParams($this->_getPageParams());
+        $this->_client->checkoutTracking($skus, $prices, $qtys, $profilingParams);
+
+        $this->_logger->debug('Tracking checkout: tracked checkout order');
+        $this->_setEmptyScriptResponse();
+        return;
+    }
+
+    /**
+     * Response with empty script
+     */
+    protected function _setEmptyScriptResponse(){
         // Prevent browser cache
-        header('Expires: 0');
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Pragma: no-cache');
-        header('Cache-Control: post-check=0, pre-check=0');
+        $this->getResponse()->setHeader('Expires', '0');
+        $this->getResponse()->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        $this->getResponse()->setHeader('Pragma','no-cache');
+        $this->getResponse()->setHeader('Cache-Control', 'post-check=0, pre-check=0');
 
         // Set javascript content type
+        $this->getResponse()->setHeader('Content-type', 'application/javascript');
 
-        header('Content-Type: application/javascript');
+        // Response with empty script
+        $this->getResponse()->setBody("");
+    }
 
-        // Render script
-        ?>
-        
-        var trackingScript = document.createElement('script');
-        trackingScript.type = 'text/javascript';
-        trackingScript.src = '<?=$tracking_url?>';
-        document.getElementsByTagName('body')[0].appendChild(trackingScript);
+    /**
+     * @return array
+     */
+    protected function _getPageParams(){
+        $currentPageIdentifier = base64_decode($this->getRequest()->getParam('currentPage'));
+        $lastPageIdentifier = base64_decode($this->getRequest()->getParam('lastPage'));
 
-        <?php
-
-        $this->_logger->debug('Tracking pixel: pixel added into page');
+        return array(
+            'currentPage' => $currentPageIdentifier,
+            'lastPage' => $lastPageIdentifier
+        );
     }
 
 }

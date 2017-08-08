@@ -18,7 +18,7 @@ class Bitbull_Tooso_Helper_Log
         return Mage::getStoreConfigFlag(self::XML_PATH_FORCE_LOG, $store);
     }
 
-    public function isDebugModeEnabled($store = null)
+public function isDebugModeEnabled($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_DEBUG_MODE, $store);
     }

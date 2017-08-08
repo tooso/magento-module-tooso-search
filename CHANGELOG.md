@@ -5,10 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-- Tracking product views using simple product instead of configurable one
-- Added stock quantity into indexer exported CSV
-- Added tracking IP param
-- Tracking API called using S2S approach
+- Added API v2 compatibility
+- Catch current_layer null error
+- Substituted "+" with " " in query string
+- Soft error when 'before_body_end' block not exist
+- Refactory search id using cookies
 
 ## [2.0.1]
 - Get base url to point correct controller endpoint

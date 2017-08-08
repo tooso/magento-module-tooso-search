@@ -10,6 +10,11 @@ class Bitbull_Tooso_Client
     const HTTP_METHOD_POST = 'POST';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
+    const INDEX_DOC_TYPE = 1;
+    const INDEX_EXTENSION = "csv";
+
+    const ARRAY_VALUES_SEPARATOR = ',';
+
     /**
      * Base url for API calls
      *
@@ -37,6 +42,13 @@ class Bitbull_Tooso_Client
      * @var string
      */
     protected $_storeCode;
+
+    /**
+     * Secret API key
+     *
+     * @var null|string
+     */
+    protected $_secretKey;
 
     /**
      * Timeout for API connection wait
@@ -81,11 +93,12 @@ class Bitbull_Tooso_Client
      * @param string $storeCode
      * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $apiBaseUrl, $language, $storeCode)
+    public function __construct($apiKey, $secretKey, $apiBaseUrl, $language, $storeCode)
     {
         $this->_apiKey = $apiKey;
+        $this->_secretKey = $secretKey;
         $this->_baseUrl = $apiBaseUrl;
-        $this->_language = $language;
+        $this->_language = strtolower($language);
         $this->_storeCode = $storeCode;
     }
 
@@ -124,11 +137,13 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
+
         if(self::FORCE_ERROR){
             $query = null;
         }
 
-        $path = '/Search/search';
+        $path = '/search';
         $params = array_merge(
             array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
             (array)$extraParams
@@ -138,7 +153,11 @@ class Bitbull_Tooso_Client
             $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
             $result = new Bitbull_Tooso_Search_Result($response);
             if ($this->_sessionStorage) {
-                $this->_sessionStorage->setSearchId($result->getSearchId());
+                $searchId = $result->getSearchId();
+                $this->_sessionStorage->setSearchId($searchId);
+                if($this->_logger){
+                    $this->_logger->debug('Session: set search id to '.$searchId);
+                }
             }
 
             // In the early adopter phase, even a 0 result query need to be treated as an error
@@ -153,7 +172,11 @@ class Bitbull_Tooso_Client
             $response = $e->getResponse();
             if($response != null && $this->_sessionStorage){
                 $result = new Bitbull_Tooso_Search_Result($response);
-                $this->_sessionStorage->setSearchId($result->getSearchId());
+                $searchId = $result->getSearchId();
+                $this->_sessionStorage->setSearchId($searchId);
+                if($this->_logger){
+                    $this->_logger->debug('Session: set search id to '.$searchId);
+                }
             }
             throw $e;
         }
@@ -171,12 +194,14 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
+        $path = '/suggest';
         $params = array_merge(
             array('query' => $query, 'limit' => $limit),
             (array)$extraParams
         );
 
-        $response = $this->_doRequest('/Search/suggest', self::HTTP_METHOD_GET, $params);
+        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
 
         $result = new Bitbull_Tooso_Suggest_Result($response);
         return $result;
@@ -209,7 +234,13 @@ class Bitbull_Tooso_Client
             $this->_logger->debug("Start uploading zipfile");
         }
 
-        $response = $this->_doRequest('/Index/index', self::HTTP_METHOD_POST, array(), $tmpZipFile, 300000);
+        $path = '/index';
+        $params = array(
+            "docType" => self::INDEX_DOC_TYPE,
+            "extension" => self::INDEX_EXTENSION,
+            "secretKey" => $this->_secretKey
+        );
+        $response = $this->_doRequest($path, self::HTTP_METHOD_POST, $params, $tmpZipFile, 300000);
         if($this->_logger){
             $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
         }
@@ -224,51 +255,123 @@ class Bitbull_Tooso_Client
     /**
      * Send product added to cart event
      *
-     * @param string $sku Product SKU
-     * @param array $extraParams
+     * @param string $sku product sku
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function productAddedToCart($sku, $extraParams)
+    public function productAddedToCart($sku, $profilingParams)
     {
+        $path = '/addToCart';
         $params = array_merge(
-            array('sku' => $sku),
-            (array)$extraParams
+            array(
+                'objectId' => $sku
+            ),
+            (array)$profilingParams
         );
 
-        $response = $this->_doRequest('/User/addToCart', self::HTTP_METHOD_GET, $params);
-
-        $result = new Bitbull_Tooso_Suggest_Result($response);
-        return $result;
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
 
     /**
      * Tracking result
      *
-     * @param string $params tracking parameters
+     * @param string $searchId search ID
+     * @param string $sku product SKU
+     * @param string $rank result position
+     * @param array $order search order
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Response
      */
-    public function resultTracking($trackingParams, $extraParams)
+    public function resultTracking($searchId, $sku, $rank, $order, $profilingParams)
     {
+        $path = '/feedback';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                "searchId" => $searchId,
+                "objectId" => $sku,
+                "rank" => $rank,
+                "order" => $order
+            ),
+            (array)$profilingParams
         );
-        return $this->_doRequest("/User/clickOnResult", self::HTTP_METHOD_GET, $params);
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
     }
 
     /**
      * Tracking product view
      *
-     * @param string $params tracking parameters
+     * @param string $sku product SKU
+     * @param array $profilingParams
      * @return Bitbull_Tooso_Response
      */
-    public function productViewTracking($trackingParams, $extraParams)
+    public function productViewTracking($sku, $profilingParams)
     {
+        $path = '/productView';
         $params = array_merge(
-            $trackingParams,
-            (array)$extraParams
+            array(
+                'objectId' => $sku
+            ),
+            (array)$profilingParams
         );
-        return $this->_doRequest("/User/productView", self::HTTP_METHOD_GET, $params);
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+    }
+
+    /**
+     * Tracking page view
+     *
+     * @param string $currentPage current page
+     * @param string $lastPage last page
+     * @param array $profilingParams
+     * @return Bitbull_Tooso_Response
+     */
+    public function pageViewTracking($currentPage, $lastPage, $profilingParams)
+    {
+        $path = '/pageView';
+        $params = array_merge(
+            array(
+                'currentPage' => $currentPage,
+                'lastPage' => $lastPage
+            ),
+            (array)$profilingParams
+        );
+        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+    }
+
+    /**
+     * Checkout page view
+     *
+     * @param array $skus skus
+     * @param array $prices prices
+     * @param array $qtys quantities
+     * @return Bitbull_Tooso_Response
+     */
+    public function checkoutTracking($skus, $prices, $qtys, $trackingParams)
+    {
+        if(is_array($skus) && is_array($prices) && is_array($qtys)){
+            if(sizeof($skus) == sizeof($prices) && sizeof($skus) == sizeof($qtys)){
+
+                // Parse eventually float value in quantities to integer
+                for($i = 0; $i < sizeof($qtys); $i++){
+                    $qtys[$i] = intval($qtys[$i]);
+                }
+
+                $path = '/checkOut';
+                $params = array_merge(
+                    array(
+                        'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $skus),
+                        'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
+                        'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
+                    ),
+                    (array)$trackingParams
+                );
+                return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+
+            }else{
+                throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must have the same length');
+            }
+        }else{
+            throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must be array');
+        }
     }
 
     /**
@@ -393,6 +496,8 @@ class Bitbull_Tooso_Client
     */
     protected function _buildUrl($path, $params)
     {
+        $this->_logger->log(print_r($params, true));
+
         if (filter_var($this->_baseUrl, FILTER_VALIDATE_URL) === false) {
             $message = 'API base URL missing or invalid: "' . $this->_baseUrl . '"';
 
@@ -403,15 +508,23 @@ class Bitbull_Tooso_Client
             throw new Bitbull_Tooso_Exception($message, 0);
         }
 
-        $url = $this->_baseUrl . '/' . $this->_apiKey . $path;
+        $baseUrl = $this->_baseUrl;
+        if(substr($baseUrl, -1) != '/'){
+            $baseUrl .= '/';
+        }
 
+        $url = $baseUrl . $this->_apiKey . $path;
+
+        $language = $this->_language;
+        if($language == null){
+            $language = $this->_storeCode;
+        }
         $queryString = array(
-            'language=' . $this->_language,
-            'storeCode=' . $this->_storeCode,
+            'language=' . $language
         );
 
         foreach ($params as $key => $value) {
-            $queryString[] = $key . '=' . $value;
+            $queryString[] = $key . '=' . urlencode($value);
         }
 
         $url .= '?' . implode('&', $queryString);

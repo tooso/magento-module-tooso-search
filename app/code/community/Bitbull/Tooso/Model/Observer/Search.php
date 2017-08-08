@@ -55,7 +55,12 @@ class Bitbull_Tooso_Model_Observer_Search extends Bitbull_Tooso_Model_Observer
         }
 
         $this->_logger->debug('Rank Collection: elaborating collection..');
-        $collection = Mage::registry('current_layer')->getProductCollection();
+        $currentLayer = Mage::registry('current_layer');
+        if($currentLayer == null){
+            $this->_logger->warn('Registry current_layer is null, cannot get current search results');
+            return;
+        }
+        $collection = $currentLayer->getProductCollection();
 
         $collection->addAttributeToSelect('name');
         $rankCollection = array();

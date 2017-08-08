@@ -19,9 +19,12 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
         $this->_client = Mage::helper('tooso')->getClient();
     }
 
-    public function pixelAction() {
+    /**
+     * Tracking product view
+     */
+    public function productAction() {
 
-        $product_id = $this->getRequest()->getParam('product');
+        $product_id = $this->getRequest()->getParam('id');
         if($product_id == null){
             $this->_logger->warn('Tracking: product param not found');
             return;
@@ -91,6 +94,46 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         }
 
+        $this->_logger->debug('Tracking: tracked product page view');
+        $this->_setEmptyScriptResponse();
+    }
+
+    /**
+     * Tracking checkout success page
+     */
+    public function checkoutAction(){
+        $orderId = $this->getRequest()->getParam('order');
+        $order = Mage::getSingleton('sales/order')->loadByIncrementId($orderId);
+
+        if($order->getId() != null){
+            $objectIds = array();
+            $prices = array();
+            $qtys = array();
+
+            $items = $order->getAllVisibleItems();
+            foreach ($items as $item) {
+                array_push($objectIds, $item->getSku());
+                array_push($prices, $item->getPrice());
+                array_push($qtys, $item->getQtyOrdered());
+            }
+
+            $profilingParams = Mage::helper('tooso')->getProfilingParams();
+            $this->_client->checkoutTracking($objectIds, $prices, $qtys, $profilingParams);
+
+            $this->_logger->debug('Tracking: tracked checkout order '.$orderId);
+        }else{
+            $this->_logger->warn('Tracking: checkout with id '.$orderId.' not exist');
+        }
+
+
+        $this->_setEmptyScriptResponse();
+    }
+
+    /**
+     * Response with empty script
+     */
+    protected function _setEmptyScriptResponse(){
+
         // Prevent browser cache
         $this->getResponse()->setHeader('Expires', '0');
         $this->getResponse()->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
@@ -102,8 +145,5 @@ class Bitbull_Tooso_TrackingController extends Mage_Core_Controller_Front_Action
 
         // Response with empty script
         $this->getResponse()->setBody("");
-
-        $this->_logger->debug('Tracking: pixel added into page');
     }
-
 }

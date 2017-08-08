@@ -9,6 +9,7 @@ class Bitbull_Tooso_Client
     const HTTP_METHOD_GET = 'GET';
     const HTTP_METHOD_POST = 'POST';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
+    const ARRAY_VALUES_SEPARATOR = ',';
 
     /**
      * Base url for API calls
@@ -124,6 +125,8 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
+
         if(self::FORCE_ERROR){
             $query = null;
         }
@@ -171,6 +174,7 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10, $extraParams = array())
     {
+        $query = str_replace(array("+", "%2B"), " ", $query);
         $params = array_merge(
             array('query' => $query, 'limit' => $limit),
             (array)$extraParams
@@ -269,6 +273,43 @@ class Bitbull_Tooso_Client
             (array)$extraParams
         );
         return $this->_doRequest("/User/productView", self::HTTP_METHOD_GET, $params);
+    }
+
+    /**
+     * Checkout page view
+     *
+     * @param string $objectIds skus
+     * @param string $prices prices
+     * @param string $qtys quantities
+     * @return Bitbull_Tooso_Response
+     */
+    public function checkoutTracking($objectIds, $prices, $qtys, $extraParams)
+    {
+        if(is_array($objectIds) && is_array($prices) && is_array($qtys)){
+            if(sizeof($objectIds) == sizeof($prices) && sizeof($objectIds) == sizeof($qtys)){
+
+                for($i = 0; $i < sizeof($qtys); $i++){
+                    $qtys[$i] = intval($qtys[$i]);
+                }
+
+                $trackingParams = array(
+                    'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $objectIds),
+                    'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
+                    'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
+                );
+
+                $params = array_merge(
+                    $trackingParams,
+                    (array)$extraParams
+                );
+                return $this->_doRequest('/User/checkOut', self::HTTP_METHOD_GET, $params);
+
+            }else{
+                throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must have the same length');
+            }
+        }else{
+            throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must be array');
+        }
     }
 
     /**
@@ -411,7 +452,7 @@ class Bitbull_Tooso_Client
         );
 
         foreach ($params as $key => $value) {
-            $queryString[] = $key . '=' . $value;
+            $queryString[] = $key . '=' . urlencode($value);
         }
 
         $url .= '?' . implode('&', $queryString);

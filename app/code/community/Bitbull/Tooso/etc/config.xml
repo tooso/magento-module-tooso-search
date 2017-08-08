@@ -68,7 +68,7 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_postdispatch_catalogsearch_result_index>
-            <http_response_send_before>
+            <controller_action_layout_render_before>
                 <observers>
                     <tooso_clear_search_id>
                         <type>singleton</type>
@@ -76,7 +76,7 @@
                         <method>clearSearchId</method>
                     </tooso_clear_search_id>
                 </observers>
-            </http_response_send_before>
+            </controller_action_layout_render_before>
             <checkout_cart_add_product_complete>
                 <observers>
                     <tooso_track_add_to_cart>
@@ -91,10 +91,19 @@
                     <tooso_tracking_pixel>
                         <type>singleton</type>
                         <class>tooso/observer</class>
-                        <method>includeTrackingScript</method>
+                        <method>includeProductTrackingScript</method>
                     </tooso_tracking_pixel>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
+            <controller_action_layout_render_before_checkout_onepage_success>
+                <observers>
+                    <tooso_track_checkout>
+                        <type>singleton</type>
+                        <class>tooso/observer</class>
+                        <method>includeCheckoutTrackingScript</method>
+                    </tooso_track_checkout>
+                </observers>
+            </controller_action_layout_render_before_checkout_onepage_success>
         </events>
         <template>
             <email>

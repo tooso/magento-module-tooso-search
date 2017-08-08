@@ -79,14 +79,14 @@ class Bitbull_Tooso_Model_Observer
      * Add tracking script that point to controller action endpoint
      * @param  Varien_Event_Observer $observer
      */
-    public function includeTrackingScript(Varien_Event_Observer $observer){
+    public function includeProductTrackingScript(Varien_Event_Observer $observer){
         if(!Mage::helper('tooso')->isTrackingEnabled()){
             return;
         }
         $current_product = Mage::registry('current_product');
         if($current_product != null) {
             $layout = Mage::app()->getLayout();
-            $block = Mage::helper('tooso/tracking')->getTrackingPixelBlock($current_product->getId());
+            $block = Mage::helper('tooso/tracking')->getTrackingProductBlock($current_product->getId());
             $layout->getBlock('before_body_end')->append($block);
         }else{
             $this->_logger->debug('Tracking script: product not found in request');
@@ -140,8 +140,11 @@ class Bitbull_Tooso_Model_Observer
         }
 
         $routeName = Mage::app()->getRequest()->getRouteName();
-        if($routeName != "catalog" && $routeName != "catalogsearch"){
-            Mage::helper('tooso/session')->clearSearchId();
+        $exclude = array("catalog", "catalogsearch", "enterprise_pagecache");
+        if(!in_array($routeName, $exclude)){
+            $layout = Mage::app()->getLayout();
+            $block = Mage::helper('tooso/tracking')->getClearSearchIDBlock();
+            $layout->getBlock('before_body_end')->append($block);
         }
     }
 
@@ -164,6 +167,27 @@ class Bitbull_Tooso_Model_Observer
             $this->_logger->debug('Cart Tracking: '.$sku.' added to cart');
         }else{
             $this->_logger->debug('Cart Tracking: can\'t find product param');
+        }
+    }
+
+    /**
+     * Track checkout event
+     * @param Varien_Event_Observer $observer
+     */
+    public function includeCheckoutTrackingScript(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+        if($orderId != null){
+            $layout = Mage::app()->getLayout();
+            $block = Mage::helper('tooso/tracking')->getCheckoutTrackingPixelBlock($orderId);
+            $layout->getBlock('before_body_end')->append($block);
+            $this->_logger->debug('Tracking cart: added tracking script');
+        }else{
+            $this->_logger->warn('Tracking checkout: can\'t find order id in session');
         }
     }
 

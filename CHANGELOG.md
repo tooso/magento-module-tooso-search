@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1]
+- Fix secure script url in checkout page
+
 ## [2.1.0]
 - Tracking product views using simple product instead of configurable one
 - Added stock quantity into indexer exported CSV

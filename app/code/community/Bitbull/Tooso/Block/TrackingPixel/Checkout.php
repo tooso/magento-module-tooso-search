@@ -47,7 +47,7 @@ class Bitbull_Tooso_Block_TrackingPixel_Checkout extends Mage_Core_Block_Templat
             $this->_orderId = $idFromSession;
         }
 
-        $url =  Mage::getBaseUrl().self::SCRIPT_ENDPOINT."order/".$this->_orderId;
+        $url =  Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB,true).self::SCRIPT_ENDPOINT."order/".$this->_orderId;
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
     }
 

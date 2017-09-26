@@ -87,6 +87,11 @@ class Bitbull_Tooso_Client
     protected $_sessionStorage;
 
     /**
+     * @var Bitbull_Tooso_Log_ProfilerInterface
+     */
+    protected $_profiler;
+
+    /**
      * @param string $apiKey
      * @param string $apiBaseUrl
      * @param string $language
@@ -124,6 +129,14 @@ class Bitbull_Tooso_Client
     public function setSessionStorage(Bitbull_Tooso_Storage_SessionInterface $sessionStorage)
     {
         $this->_sessionStorage = $sessionStorage;
+    }
+
+    /**
+     * @param Bitbull_Tooso_Log_ProfilerInterface $sessionStorage
+     */
+    public function setProfiler(Bitbull_Tooso_Log_ProfilerInterface $profilerInterface)
+    {
+        $this->_profiler = $profilerInterface;
     }
 
     /**
@@ -194,6 +207,10 @@ class Bitbull_Tooso_Client
      */
     public function suggest($query, $limit = 10, $extraParams = array())
     {
+        if($this->_profiler){
+            $this->_profiler->start('tooso::suggestion::request');
+        }
+
         $query = str_replace(array("+", "%2B"), " ", $query);
         $path = '/suggest';
         $params = array_merge(
@@ -202,8 +219,11 @@ class Bitbull_Tooso_Client
         );
 
         $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-
         $result = new Bitbull_Tooso_Suggest_Result($response);
+
+        if($this->_profiler){
+            $this->_profiler->stop('tooso::suggestion::request');
+        }
         return $result;
     }
 
@@ -387,6 +407,9 @@ class Bitbull_Tooso_Client
     */
     protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '', $timeout = null)
     {
+        if($this->_profiler){
+            $this->_profiler->start('tooso::request');
+        }
         $url = $this->_buildUrl($path, $params);
 
         if($this->_logger) {
@@ -421,12 +444,18 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
+        if($this->_profiler){
+            $this->_profiler->start('tooso::request::curl');
+        }
         $output = curl_exec($ch);
         $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
         $errorNumber = curl_errno($ch);
 
         curl_close($ch);
+        if($this->_profiler){
+            $this->_profiler->stop('tooso::request::curl');
+        }
 
         if($this->_logger) {
             $this->_logger->debug("Raw response: " . print_r($output, true));
@@ -440,9 +469,15 @@ class Bitbull_Tooso_Client
                 $this->_reportSender->sendReport($url, $httpMethod, $this->_apiKey, $this->_language, $this->_storeCode, $message);
             }
 
+            if($this->_profiler){
+                $this->_profiler->stop('tooso::request');
+            }
             throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
 
         }else{
+            if($this->_profiler){
+                $this->_profiler->start('tooso::request::elaborate');
+            }
             $response = json_decode($output);
             $result = new Bitbull_Tooso_Response();
             $result->setResponse($response);
@@ -461,6 +496,9 @@ class Bitbull_Tooso_Client
 
                 $e = new Bitbull_Tooso_Exception('API unavailable, HTTP STATUS CODE = ' . $httpStatusCode, 0);
                 $e->setResponse($result);
+                if($this->_profiler){
+                    $this->_profiler->stop('tooso::request::elaborate');
+                }
                 throw $e;
 
             } else if ($httpStatusCode == 200 && !$result->isValid()) {
@@ -476,12 +514,21 @@ class Bitbull_Tooso_Client
                 $e = new Bitbull_Tooso_Exception($result->getErrorDescription(), $result->getErrorCode());
                 $e->setDebugInfo($result->getErrorDebugInfo());
                 $e->setResponse($result);
+                if($this->_profiler){
+                    $this->_profiler->stop('tooso::request::elaborate');
+                }
                 throw $e;
 
             }
 
-            return $result;
+            if($this->_profiler){
+                $this->_profiler->stop('tooso::request::elaborate');
+            }
 
+            if($this->_profiler){
+                $this->_profiler->stop('tooso::request');
+            }
+            return $result;
         }
 
     }

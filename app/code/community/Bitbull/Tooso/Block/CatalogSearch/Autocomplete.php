@@ -8,7 +8,9 @@ class Bitbull_Tooso_Block_CatalogSearch_Autocomplete extends Mage_CatalogSearch_
 {
     public function getSuggestData()
     {
+        Mage::helper('tooso/profiler')->start('tooso::suggestion');
         if (!$this->helper('tooso')->isSearchEnabled()) {
+            Mage::helper('tooso/profiler')->stop('tooso::suggestion');
             return parent::getSuggestData();
         }
 
@@ -33,6 +35,8 @@ class Bitbull_Tooso_Block_CatalogSearch_Autocomplete extends Mage_CatalogSearch_
             }
             $this->_suggestData = $data;
         }
+
+        Mage::helper('tooso/profiler')->stop('tooso::suggestion');
         return $this->_suggestData;
     }
 }

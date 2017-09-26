@@ -13,7 +13,9 @@ class Bitbull_Tooso_Helper_CatalogSearch_Data extends Mage_CatalogSearch_Helper_
      */
     public function getQuery()
     {
+        Mage::helper('tooso/profiler')->start('tooso::suggestion::getquery');
         if (!Mage::helper('tooso')->isSearchEnabled()) {
+            Mage::helper('tooso/profiler')->stop('tooso::suggestion::getquery');
             return parent::getQuery();
         }
 
@@ -30,6 +32,7 @@ class Bitbull_Tooso_Helper_CatalogSearch_Data extends Mage_CatalogSearch_Helper_
                 $this->_query->setQueryText($this->getQueryText());
             }
         }
+        Mage::helper('tooso/profiler')->stop('tooso::suggestion::getquery');
         return $this->_query;
     }
 

@@ -15,6 +15,60 @@
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
+                <info translate="label">
+                    <label>About</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <module_version translate="label">
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_version</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Current installed module]]></comment>
+                        </module_version>
+                        <api_capatibility translate="label">
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_APICompatibility</frontend_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Module API compatibility]]></comment>
+                        </api_capatibility>
+                    </fields>
+                </info>
+                <tool translate="label">
+                    <label>Tools</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>6</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <tail_log translate="label">
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_TailLog</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </tail_log>
+                        <clear_log translate="label">
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_ClearLog</frontend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </clear_log>
+                    </fields>
+                </tool>
                 <active translate="label">
                     <label>Active Tooso</label>
                     <frontend_type>text</frontend_type>

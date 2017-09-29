@@ -8,7 +8,7 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>1.2.0</version>
+            <version>3.0.0</version>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -68,15 +68,6 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_postdispatch_catalogsearch_result_index>
-            <controller_action_layout_render_before>
-                <observers>
-                    <tooso_clear_search_id>
-                        <type>singleton</type>
-                        <class>tooso/observer_search</class>
-                        <method>clearSearchId</method>
-                    </tooso_clear_search_id>
-                </observers>
-            </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
                 <observers>
                     <tooso_tracking_pixel_product>
@@ -125,6 +116,15 @@
     </global>
     <frontend>
         <events>
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_clear_search_id>
+                        <type>singleton</type>
+                        <class>tooso/observer_search</class>
+                        <method>clearSearchId</method>
+                    </tooso_clear_search_id>
+                </observers>
+            </controller_action_layout_render_before>
             <controller_action_layout_render_before>
                 <observers>
                     <tooso_tracking_pixel_page>

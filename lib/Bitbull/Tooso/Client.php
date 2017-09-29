@@ -192,16 +192,25 @@ class Bitbull_Tooso_Client
      * @param array $extraParams
      * @return Bitbull_Tooso_Suggest_Result
      */
-    public function suggest($query, $limit = 10, $extraParams = array())
+    public function suggest($query, $limit = 10, $extraParams = array(), $apiV1VersionBaseURL = null)
     {
         $query = str_replace(array("+", "%2B"), " ", $query);
-        $path = '/suggest';
+
         $params = array_merge(
             array('query' => $query, 'limit' => $limit),
             (array)$extraParams
         );
 
-        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+        if($apiV1VersionBaseURL != null && $apiV1VersionBaseURL != ""){
+            $path = '/Search/suggest';
+            $oldBaseUrl = $this->_baseUrl;
+            $this->_baseUrl = $apiV1VersionBaseURL;
+            $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+            $this->_baseUrl = $oldBaseUrl;
+        }else{
+            $path = '/suggest';
+            $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
+        }
 
         $result = new Bitbull_Tooso_Suggest_Result($response);
         return $result;

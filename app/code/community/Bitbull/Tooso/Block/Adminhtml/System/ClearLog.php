@@ -66,7 +66,11 @@ class Bitbull_Tooso_Block_Adminhtml_System_ClearLog extends Mage_Adminhtml_Block
                 }
                 //]]>
             </script>
+            <tr>
+                <td class="label">Empty Tooso log</td>
+                <td class="value"><?=$this->getButtonHtml() ?></td>
+            </tr>
         <?php
-        return ob_get_clean().$this->getButtonHtml();
+        return ob_get_clean();
     }
 }

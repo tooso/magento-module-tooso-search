@@ -67,7 +67,12 @@ class Bitbull_Tooso_Block_Adminhtml_System_TailLog extends Mage_Adminhtml_Block_
                 }
                 //]]>
             </script>
+            <tr>
+                <td class="label">Get Tooso log</td>
+                <td class="value"><?=$this->getButtonHtml() ?></td>
+            </tr>
+
         <?php
-        return ob_get_clean().$this->getButtonHtml();
+        return ob_get_clean();
     }
 }

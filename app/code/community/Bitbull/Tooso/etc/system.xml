@@ -32,15 +32,6 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Current installed module]]></comment>
                         </module_version>
-                        <api_capatibility translate="label">
-                            <frontend_type>text</frontend_type>
-                            <frontend_model>tooso/adminhtml_system_APICompatibility</frontend_model>
-                            <sort_order>2</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Module API compatibility]]></comment>
-                        </api_capatibility>
                     </fields>
                 </info>
                 <tool translate="label">

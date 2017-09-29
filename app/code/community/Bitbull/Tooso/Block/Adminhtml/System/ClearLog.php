@@ -25,7 +25,7 @@ class Bitbull_Tooso_Block_Adminhtml_System_ClearLog extends Mage_Adminhtml_Block
      */
     public function getAjaxCheckUrl()
     {
-        return Mage::helper('adminhtml')->getUrl('tooso/log/clear');
+        return Mage::helper('adminhtml')->getUrl('adminhtml/tooso/clearlog');
     }
 
     /**

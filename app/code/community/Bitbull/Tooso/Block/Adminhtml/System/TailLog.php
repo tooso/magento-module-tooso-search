@@ -25,7 +25,7 @@ class Bitbull_Tooso_Block_Adminhtml_System_TailLog extends Mage_Adminhtml_Block_
      */
     public function getAjaxCheckUrl()
     {
-        return Mage::helper('adminhtml')->getUrl('tooso/log/tail');
+        return Mage::helper('adminhtml')->getUrl('adminhtml/tooso/taillog');
     }
 
     /**

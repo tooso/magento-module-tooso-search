@@ -232,7 +232,11 @@ class Bitbull_Tooso_Model_Search
      * @return bool
      */
     public function getAdditionalData(){
-        $additionalData = $this->_result->getAdditionalData();
-        return $additionalData;
+        if(!$this->isResultEmpty()){
+            $additionalData = $this->_result->getAdditionalData();
+            return $additionalData;
+        }else{
+            return null;
+        }
     }
 }

@@ -93,4 +93,13 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
         }
     }
 
+    public function getAdditionalData()
+    {
+        if(isset($this->_response->Content)){
+            return $this->_response->Content->SimilarResultsAlert;
+        }else{
+            return null;
+        }
+    }
+
 }

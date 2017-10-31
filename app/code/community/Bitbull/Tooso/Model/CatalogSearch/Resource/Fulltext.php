@@ -45,6 +45,9 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                 }
                 $search = Mage::getModel('tooso/search')->search($queryText, $typoCorrection, $parentSearchId);
 
+                $additionalData = $search->getAdditionalData();
+                if($additionalData != null) Mage::helper('catalogsearch')->addNoteMessage($additionalData);
+
                 // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {
 

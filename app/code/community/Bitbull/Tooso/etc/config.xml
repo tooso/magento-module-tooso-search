@@ -60,6 +60,14 @@
                     </tooso_search_results_breadcrumbs>
                 </observers>
             </core_block_abstract_to_html_before>
+            <controller_action_predispatch_catalogsearch_result_index>
+                <observers>
+                    <tooso_prepare_results>
+                        <class>tooso/observer_search</class>
+                        <method>prepareResults</method>
+                    </tooso_prepare_results>
+                </observers>
+            </controller_action_predispatch_catalogsearch_result_index>
             <controller_action_postdispatch_catalogsearch_result_index>
                 <observers>
                     <tooso_elaborate_rank_collection>

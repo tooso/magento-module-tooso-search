@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.0]
+- Added backend module's info and log tools
+
 ## [3.0.0]
 - Added API v2 compatibility
 - Catch current_layer null error

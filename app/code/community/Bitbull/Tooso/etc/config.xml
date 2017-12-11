@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>3.0.0</version>
+            <version>3.0.0 (feature/autosuggestion-custom-endpoint)</version>
             <api_compatibility>v2.0/v1.0</api_compatibility>
-            <notes>Patch suggestions overriding base URL</notes>
+            <notes>Patch suggestions overriding base URL.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>

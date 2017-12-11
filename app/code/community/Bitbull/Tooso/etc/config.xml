@@ -53,6 +53,25 @@
                 </rewrite>
             </catalogsearch>
         </blocks>
+        <template>
+            <email>
+                <tooso_alert_email_template translate="label" module="tooso">
+                    <label>Send report for API error</label>
+                    <file>tooso_alert.html</file>
+                    <type>html</type>
+                </tooso_alert_email_template>
+            </email>
+        </template>
+        <importexport>
+            <export_file_formats>
+                <tooso_csv translate="label">
+                    <model_token>tooso/export_adapter_csv</model_token>
+                    <label>CSV</label>
+                </tooso_csv>
+            </export_file_formats>
+        </importexport>
+    </global>
+    <frontend>
         <events>
             <core_block_abstract_to_html_before>
                 <observers>
@@ -105,27 +124,6 @@
                     </tooso_track_add_to_cart>
                 </observers>
             </checkout_cart_add_product_complete>
-        </events>
-        <template>
-            <email>
-                <tooso_alert_email_template translate="label" module="tooso">
-                    <label>Send report for API error</label>
-                    <file>tooso_alert.html</file>
-                    <type>html</type>
-                </tooso_alert_email_template>
-            </email>
-        </template>
-        <importexport>
-            <export_file_formats>
-                <tooso_csv translate="label">
-                    <model_token>tooso/export_adapter_csv</model_token>
-                    <label>CSV</label>
-                </tooso_csv>
-            </export_file_formats>
-        </importexport>
-    </global>
-    <frontend>
-        <events>
             <controller_action_layout_render_before>
                 <observers>
                     <tooso_clear_search_id>

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 - Added more info on exported simple product 
 
+## [3.1.2]
+- Save query before fallback to ensure query_id is valorized
+- Moved events inside frontend section instead of global
+
 ## [3.1.0]
 - Added backend module's info and log tools
 

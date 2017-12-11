@@ -108,4 +108,18 @@ class Bitbull_Tooso_Model_Observer_Search extends Bitbull_Tooso_Model_Observer
         }
     }
 
+    /**
+     * Call search API and populate products ids list in memory
+     *
+     * @param Varien_Event_Observer $observer
+     */
+    public function prepareResults(Varien_Event_Observer $observer)
+    {
+        if (Mage::helper('tooso')->isSearchEnabled()) {
+            $query = Mage::helper('catalogsearch')->getQuery();
+            $query->save();
+            Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
+        }
+    }
+
 }

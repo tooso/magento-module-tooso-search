@@ -116,6 +116,8 @@ class Bitbull_Tooso_Model_Observer_Search extends Bitbull_Tooso_Model_Observer
     public function prepareResults(Varien_Event_Observer $observer)
     {
         if (Mage::helper('tooso')->isSearchEnabled()) {
+            $query = Mage::helper('catalogsearch')->getQuery();
+            $query->save();
             Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
         }
     }

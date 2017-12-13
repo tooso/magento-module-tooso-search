@@ -132,6 +132,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </api_base_url>
+                        <api_base_url_suggestions translate="label">
+                            <label>API base url v1 (suggestions)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Override suggestions base url (leave empty to use default)]]></comment>
+                        </api_base_url_suggestions>
                         <send_report>
                             <label>Send report</label>
                             <frontend_type>select</frontend_type>

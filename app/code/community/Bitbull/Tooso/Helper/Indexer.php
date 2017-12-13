@@ -26,6 +26,10 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
      * @var array|null
      */
     protected $_systemAttributes = null;
+    /**
+     * @var array|null
+     */
+    protected $_preserveAttributeValue = null;
 
 
     /**
@@ -117,6 +121,14 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             'short_description' => 'short_description',
             'status' => 'status'
         );
+
+        /**
+         * Not use getAttributeText to get value of data
+         */
+        $this->_preserveAttributeValue = array(
+            'status',
+            'visibility'
+        );
     }
 
     public function getExcludeAttributes(){
@@ -137,6 +149,10 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
 
     public function getSystemAttributes(){
         return $this->_systemAttributes;
+    }
+
+    public function getPreservedAttributeType(){
+        return $this->_preserveAttributeValue;
     }
 
 }

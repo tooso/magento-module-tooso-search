@@ -9,6 +9,7 @@ class Bitbull_Tooso_Model_Indexer
     const XML_PATH_INDEXER_STORES = 'tooso/indexer/stores_to_index';
     const XML_PATH_INDEXER_DRY_RUN = 'tooso/indexer/dry_run_mode';
     const XML_PATH_INDEXER_ATTRIBUTES = 'tooso/indexer/attributes_to_index';
+    const XML_PATH_INDEXER_ATTRIBUTES_SIMPLE = 'tooso/indexer/attributes_simple_to_index';
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
@@ -131,14 +132,6 @@ class Bitbull_Tooso_Model_Indexer
             'sku' => 'sku'
         ), $attributes);
 
-        /**
-         * Not use getAttributeText to get value of data
-         */
-        $preserveAttributeValue = array(
-            'status',
-            'visibility'
-        );
-
         $this->_logger->debug("Indexer: using attributes ".json_encode($attributes));
 
         // load custom attributes
@@ -189,7 +182,7 @@ class Bitbull_Tooso_Model_Indexer
                 'storeId' => $storeId,
                 'attributes' => $attributes,
                 'attributesTypes' => $attributesTypes,
-                'preserveAttributeValue' => $preserveAttributeValue,
+                'preserveAttributeValue' => $this->_indexerHelper->getPreservedAttributeType(),
                 'writer' => $writer
             )
         );
@@ -219,7 +212,7 @@ class Bitbull_Tooso_Model_Indexer
 
         foreach ($attributes as $attributeCode) {
             if($attributeCode == 'variants'){
-                $variants = $this->_getProductVariants($product);
+                $variants = $this->_getProductVariants($product, $storeId);
                 if(sizeof($variants) > 0){
                     $row["variants"] = json_encode($variants);
                 }
@@ -242,7 +235,7 @@ class Bitbull_Tooso_Model_Indexer
      * @param $product
      * @return array
      */
-    protected function _getProductVariants($product){
+    protected function _getProductVariants($product, $storeId){
         $variants = array();
         if($product->getTypeId() == Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE) {
             $productAttributesOptions = $product->getTypeInstance(true)->getConfigurableOptions($product);
@@ -255,6 +248,36 @@ class Bitbull_Tooso_Model_Indexer
                     $variants[$optionValues['sku']][$optionValues['attribute_code']] = $optionValues['option_title'];
                 }
             }
+
+            $attributes = explode(",", Mage::getStoreConfig(self::XML_PATH_INDEXER_ATTRIBUTES_SIMPLE));
+            if(sizeof($attributes) > 0){
+                $variantsCollection = Mage::getResourceModel('catalog/product_type_configurable_product_collection')
+                    ->setProductFilter($product);
+
+                $attributesTypes= [];
+                $attributesCollection = Mage::getResourceModel('catalog/product_attribute_collection')->addFieldToFilter('attribute_code', array('in' => $attributes));
+                foreach ($attributesCollection as $attribute) {
+                    $attributeCode = $attribute->getAttributeCode();
+                    $attributesTypes[$attributeCode] = $attribute->getFrontendInput();
+                    $variantsCollection->addAttributeToSelect($attributeCode, 'left');
+                }
+
+                $preserveAttributeValue = $this->_indexerHelper->getPreservedAttributeType();
+
+                foreach ($variantsCollection as $variant){
+                    $variant->setStoreId($storeId);
+                    $sku = $variant->getSku();
+
+                    foreach ($attributes as $attributeCode) {
+                        if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                            $variants[$sku][$attributeCode] = $variant->getAttributeText($attributeCode);
+                        }else{
+                            $variants[$sku][$attributeCode] = $variant->getData($attributeCode);
+                        }
+                    }
+                }
+            }
+
         }
 
         if(sizeof($variants) > 0){

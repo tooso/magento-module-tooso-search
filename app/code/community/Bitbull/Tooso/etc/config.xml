@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>3.0.0</version>
+            <version>3.2.0</version>
             <api_compatibility>v2.0</api_compatibility>
-            <notes>Stable Release</notes>
+            <notes></notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -170,6 +170,7 @@
             </server>
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
+                <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
             </indexer>
             <suggest>
                 <max_results>10</max_results>

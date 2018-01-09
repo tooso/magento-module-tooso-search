@@ -97,6 +97,27 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_postdispatch_catalogsearch_result_index>
+
+
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_clear_search_id>
+                        <type>singleton</type>
+                        <class>tooso/observer_search</class>
+                        <method>clearSearchId</method>
+                    </tooso_clear_search_id>
+                </observers>
+            </controller_action_layout_render_before>
+
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_tracking_library>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>includeLibrary</method>
+                    </tooso_tracking_library>
+                </observers>
+            </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
                 <observers>
                     <tooso_tracking_pixel_product>
@@ -111,28 +132,10 @@
                     <tooso_track_checkout>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
-                        <method>trackCheckout</method>
+                        <method>includeCheckoutTrackingScript</method>
                     </tooso_track_checkout>
                 </observers>
             </controller_action_layout_render_before_checkout_onepage_success>
-            <checkout_cart_add_product_complete>
-                <observers>
-                    <tooso_track_add_to_cart>
-                        <type>singleton</type>
-                        <class>tooso/observer_tracking</class>
-                        <method>trackAddToCart</method>
-                    </tooso_track_add_to_cart>
-                </observers>
-            </checkout_cart_add_product_complete>
-            <controller_action_layout_render_before>
-                <observers>
-                    <tooso_clear_search_id>
-                        <type>singleton</type>
-                        <class>tooso/observer_search</class>
-                        <method>clearSearchId</method>
-                    </tooso_clear_search_id>
-                </observers>
-            </controller_action_layout_render_before>
             <controller_action_layout_render_before>
                 <observers>
                     <tooso_tracking_pixel_page>
@@ -142,6 +145,16 @@
                     </tooso_tracking_pixel_page>
                 </observers>
             </controller_action_layout_render_before>
+
+            <checkout_cart_add_product_complete>
+                <observers>
+                    <tooso_track_add_to_cart>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>trackAddToCart</method>
+                    </tooso_track_add_to_cart>
+                </observers>
+            </checkout_cart_add_product_complete>
         </events>
     </frontend>
     <admin>
@@ -175,6 +188,10 @@
             <suggest>
                 <max_results>10</max_results>
             </suggest>
+            <analytics>
+                <include_library>1</include_library>
+                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>
+            </analytics>
         </tooso>
     </default>
     <crontab>

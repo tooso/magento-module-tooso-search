@@ -155,10 +155,13 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             $userId = $sessionId;
         }
 
+        $clientId = Mage::helper('tooso/session')->getClientId();
+
         $params = array(
             'ip' => Mage::helper('core/http')->getRemoteAddr(),
             'userId' => $userId,
             'sessionId' => $sessionId,
+            'clientId' => $clientId,
             'isMobile' => Mage::helper('tooso/tracking')->isMobile(),
             'lastPage' => Mage::helper('tooso/tracking')->getLastPage(),
             'currentPage' => Mage::helper('tooso/tracking')->getCurrentPage()

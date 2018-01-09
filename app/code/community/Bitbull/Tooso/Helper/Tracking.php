@@ -8,6 +8,11 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 {
     const CONTAINER_BLOCK = 'before_body_end';
 
+    const XML_PATH_ANALYTICS_INCLUDE_LIBRARY = 'tooso/analytics/include_library';
+    const XML_PATH_ANALYTICS_LIBRARY_ENDPOINT = 'tooso/analytics/library_endpoint';
+    const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
+    const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
+
     /**
      * Get block to append tracking script and cookies managers
      *
@@ -18,44 +23,38 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Create Product TrackingPixel Block
+     * Create Product Tracking Block
      *
      * @param $productId
      * @return Bitbull_Tooso_Block_TrackingPixel
      */
-    public function getProductTrackingPixelBlock($productId){
+    public function getProductTrackingBlock($productId){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/trackingPixel_product');
-        $block->setCurrentPage($this->getCurrentPage());
-        $block->setLastPage($this->getLastPage());
+        $block = $layout->createBlock('tooso/tracking_productView');
         $block->setProductID($productId);
         return $block;
     }
 
     /**
-     * Create Page TrackingPixel Block
+     * Create Page Tracking Block
      *
      * @return Bitbull_Tooso_Block_TrackingPixel
      */
-    public function getPageTrackingPixelBlock(){
+    public function getPageTrackingBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/trackingPixel_page');
-        $block->setCurrentPage($this->getCurrentPage());
-        $block->setLastPage($this->getLastPage());
+        $block = $layout->createBlock('tooso/tracking_pageView');
         return $block;
     }
 
     /**
-     * Create Checkout TrackingPixel Block
+     * Create Checkout Tracking Block
      *
      * @param $orderId
      * @return Bitbull_Tooso_Block_TrackingPixel
      */
-    public function getCheckoutTrackingPixelBlock($orderId){
+    public function getCheckoutTrackingBlock($orderId){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/trackingPixel_checkout');
-        $block->setCurrentPage($this->getCurrentPage());
-        $block->setLastPage($this->getLastPage());
+        $block = $layout->createBlock('tooso/tracking_checkout');
         $block->setOrderId($orderId);
         return $block;
     }
@@ -119,6 +118,84 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getCurrentPage(){
         return Mage::helper('core/url')->getCurrentUrl();
+    }
+
+    /**
+     * Check if is necessary to include JS library
+     */
+    public function includeTrackingJSLibrary($store = null){
+        return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_INCLUDE_LIBRARY, $store);
+    }
+
+    /**
+     * Create Product TrackingPixel Block
+     *
+     * @return Bitbull_Tooso_Block_Tracking_LibraryInclusion
+     */
+    public function getTrackingLibraryBlock(){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/tracking_library');
+        return $block;
+    }
+
+    /**
+     * Create Product TrackingPixel Block
+     *
+     * @return Bitbull_Tooso_Block_Tracking_LibraryInclusion
+     */
+    public function getTrackingLibraryInitBlock(){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/tracking_libraryInit');
+        return $block;
+    }
+
+    /**
+     * Check if is necessary to include JS library
+     */
+    public function getTrackingLibraryEndpoint($store = null){
+        return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_LIBRARY_ENDPOINT, $store);
+    }
+
+    /**
+     * Check if is necessary to include JS library
+     */
+    public function getTrackingKey($store = null){
+        return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_KEY, $store);
+    }
+
+    /**
+     * Check if is necessary to include JS library
+     */
+    public function isDebugMode($store = null){
+        return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_DEBUG_MODE, $store);
+    }
+
+    /**
+     * Get product tracking params
+     *
+     * @param $productId
+     * @return null|array
+     */
+    public function getProductTrackingParams($productId){
+        $product = Mage::getModel('catalog/product')->load($productId);
+        if($product == null){
+            return null;
+        }
+        $trackingProductParams = [
+            'id' => $product->getSku(),
+            'name' => $product->getName(),
+            'brand' => $product->getBrand(),
+            'price' => $product->getFinalPrice(),
+        ];
+
+        $categoryIds = $product->getCategoryIds();
+        $currentProductCategory = null;
+        if(count($categoryIds) > 0){
+            $currentProductCategory = Mage::getModel('catalog/category')->load($categoryIds[0]);
+            $trackingProductParams['category'] = $currentProductCategory->getName();
+        }
+
+        return $trackingProductParams;
     }
 
 }

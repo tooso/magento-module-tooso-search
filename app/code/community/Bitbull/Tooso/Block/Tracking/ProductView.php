@@ -4,21 +4,10 @@
  * @author Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Block_TrackingPixel_Product extends Bitbull_Tooso_Block_TrackingPixel
+class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Tracking
 {
-    const BLOCK_ID = 'tooso_tracking_pixel_product';
-
-    const RESULT_SCRIPT_ID = 'tooso-tracking-result';
-    const RESULT_SCRIPT_ENDPOINT = 'tooso/tracking/result/';
-
-    const PRODUCT_SCRIPT_ID = 'tooso-tracking-product';
-    const PRODUCT_SCRIPT_ENDPOINT = 'tooso/tracking/product/';
-
-
-    /**
-     * @var Bitbull_Tooso_Helper_Log
-     */
-    protected $_logger = null;
+    const BLOCK_ID = 'tooso_tracking_productview';
+    const SCRIPT_ID = 'tooso-tracking-productview';
 
     /**
      * @var null|integer
@@ -32,16 +21,16 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Bitbull_Tooso_Block_Trac
             return;
         }
 
-        $currentProduct = Mage::getModel('catalog/product')->load($this->_productId);
-
-        if($currentProduct == null){
+        $trackingProductParams = $this->_helper->getProductTrackingParams($this->_productId);
+        if($trackingProductParams == null){
             $this->_logger->warn('Tracking product: product not found with id '.$this->_productId);
             return;
         }
 
+        ob_start();
+
         if(Mage::helper('tooso/tracking')->isUserComingFromSearch()){
             $this->_logger->debug('Tracking product: elaborating result..');
-            $sku = $currentProduct->getSku();
 
             // Get rank collection from search collection
             $searchRankCollection = Mage::helper('tooso/session')->getRankCollection();
@@ -58,21 +47,33 @@ class Bitbull_Tooso_Block_TrackingPixel_Product extends Bitbull_Tooso_Block_Trac
                     }
                 }
             }
+            $trackingProductParams['rank'] = $rank;
 
             $order = Mage::helper('tooso/session')->getSearchOrder();
             if($order == null){
                 $order = "relevance";
             }
+            $trackingProductParams['order'] = $order;
 
-            $url = Mage::getBaseUrl().self::RESULT_SCRIPT_ENDPOINT."sku/$sku/rank/$rank/order/$order".'/'.$this->_getPageParams();
-            return "<script id='".self::RESULT_SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
+            ?>
+            <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
+                ta('ec:setAction', 'detail');
+            </script>
+            <?php
+
         }else{
             $this->_logger->debug('Tracking product: elaborating product view..');
-            $sku = $currentProduct->getSku();
 
-            $url = Mage::getBaseUrl().self::PRODUCT_SCRIPT_ENDPOINT."sku/$sku".'/'.$this->_getPageParams();
-            return "<script id='".self::PRODUCT_SCRIPT_ID."' async type='text/javascript' src='".$url."'></script>";
+            ?>
+            <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
+                ta('ec:setAction', 'detail');
+            </script>
+            <?php
         }
+
+        return ob_get_clean();
     }
 
     /**

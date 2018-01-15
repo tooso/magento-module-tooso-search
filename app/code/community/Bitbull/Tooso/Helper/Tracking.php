@@ -252,6 +252,9 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 
         $url = $this->getTrackingAPIEndpoint().'collect?' . implode('&', $queryString);
 
+        Mage::helper('tooso/log')->debug("Performing API request to url: " . $url . " with method: GET");
+        Mage::helper('tooso/log')->debug("Params: " . print_r($params, true));
+
         $curl->write(Zend_Http_Client::GET, $url, '1.0');
         $output = $curl->read();
         if ($output === false) {

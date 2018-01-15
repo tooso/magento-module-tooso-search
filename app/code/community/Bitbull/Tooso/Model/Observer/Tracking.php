@@ -124,7 +124,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             $sku = $product->getSku();
 
             $productData = Mage::helper('tooso/tracking')->getProductTrackingParams($product->getId());
-            $qty = Mage::app()->getRequest()->getParam('qty') || 1;
+            $qty = Mage::app()->getRequest()->getParam('qty') | 1;
 
             Mage::helper('tooso/tracking')->makeTrackingRequest([
                 "t" => "event",

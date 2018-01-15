@@ -228,6 +228,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         $profilingParams = Mage::helper('tooso')->getProfilingParams();
 
         $params = array_merge([
+            "z" => Mage::helper('tooso')->getUuid(),
             "uip" => $this->getRemoteAddr(),
             "ua" => $this->getUserAgent(),
             "tid" => $this->getTrackingKey(),

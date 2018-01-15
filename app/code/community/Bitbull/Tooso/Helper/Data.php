@@ -199,4 +199,19 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getAttributesToIndex(){
 
     }
+
+    /**
+     * Generate uuid
+     *
+     * @return string
+     */
+    public function getUuid(){
+        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+            mt_rand( 0, 0xffff ),
+            mt_rand( 0, 0x0fff ) | 0x4000,
+            mt_rand( 0, 0x3fff ) | 0x8000,
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+        );
+    }
 }

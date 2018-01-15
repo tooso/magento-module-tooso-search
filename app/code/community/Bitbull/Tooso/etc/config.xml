@@ -118,24 +118,6 @@
                     </tooso_tracking_library>
                 </observers>
             </controller_action_layout_render_before>
-            <controller_action_layout_render_before_catalog_product_view>
-                <observers>
-                    <tooso_tracking_pixel_product>
-                        <type>singleton</type>
-                        <class>tooso/observer_tracking</class>
-                        <method>includeProductTrackingScript</method>
-                    </tooso_tracking_pixel_product>
-                </observers>
-            </controller_action_layout_render_before_catalog_product_view>
-            <controller_action_layout_render_before_checkout_onepage_success>
-                <observers>
-                    <tooso_track_checkout>
-                        <type>singleton</type>
-                        <class>tooso/observer_tracking</class>
-                        <method>includeCheckoutTrackingScript</method>
-                    </tooso_track_checkout>
-                </observers>
-            </controller_action_layout_render_before_checkout_onepage_success>
             <controller_action_layout_render_before>
                 <observers>
                     <tooso_tracking_pixel_page>
@@ -155,6 +137,15 @@
                     </tooso_track_add_to_cart>
                 </observers>
             </checkout_cart_add_product_complete>
+            <sales_quote_remove_item>
+                <observers>
+                    <tooso_track_add_to_cart>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>trackRemoveFromCart</method>
+                    </tooso_track_add_to_cart>
+                </observers>
+            </sales_quote_remove_item>
         </events>
     </frontend>
     <admin>

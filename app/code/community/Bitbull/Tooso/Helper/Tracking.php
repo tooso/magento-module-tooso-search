@@ -10,6 +10,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ANALYTICS_INCLUDE_LIBRARY = 'tooso/analytics/include_library';
     const XML_PATH_ANALYTICS_LIBRARY_ENDPOINT = 'tooso/analytics/library_endpoint';
+    const XML_PATH_ANALYTICS_API_ENDPOINT = 'tooso/analytics/api_endpoint';
     const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
 
@@ -107,6 +108,15 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get client user agent
+     *
+     * @return string
+     */
+    public function getUserAgent(){
+        return Mage::helper('core/http')->getHttpUserAgent();
+    }
+
+    /**
      * Get last page visited
      */
     public function getLastPage(){
@@ -150,21 +160,28 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if is necessary to include JS library
+     * Get tracking endpoint
      */
     public function getTrackingLibraryEndpoint($store = null){
         return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_LIBRARY_ENDPOINT, $store);
     }
 
     /**
-     * Check if is necessary to include JS library
+     * Get tracking endpoint
+     */
+    public function getTrackingAPIEndpoint($store = null){
+        return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_API_ENDPOINT, $store);
+    }
+
+    /**
+     * Get tracking key
      */
     public function getTrackingKey($store = null){
         return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_KEY, $store);
     }
 
     /**
-     * Check if is necessary to include JS library
+     * Is debug mode
      */
     public function isDebugMode($store = null){
         return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_DEBUG_MODE, $store);
@@ -193,9 +210,57 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         if(count($categoryIds) > 0){
             $currentProductCategory = Mage::getModel('catalog/category')->load($categoryIds[0]);
             $trackingProductParams['category'] = $currentProductCategory->getName();
+        }else{
+            $trackingProductParams['category'] = null;
         }
 
         return $trackingProductParams;
+    }
+
+    /**
+     * Make tracking request server2server
+     *
+     * @param $params
+     * @return bool
+     */
+    public function makeTrackingRequest($params)
+    {
+        $profilingParams = Mage::helper('tooso')->getProfilingParams();
+
+        $params = array_merge([
+            "uip" => $this->getRemoteAddr(),
+            "ua" => $this->getUserAgent(),
+            "tid" => $this->getTrackingKey(),
+            "v" => "1",
+            "dl" => $this->getCurrentPage(),
+            "dr" => $this->getLastPage(),
+            "cid" => $profilingParams['clientId'],
+            "uid" => $profilingParams['userId'],
+            "tm" => time(),
+        ], $params);
+
+        $curl = new Varien_Http_Adapter_Curl();
+        $curl->setConfig(array(
+            'timeout'   => 5
+        ));
+
+        $queryString = [];
+        foreach ($params as $key => $value) {
+            $queryString[] = $key . '=' . urlencode($value);
+        }
+
+        $url = $this->getTrackingAPIEndpoint().'collect?' . implode('&', $queryString);
+
+        $curl->write(Zend_Http_Client::GET, $url, '1.0');
+        $output = $curl->read();
+        if ($output === false) {
+            return false;
+        }
+        $curl->close();
+
+        Mage::helper('tooso/log')->debug("Raw response: " . print_r($output, true));
+
+        return true;
     }
 
 }

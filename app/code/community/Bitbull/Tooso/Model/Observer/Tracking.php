@@ -37,6 +37,18 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
         $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
         if($parentBlock){
+
+            $requestId = Mage::app()->getRequest()->getRouteName().'/'.Mage::app()->getRequest()->getControllerName().'/'.Mage::app()->getRequest()->getActionName();
+
+            switch ($requestId){
+                case 'catalog/product/view':
+                    $this->includeProductTrackingScript($observer);
+                    break;
+                case 'checkout/onepage/success':
+                    $this->includeCheckoutTrackingScript($observer);
+                    break;
+            }
+
             $block = Mage::helper('tooso/tracking')->getPageTrackingBlock();
             $parentBlock->append($block);
             $this->_logger->debug('Tracking page view: added tracking script');
@@ -95,6 +107,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
     }
 
+
     /**
      * Track add to cart event
      * not using tracking script to track also ajax 'add to cart' call
@@ -109,12 +122,65 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         $product = $observer->getEvent()->getProduct();
         if($product != null){
             $sku = $product->getSku();
-            $profilingParams = Mage::helper('tooso')->getProfilingParams();
-            $this->_client->productAddedToCart($sku, $profilingParams);
-            $this->_logger->debug('Tracking cart: tracked '.$sku);
+
+            $productData = Mage::helper('tooso/tracking')->getProductTrackingParams($product->getId());
+            $qty = Mage::app()->getRequest()->getParam('qty') || 1;
+
+            Mage::helper('tooso/tracking')->makeTrackingRequest([
+                "t" => "event",
+                "pr1id" => $productData['id'],
+                "pr1nm" => $productData['name'],
+                "pr1ca" => $productData['category'],
+                "pr1br" => $productData['brand'],
+                "pr1pr" => $productData['price'],
+                "pr1qt" => $qty,
+                "pa" => "add",
+                "ec" => "cart",
+                "ea" => "add",
+            ]);
+
+            $this->_logger->debug('Tracking cart: added '.$sku);
         }else{
             $this->_logger->warn('Tracking cart: product param not found');
         }
     }
+
+    /**
+     * Track remove from cart event
+     * @param Varien_Event_Observer $observer
+     */
+    public function trackRemoveFromCart(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        $item = $observer->getEvent()->getQuoteItem();
+
+        if($item != null){
+            $sku = $item->getSku();
+
+            $productData = Mage::helper('tooso/tracking')->getProductTrackingParams(Mage::getModel("catalog/product")->getIdBySku($sku));
+            $qty = $item->getQty();
+
+            Mage::helper('tooso/tracking')->makeTrackingRequest([
+                "t" => "event",
+                "pr1id" => $productData['id'],
+                "pr1nm" => $productData['name'],
+                "pr1ca" => $productData['category'],
+                "pr1br" => $productData['brand'],
+                "pr1pr" => $productData['price'],
+                "pr1qt" => $qty,
+                "pa" => "remove",
+                "ec" => "cart",
+                "ea" => "remove",
+            ]);
+
+            $this->_logger->debug('Tracking cart: removed '.$sku);
+        }else{
+            $this->_logger->warn('Tracking cart: product param not found');
+        }
+    }
+
 
 }

@@ -63,7 +63,7 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         );
 
                         $message = sprintf(
-                            'Search instead for "<a href="%s">%s</a>"',
+                            Mage::helper('catalogsearch')->__('Search instead for "<a href="%s">%s</a>"'),
                             Mage::getUrl('catalogsearch/result', array('_query' => $queryString)),
                             $search->getOriginalSearchString()
                         );

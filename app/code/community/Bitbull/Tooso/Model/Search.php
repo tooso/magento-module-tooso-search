@@ -225,4 +225,18 @@ class Bitbull_Tooso_Model_Search
             return false;
         }
     }
+
+    /**
+     * Return response additional data
+     *
+     * @return bool
+     */
+    public function getAdditionalData(){
+        if(!is_null($this->_result)){
+            $additionalData = $this->_result->getAdditionalData();
+            return $additionalData;
+        }else{
+            return null;
+        }
+    }
 }

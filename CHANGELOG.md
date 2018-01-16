@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0]
+- Added SimilarResultsAlert message 
+
+## [2.1.5]
+- Fix 'Search instead for' label translation
+
+## [2.1.4]
+- Save query before fallback to ensure query_id is valorized
+
 ## [2.1.3]
 - Using only frontend event, fix backoffice problems
 

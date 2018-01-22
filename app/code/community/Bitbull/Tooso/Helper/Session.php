@@ -36,7 +36,12 @@ class Bitbull_Tooso_Helper_Session
      */
     public function getClientId()
     {
-        return Mage::getSingleton('core/cookie')->get('_ta');
+        $cid = Mage::getSingleton('core/cookie')->get('_ta');
+        if($cid == null || $cid == ''){
+            return "";
+        }
+
+        return substr($cid, -36);
     }
 
     /**

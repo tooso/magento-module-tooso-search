@@ -52,7 +52,7 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
                 $this->_logger->warn('Tracking checkout: product not found with id '.$productId);
                 continue;
             }
-            $trackingProductParams['quantity'] = $item->getQtyOrdered();
+            $trackingProductParams['quantity'] = round($item->getQtyOrdered());
             $trackingProductParams['price'] = $item->getPrice();
             ?>
             ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);

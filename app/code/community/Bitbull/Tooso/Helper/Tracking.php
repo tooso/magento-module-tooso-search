@@ -203,6 +203,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             'name' => $product->getName(),
             'brand' => $product->getBrand(),
             'price' => $product->getFinalPrice(),
+            'quantity' => 1
         ];
 
         $categoryIds = $product->getCategoryIds();
@@ -230,14 +231,13 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         $params = array_merge([
             "z" => Mage::helper('tooso')->getUuid(),
             "uip" => $this->getRemoteAddr(),
-            "ua" => $this->getUserAgent(),
             "tid" => $this->getTrackingKey(),
             "v" => "1",
             "dl" => $this->getCurrentPage(),
             "dr" => $this->getLastPage(),
             "cid" => $profilingParams['clientId'],
             "uid" => $profilingParams['userId'],
-            "tm" => time(),
+            "tm" => round(microtime(true) * 1000),
         ], $params);
 
         $curl = new Varien_Http_Adapter_Curl();

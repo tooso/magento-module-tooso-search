@@ -6,7 +6,8 @@
  */
 class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
 {
-    const CONTAINER_BLOCK = 'before_body_end';
+    const CONTAINER_BLOCK_AFTER = 'after_body_start';
+    const CONTAINER_BLOCK_BEFORE = 'before_body_end';
 
     const XML_PATH_ANALYTICS_INCLUDE_LIBRARY = 'tooso/analytics/include_library';
     const XML_PATH_ANALYTICS_LIBRARY_ENDPOINT = 'tooso/analytics/library_endpoint';
@@ -15,12 +16,21 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
 
     /**
+     * Get block to append init tracking script and cookies managers
+     *
+     */
+    public function getInitScriptContainerBlock(){
+        $layout = Mage::app()->getLayout();
+        return $layout->getBlock(self::CONTAINER_BLOCK_AFTER);
+    }
+
+    /**
      * Get block to append tracking script and cookies managers
      *
      */
     public function getScriptContainerBlock(){
         $layout = Mage::app()->getLayout();
-        return $layout->getBlock(self::CONTAINER_BLOCK);
+        return $layout->getBlock(self::CONTAINER_BLOCK_BEFORE);
     }
 
     /**

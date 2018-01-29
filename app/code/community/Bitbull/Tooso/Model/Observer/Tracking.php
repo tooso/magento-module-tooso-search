@@ -15,7 +15,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             return;
         }
 
-        $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+        $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
         if($parentBlock){
             $blockLibrary = Mage::helper('tooso/tracking')->getTrackingLibraryBlock();
             $parentBlock->append($blockLibrary);
@@ -37,18 +37,6 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
         $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
         if($parentBlock){
-
-            $requestId = Mage::app()->getRequest()->getRouteName().'/'.Mage::app()->getRequest()->getControllerName().'/'.Mage::app()->getRequest()->getActionName();
-
-            switch ($requestId){
-                case 'catalog/product/view':
-                    $this->includeProductTrackingScript($observer);
-                    break;
-                case 'checkout/onepage/success':
-                    $this->includeCheckoutTrackingScript($observer);
-                    break;
-            }
-
             $block = Mage::helper('tooso/tracking')->getPageTrackingBlock();
             $parentBlock->append($block);
             $this->_logger->debug('Tracking page view: added tracking script');
@@ -68,7 +56,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         $currentProduct = Mage::registry('current_product');
         if($currentProduct != null) {
 
-            $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+            $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
             if($parentBlock){
                 $block = Mage::helper('tooso/tracking')->getProductTrackingBlock($currentProduct->getId());
                 $parentBlock->append($block);
@@ -94,7 +82,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 
         $orderId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
         if($orderId != null){
-            $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();
+            $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
             if($parentBlock){
                 $block = Mage::helper('tooso/tracking')->getCheckoutTrackingBlock($orderId);
                 $parentBlock->append($block);

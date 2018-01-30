@@ -265,11 +265,7 @@ class Bitbull_Tooso_Client
         ));
         $response = curl_exec($ch);
 
-        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 204) {
-            if($this->_logger){
-                $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
-            }
-        } else {
+        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 204) {
             $error = substr($response, strpos($response, '<Code>') + 6);
             $error = substr($error, 0, strpos($error, '</Code>'));
 
@@ -281,6 +277,13 @@ class Bitbull_Tooso_Client
             $e = new Bitbull_Tooso_Exception($error, curl_getinfo($ch, CURLINFO_HTTP_CODE));
             $e->setDebugInfo($response);
             throw $e;
+        } else {
+            if($this->_logger){
+                $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
+            }
+
+            $result = new Bitbull_Tooso_Index_Result($response);
+            return $result;
         }
     }
 

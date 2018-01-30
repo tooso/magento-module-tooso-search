@@ -23,7 +23,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getResults()
     {
         if($this->isValid()){
-            return $this->_response->Content->Results;
+            return $this->_response->data->results;
         }else{
             return array();
         }
@@ -64,7 +64,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getFixedSearchString()
     {
         if($this->isValid()){
-            return $this->_response->Content->FixedSearchString;
+            return $this->_response->metadata->FixedSearchString;
         }else{
             return self::FALLBACK_RESPONSE_FIXED_SEARCH_STRING;
         }
@@ -73,7 +73,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getParentSearchId()
     {
         if($this->isValid()){
-            return $this->_response->Content->ParentSearchId;
+            return $this->_response->metadata->parentSearchId;
         }else{
             return self::FALLBACK_RESPONSE_PARENT_SEARCH_ID;
         }

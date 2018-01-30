@@ -32,7 +32,7 @@ class Bitbull_Tooso_Response
 
     public function isValid()
     {
-        return !isset($this->_response->ToosoError);
+        return !isset($this->_response->data->error);
     }
 
     public function getErrorCode()
@@ -42,13 +42,13 @@ class Bitbull_Tooso_Response
 
     public function getErrorDescription()
     {
-        return $this->_response->ToosoError->Description;
+        return $this->_response->data->error->description;
     }
 
     public function getErrorDebugInfo()
     {
-        if(isset($this->_response->ToosoError->DebugInfo)){
-            return $this->_response->ToosoError->DebugInfo;
+        if(isset($this->_response->data->error->details)){
+            return $this->_response->data->error->details;
         }else{
             return null;
         }

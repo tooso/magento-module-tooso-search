@@ -32,7 +32,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getTotalTime()
     {
         if($this->isValid()){
-            return $this->_response->Content->TotalTime;
+            return $this->_response->metadata->time;
         }else{
             return self::FALLBACK_RESPONSE_TOTAL_TIME;
         }
@@ -46,7 +46,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getTotalResults()
     {
         if($this->isValid()){
-            return $this->_response->Content->TotalResults;
+            return $this->_response->data->hits;
         }else{
             return self::FALLBACK_RESPONSE_TOTAL_RESULTS;
         }
@@ -55,7 +55,7 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getOriginalSearchString()
     {
         if($this->isValid()){
-            return $this->_response->Content->OriginalSearchString;
+            return $this->_response->metadata->q;
         }else{
             return self::FALLBACK_RESPONSE_ORIGINAL_SEARCH_STRING;
         }
@@ -64,18 +64,9 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
     public function getFixedSearchString()
     {
         if($this->isValid()){
-            return $this->_response->metadata->FixedSearchString;
+            return $this->_response->data->fixedQuery;
         }else{
             return self::FALLBACK_RESPONSE_FIXED_SEARCH_STRING;
-        }
-    }
-
-    public function getParentSearchId()
-    {
-        if($this->isValid()){
-            return $this->_response->metadata->parentSearchId;
-        }else{
-            return self::FALLBACK_RESPONSE_PARENT_SEARCH_ID;
         }
     }
 

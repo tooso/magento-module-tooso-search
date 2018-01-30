@@ -47,11 +47,6 @@
             <tooso>
                 <class>Bitbull_Tooso_Block</class>
             </tooso>
-            <catalogsearch>
-                <rewrite>
-                    <autocomplete>Bitbull_Tooso_Block_CatalogSearch_Autocomplete</autocomplete>
-                </rewrite>
-            </catalogsearch>
         </blocks>
         <template>
             <email>
@@ -183,8 +178,7 @@
             <active>
                 <frontend>0</frontend>
                 <index>0</index>
-                <suggestion_server>0</suggestion_server>
-                <suggestion_client>0</suggestion_client>
+                <suggestion>0</suggestion>
             </active>
             <server>
                 <api_key />
@@ -198,17 +192,14 @@
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
             </indexer>
-            <suggest_server>
-                <max_results>10</max_results>
-            </suggest_server>
-            <suggest_client>
+            <suggestion>
                 <include_library>0</include_library>
                 <library_endpoint>https://analyticsdev.tooso.ai/jquery.ts-dev.js</library_endpoint>
                 <input_selector>input[type=search]</input_selector>
                 <buckets>relevant,trending</buckets>
                 <zindex>100000</zindex>
                 <api_version>1</api_version>
-            </suggest_client>
+            </suggestion>
             <analytics>
                 <include_library>1</include_library>
                 <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>>

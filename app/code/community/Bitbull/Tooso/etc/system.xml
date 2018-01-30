@@ -58,6 +58,14 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </clear_log>
+                        <rebuild translate="label">
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_Rebuild</frontend_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </rebuild>
                     </fields>
                 </tool>
                 <active translate="label">
@@ -98,17 +106,7 @@
                             <show_in_store>0</show_in_store>
                             <comment><![CDATA[Enable/disable scheduled reindex process]]></comment>
                         </index>
-                        <suggestion_server translate="label">
-                            <label>Suggestion server side</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>4</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Enable/disable server side suggestion]]></comment>
-                        </suggestion_server>
-                        <suggestion_client translate="label">
+                        <suggestion translate="label">
                             <label>Suggestion client side</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -117,7 +115,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Enable/disable frontend side suggestion]]></comment>
-                        </suggestion_client>
+                        </suggestion>
                     </fields>
                 </active>
                 <server translate="label">
@@ -269,25 +267,7 @@
                         </path>
                     </fields>
                 </indexer>
-                <suggest_server translate="label">
-                    <label>Suggest server side</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>40</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                    <fields>
-                        <max_results translate="label">
-                            <label>Max results to show</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>1</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </max_results>
-                    </fields>
-                </suggest_server>
-                <suggest_client translate="label">
+                <suggestion translate="label">
                     <label>Suggest client side</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>40</sort_order>
@@ -347,7 +327,7 @@
                             <show_in_store>1</show_in_store>
                         </zindex>
                     </fields>
-                </suggest_client>
+                </suggestion>
                 <analytics translate="label">
                     <label>Analytics</label>
                     <frontend_type>text</frontend_type>

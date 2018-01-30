@@ -9,14 +9,12 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const CONTAINER_BLOCK_AFTER = 'after_body_start';
     const CONTAINER_BLOCK_BEFORE = 'before_body_end';
 
-    const XML_PATH_SUGGEST_MAX_RESULTS = 'tooso/suggest_server/max_results';
-
-    const XML_PATH_SUGGEST_LIBRARY = 'tooso/suggest_client/include_library';
-    const XML_PATH_SUGGEST_LIBRARY_ENDPOINT = 'tooso/suggest_client/library_endpoint';
-    const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggest_client/input_selector';
-    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggest_client/buckets';
-    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggest_client/zindex';
-    const XML_PATH_SUGGEST_API_KEY = 'tooso/suggest_client/api_key';
+    const XML_PATH_SUGGEST_LIBRARY = 'tooso/suggestion/include_library';
+    const XML_PATH_SUGGEST_LIBRARY_ENDPOINT = 'tooso/suggestion/library_endpoint';
+    const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
+    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
+    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
+    const XML_PATH_SUGGEST_API_KEY = 'tooso/suggestion/api_key';
 
     /**
      * Get block to append init suggestion library
@@ -56,17 +54,6 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/suggestion_libraryInit');
         return $block;
-    }
-
-    /**
-     * Get Max Results
-     *
-     * @param null $store
-     * @return mixed
-     */
-    public function getSuggestMaxResults($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_MAX_RESULTS, $store);
     }
 
     /**

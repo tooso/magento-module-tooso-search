@@ -11,7 +11,7 @@ class Bitbull_Tooso_Model_Observer_Suggestion extends Bitbull_Tooso_Model_Observ
      */
     public function initLibrary()
     {
-        if(!Mage::helper('tooso')->isSuggestionClientSideEnabled()){
+        if(!Mage::helper('tooso')->isSuggestionEnabled()){
             return;
         }
 
@@ -30,7 +30,7 @@ class Bitbull_Tooso_Model_Observer_Suggestion extends Bitbull_Tooso_Model_Observ
      */
     public function includeLibrary()
     {
-        if(!Mage::helper('tooso')->isSuggestionClientSideEnabled() || !Mage::helper('tooso/suggestion')->includeSuggestionJSLibrary()){
+        if(!Mage::helper('tooso')->isSuggestionEnabled() || !Mage::helper('tooso/suggestion')->includeSuggestionJSLibrary()){
             return;
         }
 

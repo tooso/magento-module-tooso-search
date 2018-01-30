@@ -211,19 +211,24 @@ class Bitbull_Tooso_Model_Indexer
         $row["sku"] = $product->getSku();
 
         foreach ($attributes as $attributeCode) {
-            if($attributeCode == 'variants'){
-                $variants = $this->_getProductVariants($product, $storeId);
-                if(sizeof($variants) > 0){
-                    $row["variants"] = json_encode($variants);
-                }
-            }elseif ($attributeCode == 'categories'){
-                $row["categories"] = implode("|", $this->_getProductCategories($product));
-            }else{
-                if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
-                    $row[$attributeCode] = $product->getAttributeText($attributeCode);
-                }else{
-                    $row[$attributeCode] = $product->getData($attributeCode);
-                }
+
+            switch ($attributeCode) {
+                case 'variants':
+                    $variants = $this->_getProductVariants($product, $storeId);
+                    if(sizeof($variants) > 0){
+                        $row["variants"] = json_encode($variants);
+                    }
+                    break;
+                case 'categories':
+                    $row["categories"] = implode("|", $this->_getProductCategories($product));
+                    break;
+                default:
+                    if(isset($attributesTypes[$attributeCode]) && $attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                        $row[$attributeCode] = $product->getAttributeText($attributeCode);
+                    }else{
+                        $row[$attributeCode] = $product->getData($attributeCode);
+                    }
+                    break;
             }
         }
         $writer->writeRow($row);

@@ -27,7 +27,7 @@ class Bitbull_Tooso_Response
 
     public function getObjectId()
     {
-        return $this->_response->ObjectId;
+        return $this->_response->metadata->objectId;
     }
 
     public function isValid()
@@ -37,7 +37,7 @@ class Bitbull_Tooso_Response
 
     public function getErrorCode()
     {
-        return $this->_response->Code;
+        return $this->_response->metadata->code;
     }
 
     public function getErrorDescription()

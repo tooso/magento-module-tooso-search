@@ -178,29 +178,6 @@ class Bitbull_Tooso_Client
     }
 
     /**
-     * Perform a search for suggestions
-     *
-     * @param string $query
-     * @param int $limit
-     * @param array $extraParams
-     * @return Bitbull_Tooso_Suggest_Result
-     */
-    public function suggest($query, $limit = 10, $extraParams = array())
-    {
-        $query = str_replace(array("+", "%2B"), " ", $query);
-        $path = '/suggest';
-        $params = array_merge(
-            array('q' => $query, 'limit' => $limit),
-            (array)$extraParams
-        );
-
-        $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-
-        $result = new Bitbull_Tooso_Suggest_Result($response);
-        return $result;
-    }
-
-    /**
      * Send data to index
      *
      * @param string $csvContent
@@ -263,27 +240,48 @@ class Bitbull_Tooso_Client
             'signature' => $signature,
             'file' => new CurlFile(realpath($tmpZipFile), $fileType, $fileName)
         ));
-        $response = curl_exec($ch);
 
-        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 204) {
-            $error = substr($response, strpos($response, '<Code>') + 6);
-            $error = substr($error, 0, strpos($error, '</Code>'));
+        $output = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        $errorNumber = curl_errno($ch);
+
+        curl_close($ch);
+
+        if($this->_logger) {
+            $this->_logger->debug("Raw response: " . print_r($output, true));
+        }
+
+        $result = new Bitbull_Tooso_Index_Result($output, $httpStatusCode);
+
+        if (false === $output) {
 
             if ($this->_reportSender) {
-                $message = 'Error description = ' . $error;
-                $this->_reportSender->sendReport($url, "PUT", $accessKeyId, $this->_language, $this->_storeCode, $message);
+                $message = 'cURL error = ' . $error . ' - Error number = ' . $errorNumber;
+
+                $this->_reportSender->sendReport($url, "S3", $accessKeyId, $this->_language, $this->_storeCode, $message);
             }
 
-            $e = new Bitbull_Tooso_Exception($error, curl_getinfo($ch, CURLINFO_HTTP_CODE));
-            $e->setDebugInfo($response);
-            throw $e;
-        } else {
-            if($this->_logger){
-                $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
-            }
+            throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
 
-            $result = new Bitbull_Tooso_Index_Result($response);
-            return $result;
+        }else{
+
+            if (!$result->isValid()) {
+
+                if ($this->_reportSender) {
+                    $message = 'Error description = ' . $result->getErrorMessage();
+                    $this->_reportSender->sendReport($url, "PUT", $accessKeyId, $this->_language, $this->_storeCode, $message);
+                }
+
+                $e = new Bitbull_Tooso_Exception($result->getErrorMessage(), $result->getErrorCode());
+                $e->setDebugInfo($result->getErrorMessage());
+                throw $e;
+            } else {
+                if($this->_logger){
+                    $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
+                }
+                return $result;
+            }
         }
     }
 

@@ -100,44 +100,4 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
 
         return $this;
     }
-
-    // Following methods can't be implemented so far, because reindex
-    // is ever performed async with a cronjob, and can be forced only
-    // with the button in the config admin panel
-
-//    /**
-//     * Regenerate search index for store(s)
-//     *
-//     * @param  int|null $storeId
-//     * @param  int|array|null $productIds
-//     * @return Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext
-//     */
-//    public function rebuildIndex($storeId = null, $productIds = null)
-//    {
-//        if (Mage::getStoreConfigFlag('tooso/active/admin')) {
-//            Mage::getModel('tooso/indexer')->rebuildIndex();
-//        }
-//
-//        parent::rebuildIndex($storeId, $productIds);
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Clean index for store(s)
-//     *
-//     * @param int $storeId Store View Id
-//     * @param int|array|null $productIds Product Entity Id
-//     * @return Mage_CatalogSearch_Model_Resource_Fulltext
-//     */
-//    public function cleanIndex($storeId = null, $productIds = null)
-//    {
-//        parent::cleanIndex($storeId, $productIds);
-//
-//        if (Mage::getStoreConfigFlag('tooso/active/admin')) {
-//            Mage::getModel('tooso/indexer')->cleanIndex();
-//        }
-//
-//        return $this;
-//    }
 }

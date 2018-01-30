@@ -12,9 +12,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_TRACKING = 'tooso/active/tracking';
 
-    const XML_PATH_ENABLE_SUGGEST_SEVER_ACTIVE = 'tooso/active/suggestion_server';
-
-    const XML_PATH_ENABLE_SUGGEST_CLIENT_ACTIVE = 'tooso/active/suggestion_client';
+    const XML_PATH_ENABLE_SUGGESTION_ACTIVE = 'tooso/active/suggestion';
 
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
 
@@ -45,14 +43,9 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_TRACKING, $store);
     }
 
-    public function isSuggestionServerSideEnabled($store = null)
+    public function isSuggestionEnabled($store = null)
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SUGGEST_SEVER_ACTIVE, $store);
-    }
-
-    public function isSuggestionClientSideEnabled($store = null)
-    {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SUGGEST_CLIENT_ACTIVE, $store);
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SUGGESTION_ACTIVE, $store);
     }
 
     /**

@@ -12,6 +12,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     const XML_PATH_ANALYTICS_INCLUDE_LIBRARY = 'tooso/analytics/include_library';
     const XML_PATH_ANALYTICS_LIBRARY_ENDPOINT = 'tooso/analytics/library_endpoint';
     const XML_PATH_ANALYTICS_API_ENDPOINT = 'tooso/analytics/api_endpoint';
+    const XML_PATH_ANALYTICS_API_VERSION = 'tooso/analytics/api_version';
     const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
 
@@ -89,16 +90,6 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function isUserComingFromSearch(){
         $searchId = Mage::helper('tooso/session')->getSearchId();
         return $searchId != null && $searchId != "";
-    }
-
-    /**
-     * Detect if request comes from mobile device
-     *
-     * @return integer
-     */
-    public function isMobile(){
-        $detect = new Bitbull_Mobile_Detect();
-        return (int) $detect->isMobile();
     }
 
     /**
@@ -184,6 +175,13 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get tracking endpoint
+     */
+    public function getTrackingAPIVersion($store = null){
+        return Mage::getStoreConfig(self::XML_PATH_ANALYTICS_API_VERSION, $store);
+    }
+
+    /**
      * Get tracking key
      */
     public function getTrackingKey($store = null){
@@ -242,12 +240,12 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             "z" => Mage::helper('tooso')->getUuid(),
             "uip" => $this->getRemoteAddr(),
             "tid" => $this->getTrackingKey(),
-            "v" => "1",
+            "v" => $this->getTrackingAPIVersion(),
             "dl" => $this->getCurrentPage(),
             "dr" => $this->getLastPage(),
             "cid" => $profilingParams['clientId'],
             "uid" => $profilingParams['userId'],
-            "tm" => round(microtime(true) * 1000),
+            "tm" => $profilingParams['tm'],
         ], $params);
 
         $curl = new Varien_Http_Adapter_Curl();

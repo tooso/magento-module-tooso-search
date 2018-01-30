@@ -78,7 +78,7 @@ class Bitbull_Tooso_Model_Indexer
                     $this->_writeDebugFile($this->_getCsvContent($storeId), $storeCode);
                 }else{
                     $client = Mage::helper('tooso')->getClient($storeCode, $storeLangCode);
-                    $client->index($this->_getCsvContent($storeId));
+                    $client->index($this->_getCsvContent($storeId), $this->_indexerHelper->getIndexerParams());
                 }
 
                 $time_end = microtime(true);

@@ -12,7 +12,7 @@ class Bitbull_Tooso_Block_Tracking_Library extends Bitbull_Tooso_Block_Tracking
     protected function _toHtml()
     {
         $endpoint = Mage::helper('tooso/tracking')->getTrackingLibraryEndpoint();
-        $this->_logger->debug('including library from '.$endpoint);
+        $this->_logger->debug('including tracking library from '.$endpoint);
         return "<script id='".self::SCRIPT_ID."' async type='text/javascript' src='".$endpoint."'></script>";
     }
 }

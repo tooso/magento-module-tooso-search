@@ -106,34 +106,35 @@
                         <class>tooso/observer_search</class>
                         <method>clearSearchId</method>
                     </tooso_clear_search_id>
-                </observers>
-            </controller_action_layout_render_before>
-
-            <controller_action_layout_render_before>
-                <observers>
                     <tooso_tracking_library>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
                         <method>includeLibrary</method>
                     </tooso_tracking_library>
-                </observers>
-            </controller_action_layout_render_before>
-            <controller_action_layout_render_before>
-                <observers>
-                    <tooso_tracking_pixel_page>
+                    <tooso_tracking_page>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
                         <method>includePageTrackingScript</method>
-                    </tooso_tracking_pixel_page>
+                    </tooso_tracking_page>
+                    <tooso_suggestion_frontend_init>
+                        <type>singleton</type>
+                        <class>tooso/observer_suggestion</class>
+                        <method>initLibrary</method>
+                    </tooso_suggestion_frontend_init>
+                    <tooso_suggestion_frontend_pipeline>
+                        <type>singleton</type>
+                        <class>tooso/observer_suggestion</class>
+                        <method>includeLibrary</method>
+                    </tooso_suggestion_frontend_pipeline>
                 </observers>
             </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
                 <observers>
-                    <tooso_tracking_pixel_product>
+                    <tooso_tracking_product>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
                         <method>includeProductTrackingScript</method>
-                    </tooso_tracking_pixel_product>
+                    </tooso_tracking_product>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
             <controller_action_layout_render_before_checkout_onepage_success>
@@ -182,10 +183,13 @@
             <active>
                 <frontend>0</frontend>
                 <index>0</index>
+                <suggestion_server>0</suggestion_server>
+                <suggestion_client>0</suggestion_client>
             </active>
             <server>
                 <api_key />
-                <api_base_url>https://toosopublicapi.cloudapp.net</api_base_url>
+                <api_base_url>https://api.tooso.ai</api_base_url>
+                <api_version>3</api_version>
                 <send_report>1</send_report>
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>
@@ -194,12 +198,20 @@
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
             </indexer>
-            <suggest>
+            <suggest_server>
                 <max_results>10</max_results>
-            </suggest>
+            </suggest_server>
+            <suggest_client>
+                <include_library>0</include_library>
+                <library_endpoint>https://analyticsdev.tooso.ai/jquery.ts-dev.js</library_endpoint>
+                <input_selector>input[type=search]</input_selector>
+                <buckets>relevant,trending</buckets>
+                <zindex>100000</zindex>
+                <api_version>1</api_version>
+            </suggest_client>
             <analytics>
                 <include_library>1</include_library>
-                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>
+                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>>
             </analytics>
         </tooso>
     </default>

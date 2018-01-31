@@ -12,7 +12,7 @@ class Bitbull_Tooso_Index_Result
     public function __construct($response = null, $code = null)
     {
         $this->setResponse($response);
-        $this->setCode($response);
+        $this->setCode($code);
     }
 
     public function setCode($code)
@@ -37,7 +37,7 @@ class Bitbull_Tooso_Index_Result
 
     public function isValid()
     {
-        return $this->getCode() != 204;
+        return $this->getCode() == 204;
     }
 
     public function getErrorMessage()

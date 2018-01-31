@@ -273,9 +273,7 @@ class Bitbull_Tooso_Client
                     $this->_reportSender->sendReport($url, "PUT", $accessKeyId, $this->_language, $this->_storeCode, $message);
                 }
 
-                $e = new Bitbull_Tooso_Exception($result->getErrorMessage(), $result->getErrorCode());
-                $e->setDebugInfo($result->getErrorMessage());
-                throw $e;
+                throw new Bitbull_Tooso_Exception($result->getErrorMessage(), $result->getErrorCode());
             } else {
                 if($this->_logger){
                     $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);

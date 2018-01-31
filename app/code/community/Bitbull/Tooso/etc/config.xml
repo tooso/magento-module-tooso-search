@@ -9,8 +9,8 @@
     <modules>
         <Bitbull_Tooso>
             <version>4.0.0</version>
-            <api_compatibility>v2.0</api_compatibility>
-            <notes>Using analytics js library to track actions.</notes>
+            <api_compatibility>v3.0</api_compatibility>
+            <notes>Latest version.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>

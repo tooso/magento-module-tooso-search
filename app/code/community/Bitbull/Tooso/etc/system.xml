@@ -242,7 +242,7 @@
                         </access_key>
                         <secret_key>
                             <label>AWS Secret key</label>
-                            <frontend_type>text</frontend_type>
+                            <frontend_type>password</frontend_type>
                             <sort_order>36</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>

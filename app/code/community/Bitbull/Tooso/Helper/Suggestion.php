@@ -14,7 +14,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
     const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
     const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
-    const XML_PATH_SUGGEST_API_KEY = 'tooso/suggestion/api_key';
+    const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key';
 
     /**
      * Get block to append init suggestion library
@@ -22,7 +22,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      */
     public function getInitScriptContainerBlock(){
         $layout = Mage::app()->getLayout();
-        return $layout->getBlock(self::CONTAINER_BLOCK_BEFORE);
+        return $layout->getBlock(self::CONTAINER_BLOCK_AFTER);
     }
 
     /**
@@ -31,7 +31,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      */
     public function getScriptContainerBlock(){
         $layout = Mage::app()->getLayout();
-        return $layout->getBlock(self::CONTAINER_BLOCK_AFTER);
+        return $layout->getBlock(self::CONTAINER_BLOCK_BEFORE);
     }
 
     /**

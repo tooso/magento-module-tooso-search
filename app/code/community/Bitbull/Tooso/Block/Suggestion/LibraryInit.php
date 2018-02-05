@@ -20,7 +20,7 @@ class Bitbull_Tooso_Block_Suggestion_LibraryInit extends Bitbull_Tooso_Block_Sug
         ob_start();
         ?>
         <script id='<?=self::SCRIPT_ID?>'>
-            function ts_suggestion_callback() {
+            window.ts_suggestion_callback = function() {
                 if(window.jQuery){
                     jQuery(document).ready(function ($) {
                         var element = $('<?=$inputSelector?>');

@@ -293,14 +293,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </library_endpoint>
-                        <api_key>
-                            <label>API Key</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>3</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </api_key>
                         <input_selector>
                             <label>Input selector</label>
                             <frontend_type>text</frontend_type>

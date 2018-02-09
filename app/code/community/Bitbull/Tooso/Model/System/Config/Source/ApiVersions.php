@@ -11,7 +11,7 @@ class Bitbull_Tooso_Model_System_Config_Source_ApiVersions
      */
     public function toOptionArray() {
         return [
-            "3"
+            "3" => "v3"
         ];
     }
 }

@@ -11,7 +11,7 @@ class Bitbull_Tooso_Model_System_Config_Source_ApiAnalyticsVersions
      */
     public function toOptionArray() {
         return [
-            "1"
+            "1" => "v1"
         ];
     }
 }

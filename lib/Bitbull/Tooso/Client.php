@@ -392,7 +392,9 @@ class Bitbull_Tooso_Client
     */
     protected function _buildUrl($path, $params)
     {
-        $this->_logger->log(print_r($params, true));
+        if($this->_logger){
+            $this->_logger->log(print_r($params, true));
+        }
 
         if (filter_var($this->_baseUrl, FILTER_VALIDATE_URL) === false) {
             $message = 'API base URL missing or invalid: "' . $this->_baseUrl . '"';
@@ -409,7 +411,7 @@ class Bitbull_Tooso_Client
             $baseUrl .= '/';
         }
 
-        $url = $baseUrl . $path;
+        $url = $baseUrl . 'v'.$this->_version . $path;
 
         $language = $this->_language;
         if($language == null){
@@ -419,6 +421,7 @@ class Bitbull_Tooso_Client
             'ul=' . $language,
             'tid=' . $this->_apiKey,
             'v=' . $this->_version,
+            'z=' . $this->getUuid(),
         );
 
         foreach ($params as $key => $value) {

@@ -275,4 +275,14 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         return true;
     }
 
+    public function getSearchIdWithFallback()
+    {
+        $searchId = Mage::helper('tooso/session')->getSearchId();
+        if($searchId == null || $searchId == ""){
+            $searchId = substr('magento_'.Mage::helper('tooso')->getUuid(), 0, 36);
+        }
+
+        return $searchId;
+    }
+
 }

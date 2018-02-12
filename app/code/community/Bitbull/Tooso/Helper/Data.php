@@ -206,6 +206,6 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
      * @return string
      */
     public function getUuid(){
-        Mage::helper('tooso')->getClient()->getUuid();
+        return Mage::helper('tooso')->getClient()->getUuid();
     }
 }

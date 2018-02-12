@@ -47,18 +47,20 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
                     }
                 }
             }
-            $trackingProductParams['ps'] = $rank;
+            $trackingProductParams['position'] = $rank;
 
             $order = Mage::helper('tooso/session')->getSearchOrder();
             if($order == null){
                 $order = "relevance";
             }
-            $trackingProductParams['po'] = $order;
+            $trackingProductParams['order'] = $order;
 
             ?>
             <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
                 ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
-                ta('ec:setAction', 'detail');
+                ta('ec:setAction', 'click', {
+                    'list': '<?=Mage::helper('tooso/tracking')->getSearchIdWithFallback();?>'
+                });
             </script>
             <?php
 

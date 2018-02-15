@@ -6,6 +6,11 @@
  */
 class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
 {
+    const XML_PATH_INDEX_ACCESS_KEY = 'tooso/indexer/access_key';
+    const XML_PATH_INDEX_SECRET_KEY = 'tooso/indexer/secret_key';
+    const XML_PATH_INDEX_BUCKET = 'tooso/indexer/bucket';
+    const XML_PATH_INDEX_PATH = 'tooso/indexer/path';
+
     /**
      * @var array|null
      */
@@ -153,6 +158,16 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
 
     public function getPreservedAttributeType(){
         return $this->_preserveAttributeValue;
+    }
+
+    public function getIndexerParams($store = null)
+    {
+        return [
+            "ACCESS_KEY_ID" => Mage::getStoreConfig(self::XML_PATH_INDEX_ACCESS_KEY, $store),
+            "SECRET_KEY" => Mage::getStoreConfig(self::XML_PATH_INDEX_SECRET_KEY, $store),
+            "BUCKET" => Mage::getStoreConfig(self::XML_PATH_INDEX_BUCKET, $store),
+            "PATH" => Mage::getStoreConfig(self::XML_PATH_INDEX_PATH, $store),
+        ];
     }
 
 }

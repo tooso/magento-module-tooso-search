@@ -30,6 +30,21 @@ class Bitbull_Tooso_Helper_Session
     }
 
     /**
+     * Get Client ID from cookie
+     *
+     * @return string
+     */
+    public function getClientId()
+    {
+        $cid = Mage::getSingleton('core/cookie')->get('_ta');
+        if($cid == null || $cid == ''){
+            return "";
+        }
+
+        return substr($cid, -36);
+    }
+
+    /**
      * Store Rank Collection into session
      *
      * @param string $value

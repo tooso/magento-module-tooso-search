@@ -44,11 +44,11 @@ class Bitbull_Tooso_Client
     protected $_storeCode;
 
     /**
-     * Secret API key
+     * API version
      *
      * @var null|string
      */
-    protected $_secretKey;
+    protected $_version;
 
     /**
      * Timeout for API connection wait
@@ -88,15 +88,16 @@ class Bitbull_Tooso_Client
 
     /**
      * @param string $apiKey
+     * @param string $version
      * @param string $apiBaseUrl
      * @param string $language
      * @param string $storeCode
      * @param Bitbull_Tooso_Log_LoggerInterface $logger
     */
-    public function __construct($apiKey, $secretKey, $apiBaseUrl, $language, $storeCode)
+    public function __construct($apiKey, $version, $apiBaseUrl, $language, $storeCode)
     {
         $this->_apiKey = $apiKey;
-        $this->_secretKey = $secretKey;
+        $this->_version = $version;
         $this->_baseUrl = $apiBaseUrl;
         $this->_language = strtolower($language);
         $this->_storeCode = $storeCode;
@@ -145,7 +146,7 @@ class Bitbull_Tooso_Client
 
         $path = '/search';
         $params = array_merge(
-            array('query' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
+            array('q' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
             (array)$extraParams
         );
 
@@ -159,14 +160,6 @@ class Bitbull_Tooso_Client
                     $this->_logger->debug('Session: set search id to '.$searchId);
                 }
             }
-
-            // In the early adopter phase, even a 0 result query need to be treated as an error
-            /*
-            if ($result->getTotalResults() == 0 && $typoCorrection) {
-                $message = 'No result found for query "' . $query . '""';
-
-                throw new Bitbull_Tooso_Exception($message, 0);
-            }*/
 
         } catch (Bitbull_Tooso_Exception $e) {
             $response = $e->getResponse();
@@ -185,45 +178,13 @@ class Bitbull_Tooso_Client
     }
 
     /**
-     * Perform a search for suggestions
-     *
-     * @param string $query
-     * @param int $limit
-     * @param array $extraParams
-     * @return Bitbull_Tooso_Suggest_Result
-     */
-    public function suggest($query, $limit = 10, $extraParams = array(), $apiV1VersionBaseURL = null)
-    {
-        $query = str_replace(array("+", "%2B"), " ", $query);
-
-        $params = array_merge(
-            array('query' => $query, 'limit' => $limit),
-            (array)$extraParams
-        );
-
-        if($apiV1VersionBaseURL != null && $apiV1VersionBaseURL != ""){
-            $path = '/Search/suggest';
-            $oldBaseUrl = $this->_baseUrl;
-            $this->_baseUrl = $apiV1VersionBaseURL;
-            $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-            $this->_baseUrl = $oldBaseUrl;
-        }else{
-            $path = '/suggest';
-            $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-        }
-
-        $result = new Bitbull_Tooso_Suggest_Result($response);
-        return $result;
-    }
-
-    /**
      * Send data to index
      *
      * @param string $csvContent
      * @return Bitbull_Tooso_Index_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function index($csvContent)
+    public function index($csvContent, $params)
     {
         $tmpZipFile = sys_get_temp_dir() . '/tooso_index_' . microtime() . '.zip';
 
@@ -243,143 +204,82 @@ class Bitbull_Tooso_Client
             $this->_logger->debug("Start uploading zipfile");
         }
 
-        $path = '/index';
-        $params = array(
-            "docType" => self::INDEX_DOC_TYPE,
-            "extension" => self::INDEX_EXTENSION,
-            "secretKey" => $this->_secretKey
-        );
-        $response = $this->_doRequest($path, self::HTTP_METHOD_POST, $params, $tmpZipFile, 300000);
-        if($this->_logger){
-            $this->_logger->debug("End uploading zipfile, raw response: " . print_r($response->getResponse(), true));
+        if(!isset($params["ACCESS_KEY_ID"]) || !isset($params["SECRET_KEY"]) || !isset($params["BUCKET"]) || !isset($params["PATH"])){
+            throw new Bitbull_Tooso_Exception('Index params are not correct', 0);
         }
 
-        unlink($tmpZipFile);
+        $accessKeyId = $params["ACCESS_KEY_ID"];
+        $secretKey = $params["SECRET_KEY"];
+        $bucket = $params["BUCKET"];
+        $region = 'us-west-2';
+        $fileName = $params["PATH"].round(microtime(true) * 1000)."_".$this->getUuid()."_".$this->_apiKey.'.zip';
+        $fileType = 'application/zip';
 
-        $result = new Bitbull_Tooso_Index_Result($response);
+        $policy = base64_encode(json_encode(array(
+            'expiration' => gmdate('Y-m-d\TH:i:s\Z', time() + 86400),
+            'conditions' => array(
+                array('bucket' => $bucket),
+                array('starts-with', '$key', ''),
+                array('starts-with', '$Content-Type', '')
+            )
+        )));
 
-        return $result;
-    }
+        $signature = hash_hmac('sha1', $policy, $secretKey, true);
+        $signature = base64_encode($signature);
 
-    /**
-     * Send product added to cart event
-     *
-     * @param string $sku product sku
-     * @param array $profilingParams
-     * @return Bitbull_Tooso_Suggest_Result
-     */
-    public function productAddedToCart($sku, $profilingParams)
-    {
-        $path = '/addToCart';
-        $params = array_merge(
-            array(
-                'objectId' => $sku
-            ),
-            (array)$profilingParams
-        );
+        $url = 'https://' . $bucket . '.s3-' . $region . '.amazonaws.com';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'key' => $fileName,
+            'AWSAccessKeyId' =>  $accessKeyId,
+            'policy' =>  $policy,
+            'Content-Type' =>  $fileType,
+            'signature' => $signature,
+            'file' => new CurlFile(realpath($tmpZipFile), $fileType, $fileName)
+        ));
 
-        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-    }
+        $output = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        $errorNumber = curl_errno($ch);
 
-    /**
-     * Tracking result
-     *
-     * @param string $searchId search ID
-     * @param string $sku product SKU
-     * @param string $rank result position
-     * @param array $order search order
-     * @param array $profilingParams
-     * @return Bitbull_Tooso_Response
-     */
-    public function resultTracking($searchId, $sku, $rank, $order, $profilingParams)
-    {
-        $path = '/feedback';
-        $params = array_merge(
-            array(
-                "searchId" => $searchId,
-                "objectId" => $sku,
-                "rank" => $rank,
-                "order" => $order
-            ),
-            (array)$profilingParams
-        );
-        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-    }
+        curl_close($ch);
 
-    /**
-     * Tracking product view
-     *
-     * @param string $sku product SKU
-     * @param array $profilingParams
-     * @return Bitbull_Tooso_Response
-     */
-    public function productViewTracking($sku, $profilingParams)
-    {
-        $path = '/productView';
-        $params = array_merge(
-            array(
-                'objectId' => $sku
-            ),
-            (array)$profilingParams
-        );
-        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-    }
+        if($this->_logger) {
+            $this->_logger->debug("Raw response: " . print_r($output, true));
+        }
 
-    /**
-     * Tracking page view
-     *
-     * @param string $currentPage current page
-     * @param string $lastPage last page
-     * @param array $profilingParams
-     * @return Bitbull_Tooso_Response
-     */
-    public function pageViewTracking($currentPage, $lastPage, $profilingParams)
-    {
-        $path = '/pageView';
-        $params = array_merge(
-            array(
-                'currentPage' => $currentPage,
-                'lastPage' => $lastPage
-            ),
-            (array)$profilingParams
-        );
-        return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-    }
+        $result = new Bitbull_Tooso_Index_Result($output, $httpStatusCode);
 
-    /**
-     * Checkout page view
-     *
-     * @param array $skus skus
-     * @param array $prices prices
-     * @param array $qtys quantities
-     * @return Bitbull_Tooso_Response
-     */
-    public function checkoutTracking($skus, $prices, $qtys, $trackingParams)
-    {
-        if(is_array($skus) && is_array($prices) && is_array($qtys)){
-            if(sizeof($skus) == sizeof($prices) && sizeof($skus) == sizeof($qtys)){
+        if (false === $output) {
 
-                // Parse eventually float value in quantities to integer
-                for($i = 0; $i < sizeof($qtys); $i++){
-                    $qtys[$i] = intval($qtys[$i]);
+            if ($this->_reportSender) {
+                $message = 'cURL error = ' . $error . ' - Error number = ' . $errorNumber;
+
+                $this->_reportSender->sendReport($url, "S3", $accessKeyId, $this->_language, $this->_storeCode, $message);
+            }
+
+            throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
+
+        }else{
+
+            if (!$result->isValid()) {
+
+                if ($this->_reportSender) {
+                    $message = 'Error description = ' . $result->getErrorMessage();
+                    $this->_reportSender->sendReport($url, "PUT", $accessKeyId, $this->_language, $this->_storeCode, $message);
                 }
 
-                $path = '/checkOut';
-                $params = array_merge(
-                    array(
-                        'objectIds' => implode(self::ARRAY_VALUES_SEPARATOR, $skus),
-                        'prices' => implode(self::ARRAY_VALUES_SEPARATOR, $prices),
-                        'qtys' => implode(self::ARRAY_VALUES_SEPARATOR, $qtys),
-                    ),
-                    (array)$trackingParams
-                );
-                return $this->_doRequest($path, self::HTTP_METHOD_GET, $params);
-
-            }else{
-                throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must have the same length');
+                throw new Bitbull_Tooso_Exception($result->getErrorMessage(), $result->getErrorCode());
+            } else {
+                if($this->_logger){
+                    $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
+                }
+                return $result;
             }
-        }else{
-            throw new Bitbull_Tooso_Exception('Invalid checkout tracking parameters, they must be array');
         }
     }
 
@@ -394,7 +294,7 @@ class Bitbull_Tooso_Client
      * @return stdClass
      * @throws Bitbull_Tooso_Exception
     */
-    protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $attachment = '', $timeout = null)
+    protected function _doRequest($path, $httpMethod = self::HTTP_METHOD_GET, $params = array(), $timeout = null)
     {
         $url = $this->_buildUrl($path, $params);
 
@@ -407,19 +307,6 @@ class Bitbull_Tooso_Client
 
         if ($httpMethod == self::HTTP_METHOD_POST) {
             curl_setopt($ch, CURLOPT_POST, true);
-        }
-
-        if (strlen($attachment) > 0) {
-
-            if (class_exists('CURLFile')) {
-                $file = new CURLFile(realpath($attachment));
-            } else {
-                $file = '@' . realpath($attachment);
-            }
-
-            curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-                'file' => $file
-            ));
         }
 
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -505,7 +392,9 @@ class Bitbull_Tooso_Client
     */
     protected function _buildUrl($path, $params)
     {
-        $this->_logger->log(print_r($params, true));
+        if($this->_logger){
+            $this->_logger->log(print_r($params, true));
+        }
 
         if (filter_var($this->_baseUrl, FILTER_VALIDATE_URL) === false) {
             $message = 'API base URL missing or invalid: "' . $this->_baseUrl . '"';
@@ -522,14 +411,17 @@ class Bitbull_Tooso_Client
             $baseUrl .= '/';
         }
 
-        $url = $baseUrl . $this->_apiKey . $path;
+        $url = $baseUrl . 'v'.$this->_version . $path;
 
         $language = $this->_language;
         if($language == null){
             $language = $this->_storeCode;
         }
         $queryString = array(
-            'language=' . $language
+            'ul=' . $language,
+            'tid=' . $this->_apiKey,
+            'v=' . $this->_version,
+            'z=' . $this->getUuid(),
         );
 
         foreach ($params as $key => $value) {
@@ -539,5 +431,20 @@ class Bitbull_Tooso_Client
         $url .= '?' . implode('&', $queryString);
 
         return $url;
+    }
+
+    /**
+     * Generate uuid
+     *
+     * @return string
+     */
+    public function getUuid(){
+        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+            mt_rand( 0, 0xffff ),
+            mt_rand( 0, 0x0fff ) | 0x4000,
+            mt_rand( 0, 0x3fff ) | 0x8000,
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+        );
     }
 }

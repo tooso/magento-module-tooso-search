@@ -58,6 +58,14 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </clear_log>
+                        <rebuild translate="label">
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_Rebuild</frontend_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </rebuild>
                     </fields>
                 </tool>
                 <active translate="label">
@@ -98,6 +106,16 @@
                             <show_in_store>0</show_in_store>
                             <comment><![CDATA[Enable/disable scheduled reindex process]]></comment>
                         </index>
+                        <suggestion translate="label">
+                            <label>Suggestion client side</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable/disable frontend side suggestion]]></comment>
+                        </suggestion>
                     </fields>
                 </active>
                 <server translate="label">
@@ -116,14 +134,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </api_key>
-                        <secret_key translate="label">
-                            <label>Secret key</label>
-                            <frontend_type>password</frontend_type>
+                        <api_version translate="label">
+                            <label>API Version</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tooso/system_config_source_apiVersions</source_model>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </secret_key>
+                        </api_version>
                         <api_base_url translate="label">
                             <label>API base url</label>
                             <frontend_type>text</frontend_type>
@@ -132,15 +151,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </api_base_url>
-                        <api_base_url_suggestions translate="label">
-                            <label>API base url v1 (suggestions)</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>16</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment><![CDATA[Override suggestions base url (leave empty to use default)]]></comment>
-                        </api_base_url_suggestions>
                         <send_report>
                             <label>Send report</label>
                             <frontend_type>select</frontend_type>
@@ -222,26 +232,157 @@
                             <show_in_store>0</show_in_store>
                             <comment><![CDATA[Use a local file (var/log/tooso_index_%store id%.csv) instead to send it]]></comment>
                         </dry_run_mode>
+                        <access_key>
+                            <label>AWS Access key id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </access_key>
+                        <secret_key>
+                            <label>AWS Secret key</label>
+                            <frontend_type>password</frontend_type>
+                            <sort_order>36</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </secret_key>
+                        <bucket>
+                            <label>AWS Bucket name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>37</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </bucket>
+                        <path>
+                            <label>AWS Object path</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>38</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment><![CDATA[Must end with a slash]]></comment>
+                        </path>
                     </fields>
                 </indexer>
-                <suggest translate="label">
-                    <label>Suggest</label>
+                <suggestion translate="label">
+                    <label>Suggest client side</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>40</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <max_results translate="label">
-                            <label>Max results to show</label>
-                            <frontend_type>text</frontend_type>
+                        <include_library>
+                            <label>Include Tooso suggest javascript library</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </max_results>
+                            <comment><![CDATA[Disable if you want to include it by yourself]]></comment>
+                        </include_library>
+                        <library_endpoint>
+                            <label>Tooso suggest javascript library endpoint</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </library_endpoint>
+                        <input_selector>
+                            <label>Input selector</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </input_selector>
+                        <buckets>
+                            <label>Buckets</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>tooso/system_config_source_suggestionBuckets</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </buckets>
+                        <zindex>
+                            <label>Z-Index</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </zindex>
                     </fields>
-                </suggest>
+                </suggestion>
+                <analytics translate="label">
+                    <label>Analytics</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>50</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <include_library>
+                            <label>Include Tooso analytics javascript library</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Disable if you are using a tag manager]]></comment>
+                        </include_library>
+                        <library_endpoint translate="label">
+                            <label>Javascript library endpoint</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </library_endpoint>
+                        <api_endpoint translate="label">
+                            <label>TrackingAPI endpoint</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_endpoint>
+                        <api_version translate="label">
+                            <label>API Version</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tooso/system_config_source_apiAnalyticsVersions</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_version>
+                        <key translate="label">
+                            <label>Analytics Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </key>
+                        <debug_mode>
+                            <label>Debug mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable for debug purpose]]></comment>
+                        </debug_mode>
+                    </fields>
+                </analytics>
             </groups>
         </tooso>
     </sections>

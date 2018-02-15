@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Removed autosuggestions (use an remote javascript library)
+- Removed analytics (use a remote javascript library)
+- Removed Detect library
+- Added API v3 compatibility
+
 ## [3.3.0]
 - Settings to override autosuggestion API version
 
 ## [3.2.0]
-- Added more info on exported simple product 
+- Added more info on exported simple product
 
 ## [3.1.2]
 - Save query before fallback to ensure query_id is valorized

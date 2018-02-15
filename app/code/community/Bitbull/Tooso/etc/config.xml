@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>3.3.1</version>
-            <api_compatibility>v2.0/v1.0</api_compatibility>
-            <notes></notes>
+            <version>4.0.0</version>
+            <api_compatibility>v3.0</api_compatibility>
+            <notes>Latest version.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -47,11 +47,6 @@
             <tooso>
                 <class>Bitbull_Tooso_Block</class>
             </tooso>
-            <catalogsearch>
-                <rewrite>
-                    <autocomplete>Bitbull_Tooso_Block_CatalogSearch_Autocomplete</autocomplete>
-                </rewrite>
-            </catalogsearch>
         </blocks>
         <template>
             <email>
@@ -97,13 +92,44 @@
                     </tooso_elaborate_rank_collection>
                 </observers>
             </controller_action_postdispatch_catalogsearch_result_index>
+
+
+            <controller_action_layout_render_before>
+                <observers>
+                    <tooso_clear_search_id>
+                        <type>singleton</type>
+                        <class>tooso/observer_search</class>
+                        <method>clearSearchId</method>
+                    </tooso_clear_search_id>
+                    <tooso_tracking_library>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>includeLibrary</method>
+                    </tooso_tracking_library>
+                    <tooso_tracking_page>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>includePageTrackingScript</method>
+                    </tooso_tracking_page>
+                    <tooso_suggestion_frontend_init>
+                        <type>singleton</type>
+                        <class>tooso/observer_suggestion</class>
+                        <method>initLibrary</method>
+                    </tooso_suggestion_frontend_init>
+                    <tooso_suggestion_frontend_pipeline>
+                        <type>singleton</type>
+                        <class>tooso/observer_suggestion</class>
+                        <method>includeLibrary</method>
+                    </tooso_suggestion_frontend_pipeline>
+                </observers>
+            </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
                 <observers>
-                    <tooso_tracking_pixel_product>
+                    <tooso_tracking_product>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
                         <method>includeProductTrackingScript</method>
-                    </tooso_tracking_pixel_product>
+                    </tooso_tracking_product>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
             <controller_action_layout_render_before_checkout_onepage_success>
@@ -111,10 +137,11 @@
                     <tooso_track_checkout>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
-                        <method>trackCheckout</method>
+                        <method>includeCheckoutTrackingScript</method>
                     </tooso_track_checkout>
                 </observers>
             </controller_action_layout_render_before_checkout_onepage_success>
+
             <checkout_cart_add_product_complete>
                 <observers>
                     <tooso_track_add_to_cart>
@@ -124,24 +151,15 @@
                     </tooso_track_add_to_cart>
                 </observers>
             </checkout_cart_add_product_complete>
-            <controller_action_layout_render_before>
+            <sales_quote_remove_item>
                 <observers>
-                    <tooso_clear_search_id>
-                        <type>singleton</type>
-                        <class>tooso/observer_search</class>
-                        <method>clearSearchId</method>
-                    </tooso_clear_search_id>
-                </observers>
-            </controller_action_layout_render_before>
-            <controller_action_layout_render_before>
-                <observers>
-                    <tooso_tracking_pixel_page>
+                    <tooso_track_add_to_cart>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
-                        <method>includePageTrackingScript</method>
-                    </tooso_tracking_pixel_page>
+                        <method>trackRemoveFromCart</method>
+                    </tooso_track_add_to_cart>
                 </observers>
-            </controller_action_layout_render_before>
+            </sales_quote_remove_item>
         </events>
     </frontend>
     <admin>
@@ -160,10 +178,12 @@
             <active>
                 <frontend>0</frontend>
                 <index>0</index>
+                <suggestion>0</suggestion>
             </active>
             <server>
                 <api_key />
-                <api_base_url>https://toosopublicapi.cloudapp.net</api_base_url>
+                <api_base_url>https://api.tooso.ai</api_base_url>
+                <api_version>3</api_version>
                 <send_report>1</send_report>
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>
@@ -172,9 +192,19 @@
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
             </indexer>
-            <suggest>
-                <max_results>10</max_results>
-            </suggest>
+            <suggestion>
+                <include_library>0</include_library>
+                <library_endpoint>https://analyticsdev.tooso.ai/jquery.ts-dev.js</library_endpoint>
+                <input_selector>input[type=search]</input_selector>
+                <buckets>relevant,trending</buckets>
+                <zindex>100000</zindex>
+                <api_version>1</api_version>
+            </suggestion>
+            <analytics>
+                <api_version>1</api_version>
+                <include_library>1</include_library>
+                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>>
+            </analytics>
         </tooso>
     </default>
     <crontab>

@@ -32,7 +32,7 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
      * @param  Varien_Event_Observer $observer
      */
     public function includePageTrackingScript(Varien_Event_Observer $observer){
-        if(!Mage::helper('tooso')->isTrackingEnabled()){
+        if(!Mage::helper('tooso')->isTrackingEnabled() || !Mage::helper('tooso/tracking')->includeTrackingJSLibrary()){
             return;
         }
         $parentBlock = Mage::helper('tooso/tracking')->getScriptContainerBlock();

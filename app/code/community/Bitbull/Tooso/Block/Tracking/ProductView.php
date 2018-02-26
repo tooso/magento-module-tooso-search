@@ -55,22 +55,34 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
             }
             $trackingProductParams['order'] = $order;
 
-            ?>
-            <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
-                ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
-                ta('ec:setAction', 'click', {
-                    'list': '<?=Mage::helper('tooso/tracking')->getSearchIdWithFallback();?>'
-                });
-            </script>
-            <?php
-
+            if ($this->_helper->includeTrackingJSLibrary()) {
+                ?>
+                <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                    ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
+                    ta('ec:setAction', 'click', {
+                        'list': '<?=Mage::helper('tooso/tracking')->getSearchIdWithFallback();?>'
+                    });
+                </script>
+                <?php
+            }else{
+                ?>
+                <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                    window.ToosoTrackingData = {
+                        "product": <?=json_encode($trackingProductParams);?>,
+                        "action": "click",
+                    };
+                </script>
+                <?php
+            }
         }else{
             $this->_logger->debug('Tracking product: elaborating product view..');
 
             ?>
             <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
-                ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
-                ta('ec:setAction', 'detail');
+                window.ToosoTrackingData = {
+                    "product": <?=json_encode($trackingProductParams);?>,
+                    "action": 'detail',
+                };
             </script>
             <?php
         }

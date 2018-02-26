@@ -70,6 +70,7 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
                     window.ToosoTrackingData = {
                         "product": <?=json_encode($trackingProductParams);?>,
                         "action": "click",
+                        "searchId": '<?=Mage::helper('tooso/tracking')->getSearchIdWithFallback();?>'
                     };
                 </script>
                 <?php

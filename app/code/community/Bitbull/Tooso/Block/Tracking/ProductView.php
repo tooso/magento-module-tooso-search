@@ -77,15 +77,23 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
             }
         }else{
             $this->_logger->debug('Tracking product: elaborating product view..');
-
-            ?>
-            <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
-                window.ToosoTrackingData = {
-                    "product": <?=json_encode($trackingProductParams);?>,
-                    "action": 'detail',
-                };
-            </script>
-            <?php
+            if ($this->_helper->includeTrackingJSLibrary()) {
+                ?>
+                <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                    ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
+                    ta('ec:setAction', 'detail');
+                </script>
+                <?php
+            }else{
+                ?>
+                <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
+                    window.ToosoTrackingData = {
+                        "product": <?=json_encode($trackingProductParams);?>,
+                        "action": 'detail',
+                    };
+                </script>
+                <?php
+            }
         }
 
         return ob_get_clean();

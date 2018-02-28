@@ -211,6 +211,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             'name' => $product->getName(),
             'brand' => $product->getBrand(),
             'price' => $product->getFinalPrice(),
+            'storeCurrency' => Mage::app()->getStore()->getCurrentCurrencyCode(),
             'quantity' => 1
         ];
 

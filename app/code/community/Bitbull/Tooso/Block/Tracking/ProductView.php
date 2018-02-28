@@ -105,14 +105,16 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     /**
      * @param $id
      */
-    public function setObjectID($id){
+    public function setObjectID($id)
+    {
         $this->setProductID($id);
     }
 
     /**
      * @param $id
      */
-    public function setProductID($id){
+    public function setProductID($id)
+    {
         $this->_productId = $id;
     }
 }

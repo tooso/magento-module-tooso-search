@@ -14,7 +14,6 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
     const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key';
 
-    const XML_PATH_SUGGEST_UID = 'tooso/suggestion/uid';
     const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
     const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
     const XML_PATH_SUGGEST_GROUPBY = 'tooso/suggestion/groupby';
@@ -125,9 +124,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
             $data['apiKey'] = $apiKey;
         }
 
-        $uid = Mage::getStoreConfig(self::XML_PATH_SUGGEST_UID, $store);
-        if($uid != null){
-            $data['uid'] = $uid;
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $data['uid'] = Mage::getSingleton('customer/session')->getCustomerId();
         }
 
         $buckets = Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);

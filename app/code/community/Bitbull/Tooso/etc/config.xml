@@ -194,16 +194,23 @@
             </indexer>
             <suggestion>
                 <include_library>0</include_library>
-                <library_endpoint>https://analyticsdev.tooso.ai/jquery.ts-dev.js</library_endpoint>
+                <library_endpoint>https://cdndev.tooso.ai/jquery.ts-dev.js</library_endpoint>
                 <input_selector>input[type=search]</input_selector>
+                <language>en</language>
+                <uid />
                 <buckets>relevant,trending</buckets>
+                <limit>20</limit>
+                <groupby />
+                <nocache>0</nocache>
+                <onselect>function() { this.form.submit(); }</onselect>
+                <minchars>1</minchars>
+                <width>200</width>
                 <zindex>100000</zindex>
-                <api_version>1</api_version>
             </suggestion>
             <analytics>
                 <api_version>1</api_version>
                 <include_library>1</include_library>
-                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>>
+                <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>>
             </analytics>
         </tooso>
     </default>

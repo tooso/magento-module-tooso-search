@@ -12,9 +12,18 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_LIBRARY = 'tooso/suggestion/include_library';
     const XML_PATH_SUGGEST_LIBRARY_ENDPOINT = 'tooso/suggestion/library_endpoint';
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
-    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
-    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
     const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key';
+
+    const XML_PATH_SUGGEST_LANGUAGE = 'tooso/suggestion/language';
+    const XML_PATH_SUGGEST_UID = 'tooso/suggestion/uid';
+    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
+    const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
+    const XML_PATH_SUGGEST_GROUPBY = 'tooso/suggestion/groupby';
+    const XML_PATH_SUGGEST_NOCACHE = 'tooso/suggestion/nocache';
+    const XML_PATH_SUGGEST_ONSELECT = 'tooso/suggestion/onselect';
+    const XML_PATH_SUGGEST_MINCHAR = 'tooso/suggestion/minchars';
+    const XML_PATH_SUGGEST_WIDTH = 'tooso/suggestion/with';
+    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
 
     /**
      * Get block to append init suggestion library
@@ -90,36 +99,76 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get Buckets
+     * Get javascript library initialization params
      *
      * @param null $store
-     * @return mixed
+     * @return array
      */
-    public function getSuggestionBuckets($store = null)
+    public function getSuggestioninitParams($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);
-    }
+        $data = [
+            'autocomplete' => []
+        ];
 
-    /**
-     * Get Z-Index
-     *
-     * @param null $store
-     * @return mixed
-     */
-    public function getSuggestionZIndex($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_ZINDEX, $store);
-    }
+        $apiKey = Mage::getStoreConfig(self::XML_PATH_SUGGEST_API_KEY, $store);
+        if($apiKey != null){
+            $data['apiKey'] = $apiKey;
+        }
 
-    /**
-     * get API Key
-     *
-     * @param null $store
-     * @return mixed
-     */
-    public function getApiKey($store = null)
-    {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_API_KEY, $store);
+        $language = Mage::getStoreConfig(self::XML_PATH_SUGGEST_LANGUAGE, $store);
+        if($language != null){
+            $data['language'] = $language;
+        }
+
+        $uid = Mage::getStoreConfig(self::XML_PATH_SUGGEST_UID, $store);
+        if($uid != null){
+            $data['uid'] = $uid;
+        }
+
+        $buckets = Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);
+        if($buckets != null){
+            $data['buckets'] = $buckets;
+        }
+
+        $limit = Mage::getStoreConfig(self::XML_PATH_SUGGEST_LIMIT, $store);
+        if($limit != null){
+            $data['limit'] = $limit;
+        }
+
+        $groupBy = Mage::getStoreConfig(self::XML_PATH_SUGGEST_GROUPBY, $store);
+        if($groupBy != null){
+            $data['groupBy'] = $groupBy;
+        }
+
+        $noCache = Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_NOCACHE, $store);
+        if($noCache){
+            $data['noCache'] = 'true';
+        }else{
+            $data['noCache'] = 'false';
+        }
+
+        $onSelect = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT, $store);
+        if($buckets != null){
+            $data['autocomplete']['onSelect'] = $onSelect;
+        }
+
+        $minChars = Mage::getStoreConfig(self::XML_PATH_SUGGEST_MINCHAR, $store);
+        if($minChars != null){
+            $data['autocomplete']['minChars'] = $minChars;
+        }
+
+        $width = Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH, $store);
+        if($width != null){
+            $data['autocomplete']['width'] = $width;
+        }
+
+        $zIndex = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ZINDEX, $store);
+        if($zIndex != null){
+            $data['autocomplete']['zIndex'] = $zIndex;
+        }
+
+
+        return $data;
     }
 
 }

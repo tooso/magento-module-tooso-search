@@ -200,11 +200,13 @@
                 <uid />
                 <buckets>relevant,trending</buckets>
                 <limit>20</limit>
-                <groupby />
+                <groupby>1</groupby>
                 <nocache>0</nocache>
-                <onselect>function() { this.form.submit(); }</onselect>
+                <onselect_behaviour>submit</onselect_behaviour>
+                <onselect_callback>function() { this.form.submit(); }</onselect_callback>
                 <minchars>1</minchars>
-                <width>200</width>
+                <width>auto</width>
+                <with_custom>auto</with_custom>
                 <zindex>100000</zindex>
             </suggestion>
             <analytics>

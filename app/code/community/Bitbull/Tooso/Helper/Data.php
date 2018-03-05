@@ -121,10 +121,6 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
         if($language == null){
             $language = Mage::app()->getLocale()->getLocaleCode();
-            /*
-            if(strpos($language, "_") !== false){
-                $language = explode("_", $language)[0];
-            }*/
         }
         if($storeCode == null){
             $storeCode = Mage::app()->getStore()->getCode();

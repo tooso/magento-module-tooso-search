@@ -336,8 +336,9 @@
                             <show_in_store>1</show_in_store>
                         </limit>
                         <groupby>
-                            <label>Group results by</label>
-                            <frontend_type>text</frontend_type>
+                            <label>Group by</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>9</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -352,14 +353,24 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </nocache>
-                        <onselect>
-                            <label>On select action</label>
+                        <onselect_behaviour>
+                            <label>On-select behaviour</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tooso/system_config_source_suggestionOnSelectBehaviour</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </onselect_behaviour>
+                        <onselect_callback>
+                            <label>Custom on-select callback</label>
                             <frontend_type>textarea</frontend_type>
                             <sort_order>11</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </onselect>
+                            <depends><onselect_behaviour>custom</onselect_behaviour></depends>
+                        </onselect_callback>
                         <minchars>
                             <label>Minimum number of chars</label>
                             <frontend_type>text</frontend_type>
@@ -368,18 +379,30 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </minchars>
+
                         <width>
-                            <label>Result container width</label>
-                            <frontend_type>text</frontend_type>
+                            <label>Width</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>tooso/system_config_source_suggestionWidth</source_model>
                             <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </width>
+                        <with_custom>
+                            <label>Custom width in pixel</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><width>custom</width></depends>
+                        </with_custom>
+
                         <zindex>
                             <label>Z-Index</label>
                             <frontend_type>text</frontend_type>
-                            <sort_order>14</sort_order>
+                            <sort_order>15</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

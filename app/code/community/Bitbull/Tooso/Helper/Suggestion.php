@@ -14,22 +14,24 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
     const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key';
 
-    const XML_PATH_SUGGEST_LANGUAGE = 'tooso/suggestion/language';
     const XML_PATH_SUGGEST_UID = 'tooso/suggestion/uid';
     const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
     const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
     const XML_PATH_SUGGEST_GROUPBY = 'tooso/suggestion/groupby';
     const XML_PATH_SUGGEST_NOCACHE = 'tooso/suggestion/nocache';
-    const XML_PATH_SUGGEST_ONSELECT = 'tooso/suggestion/onselect';
+    const XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR = 'tooso/suggestion/onselect_behaviour';
+    const XML_PATH_SUGGEST_ONSELECT_CALLBACK = 'tooso/suggestion/onselect_callback';
     const XML_PATH_SUGGEST_MINCHAR = 'tooso/suggestion/minchars';
-    const XML_PATH_SUGGEST_WIDTH = 'tooso/suggestion/with';
+    const XML_PATH_SUGGEST_WIDTH = 'tooso/suggestion/width';
+    const XML_PATH_SUGGEST_WIDTH_CUSTOM = 'tooso/suggestion/with_custom';
     const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
 
     /**
      * Get block to append init suggestion library
      *
      */
-    public function getInitScriptContainerBlock(){
+    public function getInitScriptContainerBlock()
+    {
         $layout = Mage::app()->getLayout();
         return $layout->getBlock(self::CONTAINER_BLOCK_AFTER);
     }
@@ -38,7 +40,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      * Get block to append suggestion library
      *
      */
-    public function getScriptContainerBlock(){
+    public function getScriptContainerBlock()
+    {
         $layout = Mage::app()->getLayout();
         return $layout->getBlock(self::CONTAINER_BLOCK_BEFORE);
     }
@@ -48,7 +51,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      *
      * @return Bitbull_Tooso_Block_Suggestion_Library
      */
-    public function getSuggestionLibraryBlock(){
+    public function getSuggestionLibraryBlock()
+    {
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/suggestion_library');
         return $block;
@@ -59,7 +63,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      *
      * @return Bitbull_Tooso_Block_Suggestion_LibraryInit
      */
-    public function getSuggestionLibraryInitBlock(){
+    public function getSuggestionLibraryInitBlock()
+    {
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/suggestion_libraryInit');
         return $block;
@@ -104,20 +109,20 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      * @param null $store
      * @return array
      */
-    public function getSuggestioninitParams($store = null)
+    public function getSuggestionInitParams($store = null)
     {
         $data = [
-            'autocomplete' => []
+            'language' => strtolower(Mage::app()->getLocale()->getLocaleCode()),
+            'groupBy' => Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_GROUPBY, $store),
+            'noCache' => Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_NOCACHE, $store),
+            'autocomplete' => [
+                'width' => $this->getWidthValue($store),
+            ]
         ];
 
         $apiKey = Mage::getStoreConfig(self::XML_PATH_SUGGEST_API_KEY, $store);
         if($apiKey != null){
             $data['apiKey'] = $apiKey;
-        }
-
-        $language = Mage::getStoreConfig(self::XML_PATH_SUGGEST_LANGUAGE, $store);
-        if($language != null){
-            $data['language'] = $language;
         }
 
         $uid = Mage::getStoreConfig(self::XML_PATH_SUGGEST_UID, $store);
@@ -135,31 +140,9 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
             $data['limit'] = $limit;
         }
 
-        $groupBy = Mage::getStoreConfig(self::XML_PATH_SUGGEST_GROUPBY, $store);
-        if($groupBy != null){
-            $data['groupBy'] = $groupBy;
-        }
-
-        $noCache = Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_NOCACHE, $store);
-        if($noCache){
-            $data['noCache'] = 'true';
-        }else{
-            $data['noCache'] = 'false';
-        }
-
-        $onSelect = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT, $store);
-        if($buckets != null){
-            $data['autocomplete']['onSelect'] = $onSelect;
-        }
-
         $minChars = Mage::getStoreConfig(self::XML_PATH_SUGGEST_MINCHAR, $store);
         if($minChars != null){
             $data['autocomplete']['minChars'] = $minChars;
-        }
-
-        $width = Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH, $store);
-        if($width != null){
-            $data['autocomplete']['width'] = $width;
         }
 
         $zIndex = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ZINDEX, $store);
@@ -169,6 +152,44 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
 
 
         return $data;
+    }
+
+    /**
+     * Get onSelect callback params
+     *
+     * @param $store
+     * @return string
+     */
+    public function getOnSelectValue($store = null)
+    {
+        $behaviour = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR, $store);
+        switch ($behaviour) {
+            case 'submit':
+                return 'function() { this.form.submit(); }';
+            case 'custom':
+                return Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_CALLBACK, $store);
+            case 'nothing':
+                return 'function() { }';
+        }
+
+        return null;
+    }
+
+    /**
+     * Get width value
+     *
+     * @param $store
+     * @return string
+     */
+    public function getWidthValue($store = null)
+    {
+        $width = Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH, $store);
+
+        if($width == 'custom'){
+            return Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH_CUSTOM, $store);
+        }
+
+        return $width;
     }
 
 }

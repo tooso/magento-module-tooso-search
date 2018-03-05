@@ -328,7 +328,7 @@
                             <show_in_store>1</show_in_store>
                         </buckets>
                         <limit>
-                            <label>Limit</label>
+                            <label>Limit results</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
@@ -336,7 +336,7 @@
                             <show_in_store>1</show_in_store>
                         </limit>
                         <groupby>
-                            <label>Group by</label>
+                            <label>Group results by</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>9</sort_order>
                             <show_in_default>1</show_in_default>
@@ -361,7 +361,7 @@
                             <show_in_store>1</show_in_store>
                         </onselect>
                         <minchars>
-                            <label>On select action</label>
+                            <label>Minimum number of chars</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>12</sort_order>
                             <show_in_default>1</show_in_default>
@@ -369,7 +369,7 @@
                             <show_in_store>1</show_in_store>
                         </minchars>
                         <width>
-                            <label>Width</label>
+                            <label>Result container width</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
@@ -377,7 +377,7 @@
                             <show_in_store>1</show_in_store>
                         </width>
                         <zindex>
-                            <label>ZIndex</label>
+                            <label>Z-Index</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>

@@ -22,7 +22,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_ONSELECT_CALLBACK = 'tooso/suggestion/onselect_callback';
     const XML_PATH_SUGGEST_MINCHAR = 'tooso/suggestion/minchars';
     const XML_PATH_SUGGEST_WIDTH = 'tooso/suggestion/width';
-    const XML_PATH_SUGGEST_WIDTH_CUSTOM = 'tooso/suggestion/with_custom';
+    const XML_PATH_SUGGEST_WIDTH_CUSTOM = 'tooso/suggestion/width_custom';
     const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
 
     /**

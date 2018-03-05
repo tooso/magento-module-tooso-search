@@ -301,15 +301,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </input_selector>
-
-                        <language>
-                            <label>Language</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>5</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </language>
                         <buckets>
                             <label>Buckets</label>
                             <frontend_type>multiselect</frontend_type>
@@ -381,7 +372,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </width>
-                        <with_custom>
+                        <width_custom>
                             <label>Custom width in pixel</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>14</sort_order>
@@ -389,7 +380,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends><width>custom</width></depends>
-                        </with_custom>
+                        </width_custom>
 
                         <zindex>
                             <label>Z-Index</label>

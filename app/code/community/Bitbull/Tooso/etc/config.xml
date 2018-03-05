@@ -196,7 +196,6 @@
                 <include_library>0</include_library>
                 <library_endpoint>https://cdndev.tooso.ai/jquery.ts-dev.js</library_endpoint>
                 <input_selector>input[type=search]</input_selector>
-                <language>en</language>
                 <buckets>relevant,trending</buckets>
                 <limit>20</limit>
                 <groupby>1</groupby>
@@ -205,7 +204,7 @@
                 <onselect_callback>function() { this.form.submit(); }</onselect_callback>
                 <minchars>1</minchars>
                 <width>auto</width>
-                <with_custom>auto</with_custom>
+                <width_custom>300</width_custom>
                 <zindex>100000</zindex>
             </suggestion>
             <analytics>

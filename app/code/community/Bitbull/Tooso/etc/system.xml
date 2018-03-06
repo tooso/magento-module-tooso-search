@@ -327,6 +327,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </groupby>
+                        <!--
                         <nocache>
                             <label>Disable Cache</label>
                             <frontend_type>select</frontend_type>
@@ -335,7 +336,7 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </nocache>
+                        </nocache> -->
                         <onselect_behaviour>
                             <label>On-select behaviour</label>
                             <frontend_type>select</frontend_type>

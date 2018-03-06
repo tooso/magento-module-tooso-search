@@ -199,7 +199,7 @@
                 <buckets>relevance,trending</buckets>
                 <limit>20</limit>
                 <groupby>1</groupby>
-                <nocache>0</nocache>
+                <nocache>1</nocache>
                 <onselect_behaviour>submit</onselect_behaviour>
                 <onselect_callback>function() { this.form.submit(); }</onselect_callback>
                 <minchars>1</minchars>

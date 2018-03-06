@@ -12,15 +12,25 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     const XML_PATH_SUGGEST_LIBRARY = 'tooso/suggestion/include_library';
     const XML_PATH_SUGGEST_LIBRARY_ENDPOINT = 'tooso/suggestion/library_endpoint';
     const XML_PATH_SUGGEST_INPUT_SELECTOR = 'tooso/suggestion/input_selector';
-    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
-    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
     const XML_PATH_SUGGEST_API_KEY = 'tooso/server/api_key';
+
+    const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
+    const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
+    const XML_PATH_SUGGEST_GROUPBY = 'tooso/suggestion/groupby';
+    const XML_PATH_SUGGEST_NOCACHE = 'tooso/suggestion/nocache';
+    const XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR = 'tooso/suggestion/onselect_behaviour';
+    const XML_PATH_SUGGEST_ONSELECT_CALLBACK = 'tooso/suggestion/onselect_callback';
+    const XML_PATH_SUGGEST_MINCHAR = 'tooso/suggestion/minchars';
+    const XML_PATH_SUGGEST_WIDTH = 'tooso/suggestion/width';
+    const XML_PATH_SUGGEST_WIDTH_CUSTOM = 'tooso/suggestion/width_custom';
+    const XML_PATH_SUGGEST_ZINDEX = 'tooso/suggestion/zindex';
 
     /**
      * Get block to append init suggestion library
      *
      */
-    public function getInitScriptContainerBlock(){
+    public function getInitScriptContainerBlock()
+    {
         $layout = Mage::app()->getLayout();
         return $layout->getBlock(self::CONTAINER_BLOCK_AFTER);
     }
@@ -29,7 +39,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      * Get block to append suggestion library
      *
      */
-    public function getScriptContainerBlock(){
+    public function getScriptContainerBlock()
+    {
         $layout = Mage::app()->getLayout();
         return $layout->getBlock(self::CONTAINER_BLOCK_BEFORE);
     }
@@ -39,7 +50,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      *
      * @return Bitbull_Tooso_Block_Suggestion_Library
      */
-    public function getSuggestionLibraryBlock(){
+    public function getSuggestionLibraryBlock()
+    {
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/suggestion_library');
         return $block;
@@ -50,7 +62,8 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
      *
      * @return Bitbull_Tooso_Block_Suggestion_LibraryInit
      */
-    public function getSuggestionLibraryInitBlock(){
+    public function getSuggestionLibraryInitBlock()
+    {
         $layout = Mage::app()->getLayout();
         $block = $layout->createBlock('tooso/suggestion_libraryInit');
         return $block;
@@ -90,36 +103,91 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get Buckets
+     * Get javascript library initialization params
      *
      * @param null $store
-     * @return mixed
+     * @return array
      */
-    public function getSuggestionBuckets($store = null)
+    public function getSuggestionInitParams($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);
+        $data = [
+            'language' => strtolower(Mage::app()->getLocale()->getLocaleCode()),
+            'groupBy' => Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_GROUPBY, $store),
+            'noCache' => Mage::getStoreConfigFlag(self::XML_PATH_SUGGEST_NOCACHE, $store),
+            'autocomplete' => [
+                'width' => $this->getWidthValue($store),
+            ]
+        ];
+
+        $apiKey = Mage::getStoreConfig(self::XML_PATH_SUGGEST_API_KEY, $store);
+        if($apiKey != null){
+            $data['apiKey'] = $apiKey;
+        }
+
+        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+            $data['uid'] = Mage::getSingleton('customer/session')->getCustomerId();
+        }
+
+        $buckets = Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);
+        if($buckets != null){
+            $data['buckets'] = $buckets;
+        }
+
+        $limit = Mage::getStoreConfig(self::XML_PATH_SUGGEST_LIMIT, $store);
+        if($limit != null){
+            $data['limit'] = $limit;
+        }
+
+        $minChars = Mage::getStoreConfig(self::XML_PATH_SUGGEST_MINCHAR, $store);
+        if($minChars != null){
+            $data['autocomplete']['minChars'] = $minChars;
+        }
+
+        $zIndex = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ZINDEX, $store);
+        if($zIndex != null){
+            $data['autocomplete']['zIndex'] = $zIndex;
+        }
+
+
+        return $data;
     }
 
     /**
-     * Get Z-Index
+     * Get onSelect callback params
      *
-     * @param null $store
-     * @return mixed
+     * @param $store
+     * @return string
      */
-    public function getSuggestionZIndex($store = null)
+    public function getOnSelectValue($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_ZINDEX, $store);
+        $behaviour = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR, $store);
+        switch ($behaviour) {
+            case 'submit':
+                return 'function() { this.form.submit(); }';
+            case 'custom':
+                return Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_CALLBACK, $store);
+            case 'nothing':
+                return 'function() { }';
+        }
+
+        return null;
     }
 
     /**
-     * get API Key
+     * Get width value
      *
-     * @param null $store
-     * @return mixed
+     * @param $store
+     * @return string
      */
-    public function getApiKey($store = null)
+    public function getWidthValue($store = null)
     {
-        return Mage::getStoreConfig(self::XML_PATH_SUGGEST_API_KEY, $store);
+        $width = Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH, $store);
+
+        if($width == 'custom'){
+            return Mage::getStoreConfig(self::XML_PATH_SUGGEST_WIDTH_CUSTOM, $store);
+        }
+
+        return $width;
     }
 
 }

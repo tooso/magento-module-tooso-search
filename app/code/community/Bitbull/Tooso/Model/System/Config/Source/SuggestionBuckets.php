@@ -12,8 +12,8 @@ class Bitbull_Tooso_Model_System_Config_Source_SuggestionBuckets
     public function toOptionArray() {
         return [
             [
-                "label" => "Relevant",
-                "value" => "relevant"
+                "label" => "Relevance",
+                "value" => "relevance"
             ],
             [
                 "label" => "Trending",

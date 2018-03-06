@@ -196,7 +196,7 @@
                 <include_library>0</include_library>
                 <library_endpoint>https://cdndev.tooso.ai/jquery.ts-dev.js</library_endpoint>
                 <input_selector>input[type=search]</input_selector>
-                <buckets>relevant,trending</buckets>
+                <buckets>relevance,trending</buckets>
                 <limit>20</limit>
                 <groupby>1</groupby>
                 <nocache>0</nocache>

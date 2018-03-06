@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.0]
+- Refactory autocomplete library inizialization
+- Fix tracking product view
+- Add store currency to product
+- Add searchId to Tracking data object
+- Add ToosoTrackingData object in page when ta() library is not included
+
 ## [4.0.0]
 - Removed autosuggestions (use an remote javascript library)
 - Removed analytics (use a remote javascript library)

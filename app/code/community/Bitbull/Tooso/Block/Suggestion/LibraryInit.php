@@ -27,7 +27,7 @@ class Bitbull_Tooso_Block_Suggestion_LibraryInit extends Bitbull_Tooso_Block_Sug
                         if(element){
                             var params = <?=json_encode($initParams)?>;
                             params.autocomplete.onSelect = <?=$onSelectCallback?>;
-                            element.attr('data-ts', '').ts(params);
+                            element.ts(params);
                         }else{
                             console.error("Tooso: Suggestion search input not found");
                         }

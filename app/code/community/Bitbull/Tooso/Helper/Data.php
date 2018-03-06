@@ -121,10 +121,6 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $apiBaseUrl = Mage::getStoreConfig(self::XML_PATH_SERVER_API_BASEURL);
         if($language == null){
             $language = Mage::app()->getLocale()->getLocaleCode();
-            /*
-            if(strpos($language, "_") !== false){
-                $language = explode("_", $language)[0];
-            }*/
         }
         if($storeCode == null){
             $storeCode = Mage::app()->getStore()->getCode();
@@ -148,24 +144,20 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $customerSession = Mage::getSingleton('customer/session');
         $sessionId = Mage::getSingleton('core/session')->getSessionId();
-
-        if ($customerSession->isLoggedIn()) {
-            $userId = $customerSession->getCustomerId();
-        } else {
-            $userId = $sessionId;
-        }
-
         $clientId = Mage::helper('tooso/session')->getClientId();
 
         $params = array(
             'uip' => Mage::helper('core/http')->getRemoteAddr(),
-            'uid' => $userId,
             'sessionId' => $sessionId,
             'cid' => $clientId,
             'dl' => Mage::helper('tooso/tracking')->getLastPage(),
             'dr' => Mage::helper('tooso/tracking')->getCurrentPage(),
             'tm' => round(microtime(true) * 1000)
         );
+
+        if ($customerSession->isLoggedIn()) {
+            $params['uid'] = $customerSession->getCustomerId();
+        }
 
         if($override != null && is_array($override)){
             foreach ($override as $key => $value){

@@ -12,10 +12,10 @@ class Bitbull_Tooso_Block_Suggestion_LibraryInit extends Bitbull_Tooso_Block_Sug
     protected function _toHtml()
     {
         $inputSelector = $this->_helper->getSuggestionInputSelector();
-        $apiKey = $this->_helper->getApiKey();
-        $zindex = $this->_helper->getSuggestionZIndex();
-        $buckets = $this->_helper->getSuggestionBuckets();
         $this->_logger->debug('initializing suggestion library');
+
+        $initParams = $this->_helper->getSuggestionInitParams();
+        $onSelectCallback = $this->_helper->getOnSelectValue();
 
         ob_start();
         ?>
@@ -25,11 +25,9 @@ class Bitbull_Tooso_Block_Suggestion_LibraryInit extends Bitbull_Tooso_Block_Sug
                     jQuery(document).ready(function ($) {
                         var element = $('<?=$inputSelector?>');
                         if(element){
-                            element.attr('data-ts', '')
-                                .attr('data-ts-api-key', '<?=$apiKey?>')
-                                .attr('data-ts-zindex', <?=$zindex?>)
-                                .attr('data-ts-buckets', '<?=$buckets?>')
-                                .ts();
+                            var params = <?=json_encode($initParams)?>;
+                            params.autocomplete.onSelect = <?=$onSelectCallback?>;
+                            element.ts(params);
                         }else{
                             console.error("Tooso: Suggestion search input not found");
                         }
@@ -37,6 +35,9 @@ class Bitbull_Tooso_Block_Suggestion_LibraryInit extends Bitbull_Tooso_Block_Sug
                 }else{
                     console.error("Tooso: Suggestion script require jQuery");
                 }
+            };
+            if(Varien && Varien.searchForm && Varien.searchForm.prototype){
+                Varien.searchForm.prototype.initAutocomplete = function () {}; //disable default Magento autocomplete
             }
         </script>
         <?php

@@ -16,7 +16,7 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
 
     protected function _toHtml()
     {
-        $trackingProductParams = [];
+        $trackingCheckoutParams = [];
 
         if($this->_orderId == null){
             $this->_logger->warn('Tracking checkout: _orderId not set, getting from session');
@@ -33,36 +33,51 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
             $this->_logger->warn('Tracking checkout: order not found with id '.$this->_orderId);
             return;
         }
-        $trackingProductParams['id'] = $order->getId();
-        $trackingProductParams['shipping'] = $order->getShippingAmount();
-        $trackingProductParams['coupon'] = $order->getCouponCode();
-        $trackingProductParams['tax'] = $order->getTaxAmount();
+        $trackingCheckoutParams['id'] = $order->getId();
+        $trackingCheckoutParams['shipping'] = $order->getShippingAmount();
+        $trackingCheckoutParams['coupon'] = $order->getCouponCode();
+        $trackingCheckoutParams['tax'] = $order->getTaxAmount();
+
+        $items = $order->getAllVisibleItems();
+        $trackingProductParams = [];
+
+        foreach ($items as $item) {
+            $productId = $item->getProductId();
+            $productData = $this->_helper->getProductTrackingParams($productId);
+            if ($productData == null) {
+                $this->_logger->warn('Tracking checkout: product not found with id ' . $productId);
+                continue;
+            }
+            $productData['quantity'] = round($item->getQtyOrdered());
+            $productData['price'] = $item->getPrice();
+            array_push($trackingProductParams, $productData);
+        }
 
         ob_start();
 
-        ?>
-        <script id='<?=self::SCRIPT_ID?>' type='text/javascript'>
-        <?php
+        if ($this->_helper->includeTrackingJSLibrary()) {
 
-        $items = $order->getAllVisibleItems();
-        foreach ($items as $item) {
-            $productId = $item->getProductId();
-            $trackingProductParams = $this->_helper->getProductTrackingParams($productId);
-            if($trackingProductParams == null){
-                $this->_logger->warn('Tracking checkout: product not found with id '.$productId);
-                continue;
-            }
-            $trackingProductParams['quantity'] = round($item->getQtyOrdered());
-            $trackingProductParams['price'] = $item->getPrice();
             ?>
-            ta('ec:addProduct', <?=json_encode($trackingProductParams);?>);
+            <script id='<?= self::SCRIPT_ID ?>' type='text/javascript'>
+                <?php foreach ($trackingProductParams as $productData) { ?>
+                    ta('ec:addProduct', <?=json_encode($productData);?>);
+                <?php } ?>
+                ta('ec:setAction', 'purchase', <?=json_encode($trackingCheckoutParams);?>);
+            </script>
+            <?php
+
+        }else{
+
+            ?>
+            <script id='<?= self::SCRIPT_ID ?>' type='text/javascript'>
+                window.ToosoTrackingData = {
+                  "products": <?=json_encode($trackingProductParams);?>,
+                  "checkout": <?=json_encode($trackingCheckoutParams);?>,
+                  "action": 'purchase',
+                };
+            </script>
             <?php
         }
-
-        ?>
-            ta('ec:setAction', 'purchase', <?=json_encode($trackingProductParams);?>);
-        </script>
-        <?php
 
         return ob_get_clean();
     }

@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.0.0</version>
+            <version>4.1.0</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Latest version.</notes>
+            <notes>Tracking javascript side, API v3 compatibility, catalog index upload to AWS S3.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -194,16 +194,23 @@
             </indexer>
             <suggestion>
                 <include_library>0</include_library>
-                <library_endpoint>https://analyticsdev.tooso.ai/jquery.ts-dev.js</library_endpoint>
+                <library_endpoint>https://cdndev.tooso.ai/jquery.ts-dev.js</library_endpoint>
                 <input_selector>input[type=search]</input_selector>
-                <buckets>relevant,trending</buckets>
+                <buckets>relevance,trending</buckets>
+                <limit>20</limit>
+                <groupby>1</groupby>
+                <nocache>1</nocache>
+                <onselect_behaviour>submit</onselect_behaviour>
+                <onselect_callback>function() { this.form.submit(); }</onselect_callback>
+                <minchars>1</minchars>
+                <width>auto</width>
+                <width_custom>300</width_custom>
                 <zindex>100000</zindex>
-                <api_version>1</api_version>
             </suggestion>
             <analytics>
                 <api_version>1</api_version>
                 <include_library>1</include_library>
-                <library_endpoint>https://analytics.tooso.ai/ta.js</library_endpoint>>
+                <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>>
             </analytics>
         </tooso>
     </default>

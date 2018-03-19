@@ -23,6 +23,7 @@ class Bitbull_Tooso_Adminhtml_ToosoController extends Mage_Adminhtml_Controller_
      */
     public function rebuildAction()
     {
+        $this->_logger->debug("Requested manual rebuild action");
         if (Mage::getModel('tooso/indexer')->rebuildIndex()) {
             $this->getResponse()->setBody(Mage::helper('tooso')->__('Catalog data have been successfully sent to Tooso.'));
         } else {
@@ -35,6 +36,7 @@ class Bitbull_Tooso_Adminhtml_ToosoController extends Mage_Adminhtml_Controller_
      * TailLog
      */
     public function taillogAction() {
+        $this->_logger->debug("Requested log file");
         $path = Mage::getBaseDir('log').'/'.$this->_logger->getLogFile();
         $this->getResponse()->setBody(file_get_contents($path));
         return;
@@ -44,6 +46,7 @@ class Bitbull_Tooso_Adminhtml_ToosoController extends Mage_Adminhtml_Controller_
      * ClearLog
      */
     public function clearlogAction() {
+        $this->_logger->debug("Requested log clean action");
         $path = Mage::getBaseDir('log').'/'.$this->_logger->getLogFile();
         fclose(fopen($path,'w'));
         $this->getResponse()->setBody("");

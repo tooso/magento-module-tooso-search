@@ -224,9 +224,9 @@ class Bitbull_Tooso_Model_Indexer
                     break;
                 default:
                     if(isset($attributesTypes[$attributeCode]) && $attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
-                        $row[$attributeCode] = $product->getAttributeText($attributeCode);
+                        $row[$attributeCode] = $this->_escapeTextValue($product->getAttributeText($attributeCode));
                     }else{
-                        $row[$attributeCode] = $product->getData($attributeCode);
+                        $row[$attributeCode] = $this->_escapeTextValue($product->getData($attributeCode));
                     }
                     break;
             }
@@ -275,9 +275,9 @@ class Bitbull_Tooso_Model_Indexer
 
                     foreach ($attributes as $attributeCode) {
                         if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
-                            $variants[$sku][$attributeCode] = $variant->getAttributeText($attributeCode);
+                            $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getAttributeText($attributeCode));
                         }else{
-                            $variants[$sku][$attributeCode] = $variant->getData($attributeCode);
+                            $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getData($attributeCode));
                         }
                     }
                 }
@@ -385,5 +385,15 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected function _isDebugEnabled(){
         return Mage::getStoreConfigFlag(self::XML_PATH_INDEXER_DRY_RUN);
+    }
+
+    /**
+     * Escape text value
+     *
+     * @param $value string
+     * @return bool
+     */
+    protected function _escapeTextValue($value){
+        return str_replace('"', '', $value);
     }
 }

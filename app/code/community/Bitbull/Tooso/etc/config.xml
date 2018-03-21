@@ -8,7 +8,7 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.1.1</version>
+            <version>4.2.0</version>
             <api_compatibility>v3.0</api_compatibility>
             <notes>Tracking javascript side, API v3 compatibility, catalog index upload to AWS S3, minor indexer fix.</notes>
         </Bitbull_Tooso>

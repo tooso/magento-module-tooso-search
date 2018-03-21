@@ -12,6 +12,10 @@ class Bitbull_Tooso_Model_System_Config_Source_SuggestionBuckets
     public function toOptionArray() {
         return [
             [
+                "label" => "History",
+                "value" => "history"
+            ],
+            [
                 "label" => "Relevance",
                 "value" => "relevance"
             ],

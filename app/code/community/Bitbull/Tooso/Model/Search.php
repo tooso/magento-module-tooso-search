@@ -239,4 +239,18 @@ class Bitbull_Tooso_Model_Search
 
         return null;
     }
+
+    /**
+     * Return similar result alert
+     *
+     * @return bool
+     */
+    public function getSimilarResultsAlert(){
+        if(!is_null($this->_result)){
+            $additionalData = $this->_result->getSimilarResultsAlert();
+            return $additionalData;
+        }
+
+        return null;
+    }
 }

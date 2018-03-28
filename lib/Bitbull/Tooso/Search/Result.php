@@ -84,4 +84,22 @@ class Bitbull_Tooso_Search_Result extends Bitbull_Tooso_Response
         }
     }
 
+    public function getRedirect()
+    {
+        if($this->isValid()){
+            return $this->_response->data->redirect;
+        }else{
+            return null;
+        }
+    }
+
+    public function getSimilarResultsAlert()
+    {
+        if($this->isValid() && isset($this->_response->data) && isset($this->_response->data->ai) && isset($this->_response->data->ai->similarResults)){
+            return $this->_response->data->ai->similarResults;
+        }else{
+            return null;
+        }
+    }
+
 }

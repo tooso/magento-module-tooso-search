@@ -45,6 +45,12 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                 }
                 $search = Mage::getModel('tooso/search')->search($queryText, $typoCorrection, $parentSearchId);
 
+                // Add similar result alert message
+                $similarResultMessage = $search->getSimilarResultsAlert();
+                if($similarResultMessage != null && $similarResultMessage != "") {
+                    Mage::helper('catalogsearch')->addNoteMessage($similarResultMessage);
+                }
+
                 // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {
 
@@ -88,6 +94,12 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         }
                     }
                 } else {
+                    $redirect = $search->getRedirect();
+                    if(!is_null($redirect)){
+                        Mage::app()->getFrontController()->getResponse()->setRedirect($redirect);
+                        return;
+                    }
+
                     return parent::prepareResult($object, $queryText, $query);
                 }
 

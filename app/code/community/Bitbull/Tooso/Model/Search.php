@@ -154,7 +154,7 @@ class Bitbull_Tooso_Model_Search
      */
     public function isSearchAvailable()
     {
-        return !is_null($this->_result);
+        return !is_null($this->_result) && is_null($this->_result->getRedirect());
     }
 
     /**
@@ -224,5 +224,33 @@ class Bitbull_Tooso_Model_Search
         }else{
             return false;
         }
+    }
+
+    /**
+     * Get redirect
+     *
+     * @return null|string
+     */
+    public function getRedirect()
+    {
+        if(!is_null($this->_result)){
+            return $this->_result->getRedirect();
+        }
+
+        return null;
+    }
+
+    /**
+     * Return similar result alert
+     *
+     * @return bool
+     */
+    public function getSimilarResultsAlert(){
+        if(!is_null($this->_result)){
+            $additionalData = $this->_result->getSimilarResultsAlert();
+            return $additionalData;
+        }
+
+        return null;
     }
 }

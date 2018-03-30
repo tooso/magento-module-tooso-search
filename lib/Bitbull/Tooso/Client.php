@@ -133,10 +133,11 @@ class Bitbull_Tooso_Client
      * @param string $query
      * @param boolean $typoCorrection
      * @param array $extraParams
+     * @param boolean $enriched
      * @return Bitbull_Tooso_Search_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function search($query, $typoCorrection = true, $extraParams = array())
+    public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false)
     {
         $query = str_replace(array("+", "%2B"), " ", $query);
 
@@ -149,6 +150,10 @@ class Bitbull_Tooso_Client
             array('q' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
             (array)$extraParams
         );
+
+        if($enriched){
+            $params['debug'] = 1;
+        }
 
         try {
             $response = $this->_doRequest($path, self::HTTP_METHOD_GET, $params);

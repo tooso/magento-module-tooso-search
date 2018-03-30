@@ -15,8 +15,7 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
      */
     public function isSearchEnriched($store = null)
     {
-        $type = Mage::getStoreConfig(self::XML_PATH_RESPONSE_TYPE, $store);
-        return $type == 'enriched';
+        return Mage::getStoreConfigFlag(self::XML_PATH_RESPONSE_TYPE, $store);
     }
 
     /**
@@ -58,5 +57,26 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
         }
 
         return $sku;
+    }
+
+    /**
+     * @param $sku
+     * @return null
+     */
+    public function getProductInfoBySku($sku)
+    {
+        $result = $this->getResponse();
+        if($result == null || !$this->isSearchEnriched()){
+            return null;
+        }
+
+        $products = $result->getResults();
+        foreach ($products as $product) {
+            if($product->sku == $sku){
+                return $product;
+            }
+        }
+
+        return null;
     }
 }

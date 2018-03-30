@@ -34,6 +34,11 @@ class Bitbull_Tooso_Model_Search
     protected $_logger = null;
 
     /**
+     * @var Bitbull_Tooso_Helper_Search
+     */
+    protected $_helper = null;
+
+    /**
      * Constructor, retrieve config for connection to Tooso API.
      */
     public function __construct()
@@ -41,6 +46,7 @@ class Bitbull_Tooso_Model_Search
         $this->_client = Mage::helper('tooso')->getClient();
 
         $this->_logger = Mage::helper('tooso/log');
+        $this->_helper = Mage::helper('tooso/search');
     }
     
     /**
@@ -62,7 +68,7 @@ class Bitbull_Tooso_Model_Search
                     $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;
                 }
 
-                $result = $this->_client->search($query, $typoCorrection, $params);
+                $result = $this->_client->search($query, $typoCorrection, $params, $this->_helper->isSearchEnriched());
 
                 if($result->isValid()){
                     $this->setResult($result);
@@ -84,6 +90,8 @@ class Bitbull_Tooso_Model_Search
     public function setResult(Bitbull_Tooso_Search_Result $result)
     {
         $this->_result = $result;
+        $this->_helper->storeResponse($result);
+
     }
     
     /**
@@ -96,7 +104,16 @@ class Bitbull_Tooso_Model_Search
         $products = array();
 
         if (!is_null($this->_result)) {
-            $skus = $this->_result->getResults();
+
+            $skus = [];
+            if($this->_helper->isSearchEnriched()){
+                $resultProducts = $this->_result->getResults();
+                foreach ($resultProducts as $product) {
+                    array_push($skus, $product->sku);
+                }
+            }else{
+                $skus = $this->_result->getResults();
+            }
 
             $i = 1;
             $productIds = $this->_getIdsBySkus($skus);

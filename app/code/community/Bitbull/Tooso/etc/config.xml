@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.3.0</version>
+            <version>4.4.0</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Tracking javascript side, API v3 compatibility, catalog index upload to AWS S3, minor indexer fix.</notes>
+            <notes>Tracking javascript side, API v3 compatibility, catalog index upload to AWS S3, minor indexer fix, enriched search.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -188,6 +188,9 @@
                 <force_log>1</force_log>
                 <debug_mode>0</debug_mode>
             </server>
+            <search>
+                <response_type>normal</response_type>
+            </search>
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>

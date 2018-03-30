@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.4.0]
+- Add enriched search response
+- Add search helper to retrive Tooso response
+
 ## [4.3.0]
 - Add redirect support as search response
 - Fix different store key during indexer procedure

@@ -112,7 +112,8 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             "variants" => 'Variants',
             "categories" => 'Categories',
             "image" => "Image",
-            "qty" => "Stock Quantity"
+            "gallery" => "Image Gallery",
+            "qty" => "Stock Quantity",
         ];
 
         /**

@@ -27,6 +27,21 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected $_categories = null;
 
+    /**
+     * @var Mage_Catalog_Model_Resource_Eav_Attribute
+     */
+    protected $_mediaAttribute = null;
+
+    /**
+     * @var Mage_Catalog_Model_Resource_Product_Attribute_Backend_Media
+     */
+    protected $_mediaResource = null;
+
+    /**
+     * @var Mage_Catalog_Model_Product_Media_Config
+     */
+    protected $_mediaConfig = null;
+
 
     public function __construct()
     {
@@ -167,6 +182,16 @@ class Bitbull_Tooso_Model_Indexer
             );
         }
 
+        if(in_array('gallery', $attributes) &&
+            $this->_mediaAttribute == null &&
+            $this->_mediaResource == null &&
+            $this->_mediaConfig == null)
+        {
+            $this->_mediaAttribute = Mage::getSingleton('catalog/product')->getResource()->getAttribute('media_gallery');
+            $this->_mediaResource = Mage::getResourceSingleton('catalog/product_attribute_backend_media');
+            $this->_mediaConfig = Mage::getModel('catalog/product_media_config');
+        }
+
         // create new writer object
         $writer = $this->_getWriter();
         $writer->setHeaderCols($headers);
@@ -221,6 +246,9 @@ class Bitbull_Tooso_Model_Indexer
                     break;
                 case 'categories':
                     $row["categories"] = implode("|", $this->_getProductCategories($product));
+                    break;
+                case 'gallery':
+                    $row["gallery"] = implode("|", $this->_getProductImageGallery($product));
                     break;
                 default:
                     if(isset($attributesTypes[$attributeCode]) && $attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
@@ -313,6 +341,27 @@ class Bitbull_Tooso_Model_Indexer
         }
 
         return $categories;
+    }
+
+    /**
+     * Return product images
+     *
+     * @param $product
+     * @return array
+     */
+    protected function _getProductImageGallery($product){
+        $gallery = $this->_mediaResource->loadGallery($product, new Varien_Object(array('attribute' => $this->_mediaAttribute)));
+
+        $images = array();
+        foreach ($gallery as $image) {
+            array_push($images, $this->_mediaConfig->getMediaUrl($image['file']));
+        }
+
+        if(sizeof($images) > 0){
+            $this->_logger->debug("Indexer: parsing ".$product->getSku()." ".sizeof($images)." images");
+        }
+
+        return $images;
     }
 
     /**

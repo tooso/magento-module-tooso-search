@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Add gallery among the exportable attributes from the reindex
+
 ## [4.4.0]
 - Add enriched search response
 - Add search helper to retrive Tooso response

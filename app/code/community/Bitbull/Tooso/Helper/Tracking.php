@@ -244,10 +244,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             "v" => $this->getTrackingAPIVersion(),
             "dl" => $this->getCurrentPage(),
             "dr" => $this->getLastPage(),
-            "cid" => $profilingParams['clientId'],
-            "uid" => $profilingParams['userId'],
-            "tm" => $profilingParams['tm'],
-        ], $params);
+        ], $profilingParams, $params);
 
         $curl = new Varien_Http_Adapter_Curl();
         $curl->setConfig(array(

@@ -51,6 +51,10 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
 
         $products = $result->getResults();
         foreach ($products as $product) {
+            if(!is_object($product)){
+                return null;
+            }
+
             if($product->sku == $sku){
                 return $product->sku_variant;
             }
@@ -72,6 +76,10 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
 
         $products = $result->getResults();
         foreach ($products as $product) {
+            if(!is_object($product)){
+                return null;
+            }
+
             if($product->sku == $sku){
                 return $product;
             }

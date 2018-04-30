@@ -98,13 +98,15 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      * @return string
      */
     public function getRemoteAddr(){
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        } else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
             return trim($ips[count($ips) - 1]);
         } else {
-            return $_SERVER['REMOTE_ADDR'];
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                return $_SERVER['HTTP_CLIENT_IP'];
+            } else {
+                return $_SERVER['REMOTE_ADDR'];
+            }
         }
     }
 

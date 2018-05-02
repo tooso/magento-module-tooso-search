@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix IP discover
 - Add UserAgent override params
 - Fix Add to cart error
+- Fail gracefully when API response is not enriched
 
 ## [4.5.0]
 - Add gallery among the exportable attributes from the reindex

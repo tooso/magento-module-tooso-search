@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Fix IP discover
+- Add UserAgent override params
+- Fix Add to cart error
+
 ## [4.5.0]
 - Add gallery among the exportable attributes from the reindex
 

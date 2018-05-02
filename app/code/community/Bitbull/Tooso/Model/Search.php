@@ -109,6 +109,10 @@ class Bitbull_Tooso_Model_Search
             if($this->_helper->isSearchEnriched()){
                 $resultProducts = $this->_result->getResults();
                 foreach ($resultProducts as $product) {
+                    if(!is_object($product)){
+                        $skus = $this->_result->getResults();
+                        break;
+                    }
                     array_push($skus, $product->sku);
                 }
             }else{

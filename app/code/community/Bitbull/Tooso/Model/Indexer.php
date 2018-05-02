@@ -306,6 +306,26 @@ class Bitbull_Tooso_Model_Indexer
                     $variantsCollection->addAttributeToSelect($attributeCode, 'left');
                 }
 
+                if(in_array('is_in_stock', $attributes)) {
+                    $variantsCollection->joinTable('cataloginventory/stock_item',
+                        'product_id=entity_id',
+                        ['is_in_stock' => 'is_in_stock'],
+                        '{{table}}.stock_id=1',
+                        'left'
+                    );
+                }
+
+                if(in_array('qty', $attributes)) {
+                    $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
+                    $this->_logger->debug("Indexer: getting variant stock by website ".$websiteId);
+                    $variantsCollection->joinTable('cataloginventory/stock_status',
+                        'product_id=entity_id',
+                        ['qty' => 'qty'],
+                        '{{table}}.stock_id=1 AND {{table}}.website_id='.$websiteId,
+                        'left'
+                    );
+                }
+
                 $preserveAttributeValue = $this->_indexerHelper->getPreservedAttributeType();
 
                 foreach ($variantsCollection as $variant){
@@ -313,7 +333,7 @@ class Bitbull_Tooso_Model_Indexer
                     $sku = $variant->getSku();
 
                     foreach ($attributes as $attributeCode) {
-                        if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                        if(isset($attributesTypes[$attributeCode]) && $attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
                             $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getAttributeText($attributeCode));
                         }else{
                             $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getData($attributeCode));

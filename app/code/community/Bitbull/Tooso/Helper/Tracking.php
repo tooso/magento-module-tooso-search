@@ -134,6 +134,30 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get current path
+     */
+    public function getCurrentPath(){
+        $currentUrl = $this->getCurrentPage();
+        $url = Mage::getSingleton('core/url')->parseUrl($currentUrl);
+        return $url->getPath();
+    }
+
+    /**
+     * Get current domain
+     *
+     * @param $subWildcard boolean
+     * @return string
+     */
+    public function getCurrentDomain($subWildcard = false){
+        $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+        $domain = parse_url($url,  PHP_URL_HOST);
+        if ($subWildcard) {
+            $domain = '.'.$domain;
+        }
+        return $domain;
+    }
+
+    /**
      * Check if is necessary to include JS library
      */
     public function includeTrackingJSLibrary($store = null){

@@ -163,6 +163,17 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Create Plugin Infos Block
+     *
+     * @return Bitbull_Tooso_Block_Tracking_PluginInfos
+     */
+    public function getPluginInfosBlock(){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/tracking_pluginInfos');
+        return $block;
+    }
+
+    /**
      * Get tracking endpoint
      */
     public function getTrackingLibraryEndpoint($store = null){

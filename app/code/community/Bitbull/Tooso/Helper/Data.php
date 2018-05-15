@@ -148,7 +148,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
         $params = array(
             'uip' => Mage::helper('core/http')->getRemoteAddr(),
-            'ua' => $this->getUserAgent(),
+            'ua' => Mage::helper('tooso/tracking')->getUserAgent(),
             'sessionId' => $sessionId,
             'cid' => $clientId,
             'dr' => Mage::helper('tooso/tracking')->getLastPage(),

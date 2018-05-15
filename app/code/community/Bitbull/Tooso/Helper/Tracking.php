@@ -152,7 +152,8 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
         $domain = parse_url($url,  PHP_URL_HOST);
         if ($subWildcard) {
-            $domain = '.'.$domain;
+            $domainPart = explode('.', $domain);
+            $domain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
         }
         return $domain;
     }

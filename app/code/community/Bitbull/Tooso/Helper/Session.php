@@ -44,9 +44,8 @@ class Bitbull_Tooso_Helper_Session
         $cid = Mage::getSingleton('core/cookie')->get(self::COOKIE_USERID);
         if($cid === false || $cid == ''){
             $cid = 'TA.'.Mage::helper('tooso')->getUuid();
-            $path = Mage::helper('tooso/tracking')->getCurrentPath();
             $domain = Mage::helper('tooso/tracking')->getCurrentDomain(true);
-            Mage::getSingleton('core/cookie')->set(self::COOKIE_USERID, $cid, null, $path, $domain, null, false);
+            Mage::getSingleton('core/cookie')->set(self::COOKIE_USERID, $cid, 63072000, '/', $domain, null, false);
         }
 
         return substr($cid, -36);

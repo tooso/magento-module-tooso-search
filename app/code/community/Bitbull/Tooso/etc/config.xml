@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.6.0</version>
+            <version>4.7.0</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Tracking javascript side, API v3 compatibility, tracking cart fixes and improvement.</notes>
+            <notes>Tracking javascript side, API v3 compatibility, tracking fixes, client ID cookie generation.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>

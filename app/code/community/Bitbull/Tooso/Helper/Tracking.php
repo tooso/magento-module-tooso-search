@@ -15,6 +15,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     const XML_PATH_ANALYTICS_API_VERSION = 'tooso/analytics/api_version';
     const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
+    const XML_PATH_ANALYTICS_COOKIE_DOMAIN = 'tooso/analytics/cookie_domain';
 
     /**
      * Get block to append init tracking script and cookies managers
@@ -143,19 +144,16 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get current domain
-     *
-     * @param $subWildcard boolean
-     * @return string
+     * Get cookie domain
      */
-    public function getCurrentDomain($subWildcard = false){
-        $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
-        $domain = parse_url($url,  PHP_URL_HOST);
-        if ($subWildcard) {
-            $domainPart = explode('.', $domain);
-            $domain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
+    public function getCookieDomain($store = null){
+        $cookieDomain = Mage::getStoreConfig(self::XML_PATH_ANALYTICS_COOKIE_DOMAIN, $store);
+        if ($cookieDomain === null || trim($cookieDomain) === '') {
+            $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+            $domainPart = explode('.', parse_url($url,  PHP_URL_HOST));
+            $cookieDomain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
         }
-        return $domain;
+        return $cookieDomain;
     }
 
     /**

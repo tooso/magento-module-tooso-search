@@ -25,6 +25,16 @@ class Bitbull_Tooso_Helper_Session
     }
 
     /**
+     * Set last search page URL
+     *
+     * @param string $value
+     */
+    public function setLastSearchPage($value)
+    {
+        Mage::getSingleton('core/cookie')->set('ToosoLastSearchPage', $value, null, null, null, null, false);
+    }
+
+    /**
      * Get Search ID from session
      *
      * @return string
@@ -32,6 +42,16 @@ class Bitbull_Tooso_Helper_Session
     public function getSearchId()
     {
         return Mage::getSingleton('core/cookie')->get('ToosoSearchId');
+    }
+
+    /**
+     * Get last search page URL
+     *
+     * @return string
+     */
+    public function getLastSearchPage()
+    {
+        return Mage::getSingleton('core/cookie')->get('ToosoLastSearchPage');
     }
 
     /**

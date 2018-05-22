@@ -54,6 +54,8 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                 // It's true if no errors was given by API call
                 if ($search->isSearchAvailable()) {
 
+                    Mage::helper('tooso/session')->setLastSearchPage(Mage::helper('tooso/tracking')->getCurrentPage());
+
                     // If this query was automatically typo-corrected, save in request scope the searchId for link
                     // this query (the parent) with the following one forced as not typo-correct
                     if (Mage::helper('tooso')->isTypoCorrectedSearch()) {

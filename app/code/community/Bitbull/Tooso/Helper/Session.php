@@ -10,6 +10,11 @@ class Bitbull_Tooso_Helper_Session
 {
 
     /**
+     * @var string
+     */
+    const COOKIE_USERID = '_ta';
+
+    /**
      * Store Search ID into session
      *
      * @param string $value
@@ -36,9 +41,11 @@ class Bitbull_Tooso_Helper_Session
      */
     public function getClientId()
     {
-        $cid = Mage::getSingleton('core/cookie')->get('_ta');
-        if($cid == null || $cid == ''){
-            return "";
+        $cid = Mage::getSingleton('core/cookie')->get(self::COOKIE_USERID);
+        if($cid === false || $cid == ''){
+            $cid = 'TA.'.Mage::helper('tooso')->getUuid();
+            $domain = Mage::helper('tooso/tracking')->getCookieDomain();
+            Mage::getSingleton('core/cookie')->set(self::COOKIE_USERID, $cid, 63072000, '/', $domain, null, false);
         }
 
         return substr($cid, -36);

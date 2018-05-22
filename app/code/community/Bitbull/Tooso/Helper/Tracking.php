@@ -146,12 +146,16 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     /**
      * Get cookie domain
      */
-    public function getCookieDomain($store = null){
+    public function getCookieDomain($default = null, $store = null){
         $cookieDomain = Mage::getStoreConfig(self::XML_PATH_ANALYTICS_COOKIE_DOMAIN, $store);
         if ($cookieDomain === null || trim($cookieDomain) === '') {
-            $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
-            $domainPart = explode('.', parse_url($url,  PHP_URL_HOST));
-            $cookieDomain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
+            if ($default === null) {
+                $url = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+                $domainPart = explode('.', parse_url($url,  PHP_URL_HOST));
+                $cookieDomain = '.'.$domainPart[count($domainPart) - 2].'.'.$domainPart[count($domainPart) - 1];
+            }else{
+                $cookieDomain = $default;
+            }
         }
         return $cookieDomain;
     }

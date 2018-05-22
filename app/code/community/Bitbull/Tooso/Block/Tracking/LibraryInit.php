@@ -13,7 +13,7 @@ class Bitbull_Tooso_Block_Tracking_LibraryInit extends Bitbull_Tooso_Block_Track
     {
         $debugMode = $this->_helper->isDebugMode();
         $trackingKey = $this->_helper->getTrackingKey();
-        $cookieDomain = $this->_helper->getCookieDomain();
+        $cookieDomain = $this->_helper->getCookieDomain('auto');
 
         ob_start();
         ?>

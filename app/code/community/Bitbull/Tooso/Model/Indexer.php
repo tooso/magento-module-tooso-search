@@ -173,24 +173,17 @@ class Bitbull_Tooso_Model_Indexer
 
         }
 
-        if(in_array('is_in_stock', $attributes)) {
-            $productCollection->joinTable('cataloginventory/stock_item',
-                'product_id=entity_id',
-                ['is_in_stock' => 'is_in_stock'],
-                '{{table}}.stock_id=1',
-                'left'
-            );
-        }
-
-        if(in_array('qty', $attributes)) {
+        if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
             $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
             $this->_logger->debug("Indexer: getting stock by website ".$websiteId);
-            $productCollection->joinTable('cataloginventory/stock_status',
-                'product_id=entity_id',
-                ['qty' => 'qty'],
-                '{{table}}.stock_id=1 AND {{table}}.website_id='.$websiteId,
+            $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
+            $productCollection->getSelect()->join(
+                ['ss' => $table],
+                'e.entity_id=ss.product_id',
+                ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)'],
+                null,
                 'left'
-            );
+            )->where('ss.website_id='.$websiteId)->group('entity_id');
         }
 
         if(in_array('gallery', $attributes) &&
@@ -306,24 +299,17 @@ class Bitbull_Tooso_Model_Indexer
                     $variantsCollection->addAttributeToSelect($attributeCode, 'left');
                 }
 
-                if(in_array('is_in_stock', $attributes)) {
-                    $variantsCollection->joinTable('cataloginventory/stock_item',
-                        'product_id=entity_id',
-                        ['is_in_stock' => 'is_in_stock'],
-                        '{{table}}.stock_id=1',
-                        'left'
-                    );
-                }
-
-                if(in_array('qty', $attributes)) {
+                if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
                     $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
                     $this->_logger->debug("Indexer: getting variant stock by website ".$websiteId);
-                    $variantsCollection->joinTable('cataloginventory/stock_status',
-                        'product_id=entity_id',
-                        ['qty' => 'qty'],
-                        '{{table}}.stock_id=1 AND {{table}}.website_id='.$websiteId,
+                    $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
+                    $variantsCollection->getSelect()->join(
+                        ['ss' => $table],
+                        'e.entity_id=ss.product_id',
+                        ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)'],
+                        null,
                         'left'
-                    );
+                    )->where('ss.website_id='.$websiteId)->group('entity_id');
                 }
 
                 $preserveAttributeValue = $this->_indexerHelper->getPreservedAttributeType();

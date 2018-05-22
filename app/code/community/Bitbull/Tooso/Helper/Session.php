@@ -10,6 +10,11 @@ class Bitbull_Tooso_Helper_Session
 {
 
     /**
+     * @var string
+     */
+    const COOKIE_USERID = '_ta';
+
+    /**
      * Store Search ID into session
      *
      * @param string $value
@@ -17,6 +22,16 @@ class Bitbull_Tooso_Helper_Session
     public function setSearchId($value)
     {
         Mage::getSingleton('core/cookie')->set('ToosoSearchId', $value, null, null, null, null, false);
+    }
+
+    /**
+     * Set last search page URL
+     *
+     * @param string $value
+     */
+    public function setLastSearchPage($value)
+    {
+        Mage::getSingleton('core/cookie')->set('ToosoLastSearchPage', $value, null, null, null, null, false);
     }
 
     /**
@@ -30,15 +45,27 @@ class Bitbull_Tooso_Helper_Session
     }
 
     /**
+     * Get last search page URL
+     *
+     * @return string
+     */
+    public function getLastSearchPage()
+    {
+        return Mage::getSingleton('core/cookie')->get('ToosoLastSearchPage');
+    }
+
+    /**
      * Get Client ID from cookie
      *
      * @return string
      */
     public function getClientId()
     {
-        $cid = Mage::getSingleton('core/cookie')->get('_ta');
-        if($cid == null || $cid == ''){
-            return "";
+        $cid = Mage::getSingleton('core/cookie')->get(self::COOKIE_USERID);
+        if($cid === false || $cid == ''){
+            $cid = 'TA.'.Mage::helper('tooso')->getUuid();
+            $domain = Mage::helper('tooso/tracking')->getCookieDomain();
+            Mage::getSingleton('core/cookie')->set(self::COOKIE_USERID, $cid, 63072000, '/', $domain, null, false);
         }
 
         return substr($cid, -36);

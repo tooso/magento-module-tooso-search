@@ -7,6 +7,21 @@
 class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 {
     /**
+     * PrintPluginInfos
+     */
+    public function printPluginInfos()
+    {
+        $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
+        if($parentBlock){
+            $blockInit = Mage::helper('tooso/tracking')->getPluginInfosBlock();
+            $parentBlock->append($blockInit);
+            $this->_logger->debug('Tracking: added plugin infos');
+        }else{
+            $this->_logger->warn('Cannot include plugin infos, parent container not found');
+        }
+    }
+
+    /**
      * Include javascript library
      */
     public function includeLibrary()

@@ -226,7 +226,7 @@
         <jobs>
             <tooso_reindex>
                 <schedule>
-                    <cron_expr>*/15 * * * *</cron_expr>
+                    <cron_expr>0 */8 * * *</cron_expr>
                 </schedule>
                 <run>
                     <model>tooso/observer_index::rebuildIndex</model>

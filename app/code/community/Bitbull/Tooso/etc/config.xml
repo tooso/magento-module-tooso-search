@@ -8,7 +8,7 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>feature/stock-qty-by-store</version>
+            <version>4.8.0-beta</version>
             <api_compatibility>v3.0</api_compatibility>
             <notes>Load product stock quantity by store/website id.</notes>
         </Bitbull_Tooso>

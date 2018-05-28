@@ -10,7 +10,7 @@
         <Bitbull_Tooso>
             <version>4.8.0-beta</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Load product stock quantity by store/website id.</notes>
+            <notes>Add "Multi Warehouse Inventory" support.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -199,6 +199,7 @@
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
+                <inventory_support>default</inventory_support>
             </indexer>
             <suggestion>
                 <include_library>0</include_library>

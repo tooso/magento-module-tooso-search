@@ -143,6 +143,7 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             'status',
             'visibility'
         );
+
     }
 
     public function getExcludeAttributes(){

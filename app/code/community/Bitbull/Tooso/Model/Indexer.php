@@ -10,6 +10,7 @@ class Bitbull_Tooso_Model_Indexer
     const XML_PATH_INDEXER_DRY_RUN = 'tooso/indexer/dry_run_mode';
     const XML_PATH_INDEXER_ATTRIBUTES = 'tooso/indexer/attributes_to_index';
     const XML_PATH_INDEXER_ATTRIBUTES_SIMPLE = 'tooso/indexer/attributes_simple_to_index';
+    const XML_PATH_INDEXER_INVENTORY_SUPPORT = 'tooso/indexer/inventory_support';
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
@@ -174,16 +175,7 @@ class Bitbull_Tooso_Model_Indexer
         }
 
         if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
-            $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
-            $this->_logger->debug("Indexer: getting stock by website ".$websiteId);
-            $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
-            $productCollection->getSelect()->join(
-                ['ss' => $table],
-                'e.entity_id=ss.product_id',
-                ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)'],
-                null,
-                'left'
-            )->where('ss.website_id='.$websiteId)->group('entity_id');
+            $this->_addStockToCollection($productCollection, $storeId);
         }
 
         if(in_array('gallery', $attributes) &&
@@ -300,16 +292,7 @@ class Bitbull_Tooso_Model_Indexer
                 }
 
                 if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
-                    $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
-                    $this->_logger->debug("Indexer: getting variant stock by website ".$websiteId);
-                    $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
-                    $variantsCollection->getSelect()->join(
-                        ['ss' => $table],
-                        'e.entity_id=ss.product_id',
-                        ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)'],
-                        null,
-                        'left'
-                    )->where('ss.website_id='.$websiteId)->group('entity_id');
+                    $this->_addStockToCollection($variantsCollection, $storeId);
                 }
 
                 $preserveAttributeValue = $this->_indexerHelper->getPreservedAttributeType();
@@ -461,5 +444,51 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected function _escapeTextValue($value){
         return str_replace('"', '', $value);
+    }
+
+    /**
+     * Multi Warehouse Support
+     *
+     * @return bool
+     */
+    protected function _isMultiWarehouseSupportEnabled(){
+        $support = Mage::getStoreConfig(self::XML_PATH_INDEXER_INVENTORY_SUPPORT);
+        return $support !== null && $support === 'warehouse_store';
+    }
+
+    /**
+     * @param $collection
+     * @param $storeId
+     * @throws Varien_Exception
+     */
+    protected function _addStockToCollection(&$collection, $storeId){
+        $resource = Mage::getSingleton('core/resource');
+
+        if ($this->_isMultiWarehouseSupportEnabled()) {
+            $this->_logger->debug('Indexer: searching in warehouse_store warehouses connected to the store '.$storeId);
+            $conn = $resource->getConnection('core_read');
+            $warehouseTable = $resource->getTableName('warehouse_store');
+            try{
+                $warehouses = $conn->fetchCol('SELECT warehouse_id FROM '.$warehouseTable.' WHERE store_id = '.$storeId);
+                if (sizeof($warehouses) > 0) {
+                    $this->_logger->debug("Indexer: getting stock by warehouses ".json_encode($warehouses));
+                    $table = $resource->getTableName('cataloginventory/stock_status');
+                    $collection->getSelect()->joinLeft(
+                        ['ss' => $table],
+                        'e.entity_id=ss.product_id AND ss.stock_id IN ('.implode(',', $warehouses).')',
+                        ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)']
+                    )->group('entity_id');
+                }
+            } catch (Exception $e) {
+                $this->_logger->logException($e);
+            }
+        }else{
+            $collection->joinTable('cataloginventory/stock_item',
+                'product_id=entity_id',
+                ['is_in_stock', 'qty'],
+                '{{table}}.stock_id=1',
+                'left'
+            );
+        }
     }
 }

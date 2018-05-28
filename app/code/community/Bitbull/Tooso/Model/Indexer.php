@@ -43,6 +43,11 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected $_mediaConfig = null;
 
+    /**
+     * @var array
+     */
+    protected $_cachedStockIds = [];
+
 
     public function __construct()
     {
@@ -461,23 +466,23 @@ class Bitbull_Tooso_Model_Indexer
      * @param $storeId
      * @throws Varien_Exception
      */
-    protected function _addStockToCollection(&$collection, $storeId){
-        $resource = Mage::getSingleton('core/resource');
-
+    protected function _addStockToCollection(&$collection, $storeId)
+    {
         if ($this->_isMultiWarehouseSupportEnabled()) {
-            $this->_logger->debug('Indexer: searching in warehouse_store warehouses connected to the store '.$storeId);
-            $conn = $resource->getConnection('core_read');
-            $warehouseTable = $resource->getTableName('warehouse_store');
             try{
-                $warehouses = $conn->fetchCol('SELECT warehouse_id FROM '.$warehouseTable.' WHERE store_id = '.$storeId);
-                if (sizeof($warehouses) > 0) {
-                    $this->_logger->debug("Indexer: getting stock by warehouses ".json_encode($warehouses));
-                    $table = $resource->getTableName('cataloginventory/stock_status');
+                $this->_logger->debug('Indexer: searching in stock_id for warehouses connected to the store '.$storeId);
+                $stockIds = $this->_getWarehouseStockIdsByStore($storeId);
+                if (sizeof($stockIds) > 0) {
+                    $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
+                    $this->_logger->debug("Indexer: getting stock by stock_id ".json_encode($stockIds)." and website ".$websiteId);
+                    $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
                     $collection->getSelect()->joinLeft(
                         ['ss' => $table],
-                        'e.entity_id=ss.product_id AND ss.stock_id IN ('.implode(',', $warehouses).')',
+                        'e.entity_id=ss.product_id AND ss.stock_id IN ('.implode(',', $stockIds).') and ss.website_id = '.$websiteId,
                         ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)']
                     )->group('entity_id');
+                }else{
+                    $this->_logger->debug('Indexer: no avaiable warehouses for store '.$storeId);
                 }
             } catch (Exception $e) {
                 $this->_logger->logException($e);
@@ -490,5 +495,19 @@ class Bitbull_Tooso_Model_Indexer
                 'left'
             );
         }
+    }
+
+    protected function _getWarehouseStockIdsByStore($storeId)
+    {
+        if (isset($this->_cachedStockIds[$storeId])) {
+            return $this->_cachedStockIds[$storeId];
+        }
+        $resource = Mage::getSingleton('core/resource');
+        $conn = $resource->getConnection('core_read');
+        $warehouseTable = $resource->getTableName('warehouse');
+        $warehouseStoreTable = $resource->getTableName('warehouse_store');
+        $stockIds = $conn->fetchCol('SELECT '.$warehouseTable.'.stock_id FROM '.$warehouseTable.' INNER JOIN '.$warehouseStoreTable.' ON '.$warehouseTable.'.warehouse_id = '.$warehouseStoreTable.'.warehouse_id WHERE '.$warehouseStoreTable.'.store_id = '.$storeId);
+        $this->_cachedStockIds[$storeId] = $stockIds;
+        return $stockIds;
     }
 }

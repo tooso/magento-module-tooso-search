@@ -8,7 +8,7 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.8.0-beta</version>
+            <version>4.8.1-beta</version>
             <api_compatibility>v3.0</api_compatibility>
             <notes>Add "Multi Warehouse Inventory" support.</notes>
         </Bitbull_Tooso>

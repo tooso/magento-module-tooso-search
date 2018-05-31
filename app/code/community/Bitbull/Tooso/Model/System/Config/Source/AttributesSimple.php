@@ -29,6 +29,14 @@ class Bitbull_Tooso_Model_System_Config_Source_AttributesSimple
         $excludeAttributes = $this->_indexerHelper->getExcludeAttributes();
         $attributeFrontendTypes = $this->_indexerHelper->getAttributeFrontendTypes();
         $attributeBackendTypes = $this->_indexerHelper->getAttributeBackendTypes();
+        $customAttributes = $this->_indexerHelper->getCustomAttributesSimple();
+
+        foreach ($customAttributes as $code => $label){
+            $attributes[] = [
+                "label" => $label,
+                "value" => $code,
+            ];
+        }
 
         $attributesCollection = Mage::getResourceModel('catalog/product_attribute_collection')
             ->addFieldToFilter('backend_type', array('in' => $attributeBackendTypes))

@@ -10,6 +10,7 @@ class Bitbull_Tooso_Model_Indexer
     const XML_PATH_INDEXER_DRY_RUN = 'tooso/indexer/dry_run_mode';
     const XML_PATH_INDEXER_ATTRIBUTES = 'tooso/indexer/attributes_to_index';
     const XML_PATH_INDEXER_ATTRIBUTES_SIMPLE = 'tooso/indexer/attributes_simple_to_index';
+    const XML_PATH_INDEXER_INVENTORY_SUPPORT = 'tooso/indexer/inventory_support';
     const DRY_RUN_FILENAME = 'tooso_index_%store%.csv';
 
     /**
@@ -41,6 +42,11 @@ class Bitbull_Tooso_Model_Indexer
      * @var Mage_Catalog_Model_Product_Media_Config
      */
     protected $_mediaConfig = null;
+
+    /**
+     * @var array
+     */
+    protected $_cachedStockIds = [];
 
 
     public function __construct()
@@ -174,12 +180,7 @@ class Bitbull_Tooso_Model_Indexer
         }
 
         if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
-            $productCollection->joinTable('cataloginventory/stock_item',
-                'product_id=entity_id',
-                ['is_in_stock', 'qty'],
-                '{{table}}.stock_id=1',
-                'left'
-            );
+            $this->_addStockToCollection($productCollection, $storeId);
         }
 
         if(in_array('gallery', $attributes) &&
@@ -295,6 +296,10 @@ class Bitbull_Tooso_Model_Indexer
                     $variantsCollection->addAttributeToSelect($attributeCode, 'left');
                 }
 
+                if(in_array('is_in_stock', $attributes) || in_array('qty', $attributes)) {
+                    $this->_addStockToCollection($variantsCollection, $storeId);
+                }
+
                 $preserveAttributeValue = $this->_indexerHelper->getPreservedAttributeType();
 
                 foreach ($variantsCollection as $variant){
@@ -302,7 +307,7 @@ class Bitbull_Tooso_Model_Indexer
                     $sku = $variant->getSku();
 
                     foreach ($attributes as $attributeCode) {
-                        if($attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
+                        if(isset($attributesTypes[$attributeCode]) && $attributesTypes[$attributeCode] === 'select' && !in_array($attributeCode, $preserveAttributeValue)){
                             $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getAttributeText($attributeCode));
                         }else{
                             $variants[$sku][$attributeCode] = $this->_escapeTextValue($variant->getData($attributeCode));
@@ -444,5 +449,65 @@ class Bitbull_Tooso_Model_Indexer
      */
     protected function _escapeTextValue($value){
         return str_replace('"', '', $value);
+    }
+
+    /**
+     * Multi Warehouse Support
+     *
+     * @return bool
+     */
+    protected function _isMultiWarehouseSupportEnabled(){
+        $support = Mage::getStoreConfig(self::XML_PATH_INDEXER_INVENTORY_SUPPORT);
+        return $support !== null && $support === 'warehouse_store';
+    }
+
+    /**
+     * @param $collection
+     * @param $storeId
+     * @throws Varien_Exception
+     */
+    protected function _addStockToCollection(&$collection, $storeId)
+    {
+        if ($this->_isMultiWarehouseSupportEnabled()) {
+            try{
+                $this->_logger->debug('Indexer: searching in stock_id for warehouses connected to the store '.$storeId);
+                $stockIds = $this->_getWarehouseStockIdsByStore($storeId);
+                if (sizeof($stockIds) > 0) {
+                    $websiteId = Mage::getModel('core/store')->load($storeId)->getWebsiteId();
+                    $this->_logger->debug("Indexer: getting stock by stock_id ".json_encode($stockIds)." and website ".$websiteId);
+                    $table = Mage::getSingleton('core/resource')->getTableName('cataloginventory/stock_status');
+                    $collection->getSelect()->joinLeft(
+                        ['ss' => $table],
+                        'e.entity_id=ss.product_id AND ss.stock_id IN ('.implode(',', $stockIds).') and ss.website_id = '.$websiteId,
+                        ['qty' => 'sum(ss.qty)', 'is_in_stock' => 'max(ss.stock_status)']
+                    )->group('entity_id');
+                }else{
+                    $this->_logger->debug('Indexer: no avaiable warehouses for store '.$storeId);
+                }
+            } catch (Exception $e) {
+                $this->_logger->logException($e);
+            }
+        }else{
+            $collection->joinTable('cataloginventory/stock_item',
+                'product_id=entity_id',
+                ['is_in_stock', 'qty'],
+                '{{table}}.stock_id=1',
+                'left'
+            );
+        }
+    }
+
+    protected function _getWarehouseStockIdsByStore($storeId)
+    {
+        if (isset($this->_cachedStockIds[$storeId])) {
+            return $this->_cachedStockIds[$storeId];
+        }
+        $resource = Mage::getSingleton('core/resource');
+        $conn = $resource->getConnection('core_read');
+        $warehouseTable = $resource->getTableName('warehouse');
+        $warehouseStoreTable = $resource->getTableName('warehouse_store');
+        $stockIds = $conn->fetchCol('SELECT '.$warehouseTable.'.stock_id FROM '.$warehouseTable.' INNER JOIN '.$warehouseStoreTable.' ON '.$warehouseTable.'.warehouse_id = '.$warehouseStoreTable.'.warehouse_id WHERE '.$warehouseStoreTable.'.store_id = '.$storeId);
+        $this->_cachedStockIds[$storeId] = $stockIds;
+        return $stockIds;
     }
 }

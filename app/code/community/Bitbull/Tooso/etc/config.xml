@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.7.0</version>
+            <version>4.8.2</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Tracking javascript side, API v3 compatibility, tracking fixes, client ID cookie generation.</notes>
+            <notes>Tracking javascript side, API v3 compatibility, client ID cookie server-side generation, support for "Multi Warehouse Inventory" module.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>
@@ -199,6 +199,7 @@
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>
                 <attributes_simple_to_index>sku,name,description,price,short_description</attributes_simple_to_index>
+                <inventory_support>default</inventory_support>
             </indexer>
             <suggestion>
                 <include_library>0</include_library>

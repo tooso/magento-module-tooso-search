@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.8.2]
+- Add support for "Multi Warehouse Inventory" module
+
 ## [4.7.0]
 - Fix duplicated product searched tracking
 - Add serverside client ID cookie generation when not set

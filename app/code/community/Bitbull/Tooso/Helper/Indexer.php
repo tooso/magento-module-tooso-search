@@ -117,6 +117,14 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
         ];
 
         /**
+         * Custom indexer attributes for simple
+         */
+        $this->_customAttributesSimple = [
+            "is_in_stock" => 'Is in stock',
+            "qty" => "Stock Quantity",
+        ];
+
+        /**
          * System Attributes
          */
 
@@ -135,6 +143,7 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
             'status',
             'visibility'
         );
+
     }
 
     public function getExcludeAttributes(){
@@ -151,6 +160,10 @@ class Bitbull_Tooso_Helper_Indexer extends Mage_Core_Helper_Abstract
 
     public function getCustomAttributes(){
         return $this->_customAttributes;
+    }
+
+    public function getCustomAttributesSimple(){
+        return $this->_customAttributesSimple;
     }
 
     public function getSystemAttributes(){

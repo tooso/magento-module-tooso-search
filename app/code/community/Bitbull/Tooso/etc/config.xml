@@ -121,11 +121,21 @@
                         <class>tooso/observer_suggestion</class>
                         <method>initLibrary</method>
                     </tooso_suggestion_frontend_init>
+                    <tooso_speech_to_text_frontend_init>
+                        <type>singleton</type>
+                        <class>tooso/observer_speechToText</class>
+                        <method>initLibrary</method>
+                    </tooso_speech_to_text_frontend_init>
                     <tooso_suggestion_frontend_pipeline>
                         <type>singleton</type>
                         <class>tooso/observer_suggestion</class>
                         <method>includeLibrary</method>
                     </tooso_suggestion_frontend_pipeline>
+                    <tooso_speech_to_text_frontend_pipeline>
+                        <type>singleton</type>
+                        <class>tooso/observer_speechToText</class>
+                        <method>includeLibrary</method>
+                    </tooso_speech_to_text_frontend_pipeline>
                 </observers>
             </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
@@ -184,6 +194,7 @@
                 <frontend>0</frontend>
                 <index>0</index>
                 <suggestion>0</suggestion>
+                <speech_to_text>0</speech_to_text>
             </active>
             <server>
                 <api_key />
@@ -221,6 +232,10 @@
                 <include_library>1</include_library>
                 <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>>
             </analytics>
+            <speech_to_text>
+                <library_endpoint>https://cdndev.tooso.ai/sdk.js</library_endpoint>
+                <example_template>0</example_template>
+            </speech_to_text>
         </tooso>
     </default>
     <crontab>

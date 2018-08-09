@@ -14,6 +14,8 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_SUGGESTION_ACTIVE = 'tooso/active/suggestion';
 
+    const XML_PATH_ENABLE_SPEECHTOTEXT_ACTIVE = 'tooso/active/speech_to_text';
+
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
 
     const XML_PATH_SERVER_APIVESION = 'tooso/server/api_version';
@@ -46,6 +48,11 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function isSuggestionEnabled($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SUGGESTION_ACTIVE, $store);
+    }
+
+    public function isSpeechToTextEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SPEECHTOTEXT_ACTIVE, $store);
     }
 
     /**

@@ -142,6 +142,16 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get API key
+     *
+     * @param null $store
+     * @return string
+     */
+    public function getApiKey($store = null){
+        return Mage::getStoreConfig(self::XML_PATH_SERVER_APIKEY, $store);
+    }
+
+    /**
      * Get profiling parameters
      *
      * @param null|array $override

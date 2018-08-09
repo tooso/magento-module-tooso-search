@@ -78,11 +78,17 @@ class Bitbull_Tooso_Helper_SpeechToText extends Mage_Core_Helper_Abstract
     public function getInitParams($store = null)
     {
         $data = [
-            'coreKey' => Mage::getStoreConfig(self::XML_PATH_SPEECHTOTEXT_CORE_KEY, $store),
             'speech' => [
                 'input' => Mage::helper('tooso/suggestion')->getSuggestionInputSelector()
             ],
         ];
+
+        $coreKey = Mage::getStoreConfig(self::XML_PATH_SPEECHTOTEXT_CORE_KEY, $store);
+        if($coreKey != null){
+            $data['coreKey'] = $coreKey;
+        }else{
+            $data['coreKey'] = Mage::helper('tooso')->getApiKey();
+        }
 
         $language = Mage::getStoreConfig(self::XML_PATH_SPEECHTOTEXT_LANGUAGE, $store);
         if($language != null){

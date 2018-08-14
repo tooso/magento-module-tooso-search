@@ -6,8 +6,8 @@
 
 class Bitbull_Tooso_Block_Sdk_Library extends Bitbull_Tooso_Block_Sdk
 {
-    const BLOCK_ID = 'tooso_tooso_sdk';
-    const SCRIPT_ID = 'tooso-tooso-sdk';
+    const BLOCK_ID = 'tooso_sdk';
+    const SCRIPT_ID = 'tooso-sdk';
 
     protected function _toHtml()
     {

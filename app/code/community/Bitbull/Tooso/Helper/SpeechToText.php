@@ -10,6 +10,7 @@ class Bitbull_Tooso_Helper_SpeechToText extends Mage_Core_Helper_Abstract
     const CONTAINER_BLOCK_BEFORE = 'before_body_end';
 
     const XML_PATH_SPEECHTOTEXT_INPUT = 'tooso/speech_to_text/input_selector';
+    const XML_PATH_SPEECHTOTEXT_LANGUAGE = 'tooso/speech_to_text/language';
     const XML_PATH_SPEECHTOTEXT_EXAMPLE_TEMPLATE = 'tooso/speech_to_text/example_template';
 
     /**
@@ -22,11 +23,14 @@ class Bitbull_Tooso_Helper_SpeechToText extends Mage_Core_Helper_Abstract
     {
         $data = [];
 
+        $language = Mage::getStoreConfig(self::XML_PATH_SPEECHTOTEXT_LANGUAGE, $store);
+        if($language != null){
+            $data['language'] = $language;
+        }
+
         $inputSelector = Mage::getStoreConfig(self::XML_PATH_SPEECHTOTEXT_INPUT, $store);
         if($inputSelector != null){
             $data['input'] = $inputSelector;
-        }else{
-            $data['input'] = Mage::helper('tooso/suggestion')->getSuggestionInputSelector();
         }
 
         return $data;
@@ -40,7 +44,7 @@ class Bitbull_Tooso_Helper_SpeechToText extends Mage_Core_Helper_Abstract
      */
     public function includeExampleTemplate($store = null)
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_SPEECHTOTEXT_EXAMPLE_TEMPLATE, $store);
+        return Mage::helper('tooso')->isSpeechToTextEnabled() && Mage::getStoreConfigFlag(self::XML_PATH_SPEECHTOTEXT_EXAMPLE_TEMPLATE, $store);
     }
 
 }

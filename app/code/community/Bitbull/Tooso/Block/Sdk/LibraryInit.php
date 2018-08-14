@@ -6,8 +6,8 @@
 
 class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
 {
-    const BLOCK_ID = 'tooso_tooso_sdk_init';
-    const SCRIPT_ID = 'tooso-tooso-sdk-init';
+    const BLOCK_ID = 'tooso_sdk_init';
+    const SCRIPT_ID = 'tooso-sdk-init';
 
     protected function _toHtml()
     {
@@ -22,15 +22,22 @@ class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
             };
         </script>
         <?php
-        $example = "";
+
+        $exampleInit = "";
         if ($this->_helperSpeechToText->includeExampleTemplate()) {
-            $this->_logger->debug('including speech to text template');
-            $example = $this->exampleTemplate();
+            $this->_logger->debug('Speech to Text: including speech to text template');
+            $exampleInit .= $this->exampleTemplateSpeechToText();
         }
-        return ob_get_clean().$example;
+
+        return ob_get_clean().$exampleInit;
     }
 
-    protected function exampleTemplate(){
+    /**
+     * Example template for speech to text
+     *
+     * @return string
+     */
+    protected function exampleTemplateSpeechToText(){
         $initParams = $this->_helperSpeechToText->getInitParams();
         $inputSelector = $initParams['input'];
 

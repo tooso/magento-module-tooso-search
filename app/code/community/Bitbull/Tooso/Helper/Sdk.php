@@ -12,11 +12,8 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
     const XML_PATH_SDK_LIBRARY_ENDPOINT = 'tooso/sdk/library_endpoint';
     const XML_PATH_SDK_CORE_KEY = 'tooso/sdk/core_key';
     const XML_PATH_SDK_LANGUAGE = 'tooso/sdk/language';
-
-    public function isSpeechToTextEnabled($store = null)
-    {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SPEECHTOTEXT_ACTIVE, $store);
-    }
+    const XML_PATH_SDK_INPUT = 'tooso/sdk/input_selector';
+    const XML_PATH_SDK_DEBUG = 'tooso/sdk/debug_mode';
 
     /**
      * Get SDK library endpoint
@@ -81,7 +78,9 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
      */
     public function getInitParams($store = null)
     {
-        $data = [];
+        $data = [
+            'debug' => Mage::getStoreConfigFlag(self::XML_PATH_SDK_DEBUG, $store)
+        ];
 
         $coreKey = Mage::getStoreConfig(self::XML_PATH_SDK_CORE_KEY, $store);
         if($coreKey != null){
@@ -97,7 +96,18 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
             $data['language'] = Mage::app()->getLocale()->getLocaleCode();
         }
 
-        $data['speech'] = Mage::helper('tooso/speechToText')->getInitParams($store);
+        $inputSelector = Mage::getStoreConfig(self::XML_PATH_SDK_INPUT, $store);
+        if($inputSelector != null){
+            $data['input'] = $inputSelector;
+        }else{
+            $data['input'] = Mage::helper('tooso/suggestion')->getSuggestionInputSelector();
+        }
+
+        // SDK functionalities properties
+
+        if (Mage::helper('tooso')->isSpeechToTextEnabled($store)) {
+            $data['speech'] = Mage::helper('tooso/speechToText')->getInitParams($store);
+        }
 
         return $data;
     }

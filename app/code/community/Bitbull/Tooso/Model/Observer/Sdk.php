@@ -20,7 +20,7 @@ class Bitbull_Tooso_Model_Observer_Sdk extends Bitbull_Tooso_Model_Observer
         if($parentBlock){
             $blockLibrary = Mage::helper('tooso/sdk')->getLibraryBlock();
             $parentBlock->append($blockLibrary);
-            $this->_logger->debug('SDK frontend: added sdk library');
+            $this->_logger->debug('Javascript SDK: added sdk library');
         }else{
             $this->_logger->warn('Cannot include library init block, parent container not found');
         }
@@ -39,7 +39,7 @@ class Bitbull_Tooso_Model_Observer_Sdk extends Bitbull_Tooso_Model_Observer
         if($parentBlock){
             $blockInitLibrary = Mage::helper('tooso/sdk')->getLibraryInitBlock();
             $parentBlock->append($blockInitLibrary);
-            $this->_logger->debug('SDK frontend: added SDK library init');
+            $this->_logger->debug('Javascript SDK: added SDK library init');
         }else{
             $this->_logger->warn('Cannot include library block, parent container not found');
         }

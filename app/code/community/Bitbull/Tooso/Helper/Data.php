@@ -14,7 +14,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     const XML_PATH_ENABLE_SUGGESTION_ACTIVE = 'tooso/active/suggestion';
 
-    const XML_PATH_ENABLE_SDK = 'tooso/active/sdk';
+    const XML_PATH_ENABLE_SPEECHTOTEXT_ACTIVE = 'tooso/active/speech_to_text';
 
     const XML_PATH_SERVER_APIKEY = 'tooso/server/api_key';
 
@@ -52,7 +52,12 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function isSdkEnabled($store = null)
     {
-        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SDK, $store);
+        return $this->isSpeechToTextEnabled(); // add more sdk feature flags here
+    }
+
+    public function isSpeechToTextEnabled($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ENABLE_SPEECHTOTEXT_ACTIVE, $store);
     }
 
     /**

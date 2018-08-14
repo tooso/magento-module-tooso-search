@@ -4,9 +4,9 @@
  * @author Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Block_SpeechToText extends Mage_Core_Block_Template
+class Bitbull_Tooso_Block_Sdk extends Mage_Core_Block_Template
 {
-    const BLOCK_ID = 'tooso_speech_to_text';
+    const BLOCK_ID = 'tooso_sdk';
 
     /**
      * @var Bitbull_Tooso_Helper_Log
@@ -22,7 +22,8 @@ class Bitbull_Tooso_Block_SpeechToText extends Mage_Core_Block_Template
         parent::_construct();
 
         $this->_logger = Mage::helper('tooso/log');
-        $this->_helper = Mage::helper('tooso/speechToText');
+        $this->_helper = Mage::helper('tooso/sdk');
+        $this->_helperSpeechToText = Mage::helper('tooso/speechToText');
     }
 
     /**

@@ -4,14 +4,14 @@
  * @author Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Block_SpeechToText_LibraryInit extends Bitbull_Tooso_Block_SpeechToText
+class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
 {
-    const BLOCK_ID = 'tooso_tooso_speech_to_text_init';
-    const SCRIPT_ID = 'tooso-tooso-speech-to-text-init';
+    const BLOCK_ID = 'tooso_tooso_sdk_init';
+    const SCRIPT_ID = 'tooso-tooso-sdk-init';
 
     protected function _toHtml()
     {
-        $this->_logger->debug('initializing speech to text library');
+        $this->_logger->debug('initializing sdk library');
         $initParams = $this->_helper->getInitParams();
 
         ob_start();
@@ -23,15 +23,16 @@ class Bitbull_Tooso_Block_SpeechToText_LibraryInit extends Bitbull_Tooso_Block_S
         </script>
         <?php
         $example = "";
-        if ($this->_helper->includeExampleTemplate()) {
+        if ($this->_helperSpeechToText->includeExampleTemplate()) {
+            $this->_logger->debug('including speech to text template');
             $example = $this->exampleTemplate();
         }
         return ob_get_clean().$example;
     }
 
     protected function exampleTemplate(){
-        $initParams = $this->_helper->getInitParams();
-        $inputSelector = $initParams['speech']['input'];
+        $initParams = $this->_helperSpeechToText->getInitParams();
+        $inputSelector = $initParams['input'];
 
         ob_start();
         ?>

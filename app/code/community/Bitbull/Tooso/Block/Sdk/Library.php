@@ -4,15 +4,15 @@
  * @author Fabio Gollinucci <fabio.gollinucci@bitbull.it>
  */
 
-class Bitbull_Tooso_Block_SpeechToText_Library extends Bitbull_Tooso_Block_SpeechToText
+class Bitbull_Tooso_Block_Sdk_Library extends Bitbull_Tooso_Block_Sdk
 {
-    const BLOCK_ID = 'tooso_tooso_speech_to_text_library';
-    const SCRIPT_ID = 'tooso-tooso-speech-to-text-library';
+    const BLOCK_ID = 'tooso_tooso_sdk';
+    const SCRIPT_ID = 'tooso-tooso-sdk';
 
     protected function _toHtml()
     {
         $endpoint = $this->_helper->getJSLibraryEndpoint();
-        $this->_logger->debug('including speech to text library from '.$endpoint);
+        $this->_logger->debug('including sdk library from '.$endpoint);
 
         ob_start();
         ?>

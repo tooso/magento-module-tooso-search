@@ -139,8 +139,6 @@ class Bitbull_Tooso_Client
     */
     public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false)
     {
-        $query = str_replace(array("+", "%2B"), " ", $query);
-
         if(self::FORCE_ERROR){
             $query = null;
         }

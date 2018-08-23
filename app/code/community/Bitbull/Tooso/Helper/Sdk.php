@@ -109,6 +109,6 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
             $data['speech'] = Mage::helper('tooso/speechToText')->getInitParams($store);
         }
 
-        return $data;
+        return (object)  $data;
     }
 }

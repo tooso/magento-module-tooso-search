@@ -33,7 +33,7 @@ class Bitbull_Tooso_Helper_SpeechToText extends Mage_Core_Helper_Abstract
             $data['input'] = $inputSelector;
         }
 
-        return $data;
+        return (object) $data;
     }
 
     /**

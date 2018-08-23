@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.10.0]
+
+- Add Tooso SDK configurations 
+- Add Speech to Text integration
+- Add example template for Speech to Text 
+
 ## [4.9.0]
 - Add flag to disable Magento search fallback
 

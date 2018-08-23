@@ -8,9 +8,9 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.8.3</version>
+            <version>4.9.0</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Tracking javascript side, API v3 compatibility, client ID cookie server-side generation, support for "Multi Warehouse Inventory" module.</notes>
+            <notes>Tracking javascript side, client ID cookie server-side generation, support for "Multi Warehouse Inventory" module, possibility to disable Magento search fallback.</notes>
         </Bitbull_Tooso>
     </modules>
     <global>

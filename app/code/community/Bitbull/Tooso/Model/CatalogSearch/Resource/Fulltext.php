@@ -79,22 +79,22 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                         Mage::helper('tooso')->setFixedSearchString($search->getFixedSearchString());
                     }
 
-                    if(!$search->isResultEmpty()){
-                        $products = array();
-                        foreach ($search->getProducts() as $product) {
-                            $products[] = $product['product_id'];
-                        }
-
-                        // Store products ids for later use them to build database query
-                        Mage::helper('tooso')->setProducts($products);
-
-                    }else{
+                    if ($search->isResultEmpty() && Mage::helper('tooso/search')->isFallbackEnable()) {
                         if ($search->getFixedSearchString() && Mage::helper('catalogsearch')->getQueryText() == $search->getOriginalSearchString()) {
                             return parent::prepareResult($object, $search->getFixedSearchString(), $query);
                         }else{
                             return parent::prepareResult($object, $queryText, $query);
                         }
                     }
+
+                    $products = array();
+                    foreach ($search->getProducts() as $product) {
+                        $products[] = $product['product_id'];
+                    }
+
+                    // Store products ids for later use them to build database query
+                    Mage::helper('tooso')->setProducts($products);
+
                 } else {
                     $redirect = $search->getRedirect();
                     if(!is_null($redirect)){

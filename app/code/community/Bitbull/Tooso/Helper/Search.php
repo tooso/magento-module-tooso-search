@@ -7,6 +7,7 @@
 class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
 {
     const XML_PATH_RESPONSE_TYPE = 'tooso/search/response_type';
+    const XML_PATH_FALLBACK_ENABLE = 'tooso/search/fallback_enable';
     const REGISTRY_SEARCH_RESULT_KEY = 'tooso-search-response';
 
     /**
@@ -16,6 +17,15 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
     public function isSearchEnriched($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_RESPONSE_TYPE, $store);
+    }
+
+    /**
+     * @param $store
+     * @return bool
+     */
+    public function isFallbackEnable($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_FALLBACK_ENABLE, $store);
     }
 
     /**

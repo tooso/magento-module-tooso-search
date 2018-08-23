@@ -34,7 +34,5 @@ class Bitbull_Tooso_Block_Adminhtml_System_Version extends Mage_Adminhtml_Block_
         </tr>
         <?php
         return ob_get_clean();
-
-        return '<tr><td class="label">Module Version</td><td class="value">'.$version.'</td></tr>';
     }
 }

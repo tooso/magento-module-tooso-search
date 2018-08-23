@@ -116,6 +116,16 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Enable/disable frontend side suggestion]]></comment>
                         </suggestion>
+                        <speech_to_text translate="label">
+                            <label>Speech to Text</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable/disable Speech to Text]]></comment>
+                        </speech_to_text>
                     </fields>
                 </active>
                 <server translate="label">
@@ -505,6 +515,152 @@
                         </cookie_domain>
                     </fields>
                 </analytics>
+                <sdk translate="label">
+                    <label>Javascript SDK</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>60</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[<b>This feature require tracking feature to be active</b>]]></comment>
+                    <fields>
+                        <library_endpoint translate="label">
+                            <label>Javascript library endpoint</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </library_endpoint>
+                        <core_key>
+                            <label>Override core key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Leave empty to use search API key]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </core_key>
+                        <input_selector>
+                            <label>Input selector</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Leave empty to use the same as suggestion]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </input_selector>
+                        <language>
+                            <label>Override language locale</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Leave empty to use Magento store locale]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </language>
+                        <debug_mode>
+                            <label>Debug mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Enable more verbose logging for debug purpose]]></comment>
+                        </debug_mode>
+                    </fields>
+                </sdk>
+                <speech_to_text translate="label">
+                    <label>Speech to Text</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>70</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[<b>This feature require tracking feature to be active</b>]]></comment>
+                    <fields>
+                        <https_check>
+                            <label>HTTPS Check</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>tooso/adminhtml_system_httpsCheck</frontend_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </https_check>
+                        <input_selector>
+                            <label>Input selector</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Leave empty to use Javascript SDK value]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </input_selector>
+                        <language>
+                            <label>Override language locale</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Leave empty to use Javascript SDK value]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </language>
+                        <example_template>
+                            <label>Use example template inijection</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Used only for demo pourpose]]></comment>
+                            <depends>
+                                <tracking>
+                                    <fieldset>active</fieldset>
+                                    <value>1</value>
+                                </tracking>
+                            </depends>
+                        </example_template>
+                    </fields>
+                </speech_to_text>
             </groups>
         </tooso>
     </sections>

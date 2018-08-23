@@ -28,7 +28,7 @@ class Bitbull_Tooso_Model_Resource_CatalogSearch_Fulltext_Collection extends Mag
             Mage::getSingleton('catalogsearch/fulltext')->prepareResult();
 
             $products = Mage::helper('tooso')->getProducts();
-            if($products != null){
+            if($products !== null){
                 $this->addFieldToFilter('entity_id', array('in' => (sizeof($products) > 0) ? $products : array(0)));
                 return $this;
             }else{

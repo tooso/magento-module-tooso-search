@@ -37,6 +37,13 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             $blockInit = Mage::helper('tooso/tracking')->getTrackingLibraryInitBlock();
             $parentBlock->append($blockInit);
             $this->_logger->debug('Tracking: added tracking library');
+
+            if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
+                $blockCustomerTracking = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
+                $parentBlock->append($blockCustomerTracking);
+                $this->_logger->debug('Tracking: added customer tracking');
+            }
+
         }else{
             $this->_logger->warn('Cannot include library block, parent container not found');
         }

@@ -13,5 +13,11 @@
             <container>Bitbull_Tooso_Model_BlockContainer</container>
             <cache_lifetime>0</cache_lifetime>
         </tooso_tracking_product>
+        <tooso_tracking_customer>
+            <block>tooso/tracking_customerTracking</block>
+            <placeholder>tooso_tracking_customerTracking</placeholder>
+            <container>Bitbull_Tooso_Model_BlockContainer</container>
+            <cache_lifetime>0</cache_lifetime>
+        </tooso_tracking_customer>
     </placeholders>
 </config>

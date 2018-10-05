@@ -289,12 +289,17 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function makeTrackingRequest($params)
     {
         $profilingParams = Mage::helper('tooso')->getProfilingParams();
+        $customerSession = Mage::getSingleton('customer/session');
 
         $params = array_merge([
             "z" => Mage::helper('tooso')->getUuid(),
             "tid" => $this->getTrackingKey(),
             "v" => $this->getTrackingAPIVersion(),
         ], $profilingParams, $params);
+
+        if ($customerSession->isLoggedIn() === true && Mage::helper('tooso/tracking')->isUserIdTrakingEnable() === true){
+            $params['uid'] = $customerSession->getCustomerId();
+        }
 
         $curl = new Varien_Http_Adapter_Curl();
         $curl->setConfig(array(

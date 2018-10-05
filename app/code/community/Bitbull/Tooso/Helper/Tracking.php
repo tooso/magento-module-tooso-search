@@ -274,7 +274,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      * @return string
      * @throws Mage_Core_Model_Store_Exception
      */
-    public function getCurrencyCode($store = 'blablabla'){
+    public function getCurrencyCode($store = null){
         $code = null;
         try{
             $code = Mage::app()->getStore($store)->getCurrentCurrencyCode();

@@ -208,6 +208,7 @@ class Bitbull_Tooso_Client
         }
 
         if(!isset($params["ACCESS_KEY_ID"]) || !isset($params["SECRET_KEY"]) || !isset($params["BUCKET"]) || !isset($params["PATH"])){
+            $this->_removeTemporaryFile($tmpZipFile);
             throw new Bitbull_Tooso_Exception('Index params are not correct', 0);
         }
 
@@ -265,6 +266,7 @@ class Bitbull_Tooso_Client
                 $this->_reportSender->sendReport($url, "S3", $accessKeyId, $this->_language, $this->_storeCode, $message);
             }
 
+            $this->_removeTemporaryFile($tmpZipFile);
             throw new Bitbull_Tooso_Exception('cURL error = ' . $error, $errorNumber);
 
         }else{
@@ -276,12 +278,30 @@ class Bitbull_Tooso_Client
                     $this->_reportSender->sendReport($url, "PUT", $accessKeyId, $this->_language, $this->_storeCode, $message);
                 }
 
+                $this->_removeTemporaryFile($tmpZipFile);
                 throw new Bitbull_Tooso_Exception($result->getErrorMessage(), $result->getErrorCode());
             } else {
                 if($this->_logger){
                     $this->_logger->debug("End uploading zipfile to s3://".$bucket."/".$fileName);
                 }
+
+                $this->_removeTemporaryFile($tmpZipFile);
                 return $result;
+            }
+        }
+    }
+
+    /**
+     * Remove temporary zip file
+     *
+     * @param $tmpZipFile
+     */
+    private function _removeTemporaryFile($tmpZipFile)
+    {
+        if (file_exists($tmpZipFile)) {
+            unlink($tmpZipFile);
+            if($this->_logger){
+                $this->_logger->debug("Temporary zipfile '$tmpZipFile' delete");
             }
         }
     }

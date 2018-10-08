@@ -264,7 +264,6 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             'name' => $product->getName(),
             'brand' => $product->getBrand(),
             'price' => $product->getFinalPrice(),
-            'storeCurrency' => Mage::app()->getStore()->getCurrentCurrencyCode(),
             'quantity' => 1
         ];
 
@@ -278,6 +277,23 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         }
 
         return $trackingProductParams;
+    }
+
+    /**
+     * Get store currency code
+     *
+     * @param null $store
+     * @return string
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    public function getCurrencyCode($store = null){
+        $code = null;
+        try{
+            $code = Mage::app()->getStore($store)->getCurrentCurrencyCode();
+        } catch (Mage_Core_Model_Store_Exception $e){
+            Mage::helper('tooso/log')->logException($e);
+        }
+        return $code;
     }
 
     /**

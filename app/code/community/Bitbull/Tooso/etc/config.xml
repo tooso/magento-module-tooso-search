@@ -8,9 +8,11 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.10.0</version>
+            <version>4.11.0</version>
             <api_compatibility>v3.0</api_compatibility>
-            <notes>Tracking Javascript side, support for "Multi Warehouse Inventory" module, Javascript Tooso SDK, Speech to Text integration.</notes>
+            <notes><![CDATA[
+                Find our versions on <a href="https://github.com/tooso/magento-module-tooso-search/releases/">github</a>.
+            ]]></notes>
         </Bitbull_Tooso>
     </modules>
     <global>

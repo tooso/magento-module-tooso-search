@@ -16,6 +16,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     const XML_PATH_ANALYTICS_KEY = 'tooso/analytics/key';
     const XML_PATH_ANALYTICS_DEBUG_MODE = 'tooso/analytics/debug_mode';
     const XML_PATH_ANALYTICS_COOKIE_DOMAIN = 'tooso/analytics/cookie_domain';
+    const XML_PATH_ANALYTICS_TRACK_USERID = 'tooso/analytics/track_userid';
 
     /**
      * Get block to append init tracking script and cookies managers
@@ -202,6 +203,17 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Create Customer Tracking Block
+     *
+     * @return Bitbull_Tooso_Block_Tracking_CustomerTracking
+     */
+    public function getCustomerTrackingBlock(){
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/tracking_customerTracking');
+        return $block;
+    }
+
+    /**
      * Get tracking endpoint
      */
     public function getTrackingLibraryEndpoint($store = null){
@@ -252,7 +264,6 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             'name' => $product->getName(),
             'brand' => $product->getBrand(),
             'price' => $product->getFinalPrice(),
-            'storeCurrency' => Mage::app()->getStore()->getCurrentCurrencyCode(),
             'quantity' => 1
         ];
 
@@ -269,6 +280,23 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get store currency code
+     *
+     * @param null $store
+     * @return string
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    public function getCurrencyCode($store = null){
+        $code = null;
+        try{
+            $code = Mage::app()->getStore($store)->getCurrentCurrencyCode();
+        } catch (Mage_Core_Model_Store_Exception $e){
+            Mage::helper('tooso/log')->logException($e);
+        }
+        return $code;
+    }
+
+    /**
      * Make tracking request server2server
      *
      * @param $params
@@ -277,12 +305,17 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function makeTrackingRequest($params)
     {
         $profilingParams = Mage::helper('tooso')->getProfilingParams();
+        $customerSession = Mage::getSingleton('customer/session');
 
         $params = array_merge([
             "z" => Mage::helper('tooso')->getUuid(),
             "tid" => $this->getTrackingKey(),
             "v" => $this->getTrackingAPIVersion(),
         ], $profilingParams, $params);
+
+        if ($customerSession->isLoggedIn() === true && Mage::helper('tooso/tracking')->isUserIdTrakingEnable() === true){
+            $params['uid'] = $customerSession->getCustomerId();
+        }
 
         $curl = new Varien_Http_Adapter_Curl();
         $curl->setConfig(array(
@@ -311,6 +344,11 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         return true;
     }
 
+    /**
+     * Retrive current search Id with a new uuid as fallback
+     *
+     * @return string
+     */
     public function getSearchIdWithFallback()
     {
         $searchId = Mage::helper('tooso/session')->getSearchId();
@@ -319,6 +357,16 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         }
 
         return $searchId;
+    }
+
+    /**
+     * Is user id tracking active?
+     *
+     * @return bool
+     */
+    public function isUserIdTrakingEnable($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_TRACK_USERID, $store);
     }
 
 }

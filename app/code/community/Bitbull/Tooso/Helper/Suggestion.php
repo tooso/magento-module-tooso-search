@@ -124,10 +124,6 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
             $data['apiKey'] = $apiKey;
         }
 
-        if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-            $data['uid'] = Mage::getSingleton('customer/session')->getCustomerId();
-        }
-
         $buckets = Mage::getStoreConfig(self::XML_PATH_SUGGEST_BUCKETS, $store);
         if($buckets != null){
             $data['buckets'] = $buckets;

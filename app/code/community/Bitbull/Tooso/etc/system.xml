@@ -513,6 +513,15 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Leave empty for all subdomains]]></comment>
                         </cookie_domain>
+                        <track_userid>
+                            <label>Track user with their customer ID</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </track_userid>
                     </fields>
                 </analytics>
                 <sdk translate="label">

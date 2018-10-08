@@ -178,7 +178,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
             'tm' => round(microtime(true) * 1000)
         );
 
-        if ($customerSession->isLoggedIn()) {
+        if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && $customerSession->isLoggedIn()) {
             $params['uid'] = $customerSession->getCustomerId();
         }
 

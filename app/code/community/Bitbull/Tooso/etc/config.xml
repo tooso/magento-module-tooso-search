@@ -237,7 +237,7 @@
                 <api_version>1</api_version>
                 <include_library>1</include_library>
                 <library_endpoint>https://analyticsdev.tooso.ai/ta.js</library_endpoint>
-                <track_userid>0</track_userid>
+                <track_userid>1</track_userid>
             </analytics>
             <sdk>
                 <library_endpoint>https://cdndev.tooso.ai/sdk.js</library_endpoint>

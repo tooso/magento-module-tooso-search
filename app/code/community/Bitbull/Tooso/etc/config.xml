@@ -224,6 +224,7 @@
                 <input_selector>input[type=search]</input_selector>
                 <buckets>relevance,trending</buckets>
                 <limit>20</limit>
+                <category_limit>0</category_limit>
                 <groupby>1</groupby>
                 <nocache>1</nocache>
                 <onselect_behaviour>submit</onselect_behaviour>

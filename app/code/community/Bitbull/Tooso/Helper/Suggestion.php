@@ -16,6 +16,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
 
     const XML_PATH_SUGGEST_BUCKETS = 'tooso/suggestion/buckets';
     const XML_PATH_SUGGEST_LIMIT = 'tooso/suggestion/limit';
+    const XML_PATH_SUGGEST_CATEGORY_LIMIT= 'tooso/suggestion/category_limit';
     const XML_PATH_SUGGEST_GROUPBY = 'tooso/suggestion/groupby';
     const XML_PATH_SUGGEST_NOCACHE = 'tooso/suggestion/nocache';
     const XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR = 'tooso/suggestion/onselect_behaviour';
@@ -132,6 +133,13 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
         $limit = Mage::getStoreConfig(self::XML_PATH_SUGGEST_LIMIT, $store);
         if($limit != null){
             $data['limit'] = $limit;
+        }
+
+        // new parameter
+
+        $climit = Mage::getStoreConfig(self::XML_PATH_SUGGEST_CATEGORY_LIMIT, $store);
+        if($climit != null){
+            $data['climit'] = $climit;
         }
 
         $minChars = Mage::getStoreConfig(self::XML_PATH_SUGGEST_MINCHAR, $store);

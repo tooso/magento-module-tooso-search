@@ -8,6 +8,9 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
 {
     const XML_PATH_RESPONSE_TYPE = 'tooso/search/response_type';
     const XML_PATH_FALLBACK_ENABLE = 'tooso/search/fallback_enable';
+    const XML_PATH_FILTER_PARAM_NAME = 'tooso/search/filter_param_name';
+    const XML_PATH_FILTER_DEBUG = 'tooso/search/filter_debug';
+    const FILTER_PARAM_NAME_DEFAULT = 'f';
     const REGISTRY_SEARCH_RESULT_KEY = 'tooso-search-response';
 
     /**
@@ -26,6 +29,24 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
     public function isFallbackEnable($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_FALLBACK_ENABLE, $store);
+    }
+
+    /**
+     * @param $store
+     * @return bool
+     */
+    public function isFilterDebugEnable($store = null)
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_FILTER_DEBUG, $store);
+    }
+
+    /**
+     * @param $store
+     * @return string
+     */
+    public function getFilterParamName($store = null)
+    {
+        return Mage::getStoreConfig(self::XML_PATH_FILTER_PARAM_NAME, $store);
     }
 
     /**
@@ -96,5 +117,19 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
         }
 
         return null;
+    }
+
+    /**
+     * @param $store
+     * @return string
+     */
+    public function getFilterParamValue($store = null)
+    {
+        $paramName = $this->getFilterParamName($store);
+        if ($paramName === null || trim($paramName) === '') {
+            return null;
+        }
+
+        return Mage::app()->getRequest()->getParam($paramName);
     }
 }

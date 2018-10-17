@@ -43,7 +43,8 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
                 if($typoCorrection == false){
                     $parentSearchId = Mage::helper('tooso')->getParentSearchId();
                 }
-                $search = Mage::getModel('tooso/search')->search($queryText, $typoCorrection, $parentSearchId);
+                $filterValue = Mage::helper('tooso/search')->getFilterParamValue();
+                $search = Mage::getModel('tooso/search')->search($queryText, $typoCorrection, $parentSearchId, $filterValue);
 
                 // Add similar result alert message
                 $similarResultMessage = $search->getSimilarResultsAlert();

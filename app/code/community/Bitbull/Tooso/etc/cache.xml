@@ -19,5 +19,11 @@
             <container>Bitbull_Tooso_Model_BlockContainer</container>
             <cache_lifetime>0</cache_lifetime>
         </tooso_tracking_customer>
+        <tooso_suggestion_filters_init>
+            <block>tooso/suggestion_filtersInit</block>
+            <placeholder>tooso_suggestion_filtersInit</placeholder>
+            <container>Bitbull_Tooso_Model_BlockContainer</container>
+            <cache_lifetime>0</cache_lifetime>
+        </tooso_suggestion_filters_init>
     </placeholders>
 </config>

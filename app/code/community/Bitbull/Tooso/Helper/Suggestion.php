@@ -71,6 +71,18 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Create Filters Init Block
+     *
+     * @return Bitbull_Tooso_Block_Suggestion_FiltersInit
+     */
+    public function getFiltersInitBlock()
+    {
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/suggestion_filtersInit');
+        return $block;
+    }
+
+    /**
      * Include Suggestion library
      *
      * @param null $store
@@ -167,7 +179,7 @@ class Bitbull_Tooso_Helper_Suggestion extends Mage_Core_Helper_Abstract
         $behaviour = Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_BEHAVIOUR, $store);
         switch ($behaviour) {
             case 'submit':
-                return 'function() { this.form.submit(); }';
+                return 'function(response) { window.ts_suggestion_filter_set(response.data.filter); this.form.submit(); }';
             case 'custom':
                 return Mage::getStoreConfig(self::XML_PATH_SUGGEST_ONSELECT_CALLBACK, $store);
             case 'nothing':

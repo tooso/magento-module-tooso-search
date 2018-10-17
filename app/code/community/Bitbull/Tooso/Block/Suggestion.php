@@ -18,11 +18,17 @@ class Bitbull_Tooso_Block_Suggestion extends Mage_Core_Block_Template
      */
     protected $_helper = null;
 
+    /**
+     * @var Bitbull_Tooso_Helper_Search
+     */
+    protected $_searchHelper = null;
+
     public function _construct(){
         parent::_construct();
 
         $this->_logger = Mage::helper('tooso/log');
         $this->_helper = Mage::helper('tooso/suggestion');
+        $this->_searchHelper = Mage::helper('tooso/search');
     }
 
     /**

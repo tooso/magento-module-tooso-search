@@ -20,6 +20,9 @@ class Bitbull_Tooso_Model_Observer_Suggestion extends Bitbull_Tooso_Model_Observ
             $blockInitLibrary = Mage::helper('tooso/suggestion')->getSuggestionLibraryInitBlock();
             $parentBlock->append($blockInitLibrary);
             $this->_logger->debug('Suggestion frontend: added tracking library init');
+            $blockFiltersInit = Mage::helper('tooso/suggestion')->getFiltersInitBlock();
+            $parentBlock->append($blockFiltersInit);
+            $this->_logger->debug('Suggestion frontend: added filter init');
         }else{
             $this->_logger->warn('Cannot include library block, parent container not found');
         }

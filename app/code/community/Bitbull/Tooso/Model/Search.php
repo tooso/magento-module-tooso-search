@@ -6,6 +6,7 @@
 class Bitbull_Tooso_Model_Search
 {
     const SEARCH_PARAM_PARENT_SEARCH_ID = 'parentSearchId';
+    const SEARCH_PARAM_FILTER = 'filter';
 
     /**
      * Client for API comunication
@@ -55,17 +56,21 @@ class Bitbull_Tooso_Model_Search
      * @param string $query
      * @param boolean $typoCorrection
      * @param string $parentSearchId
+     * @param string $filterValue
      * @return Bitbull_Tooso_Model_Search
      */
-    public function search($query, $typoCorrection = true, $parentSearchId = null)
+    public function search($query, $typoCorrection = true, $parentSearchId = null, $filterValue = null)
     {
         $query = urldecode($query);
         if ($query) {
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();
 
-                if (!is_null($parentSearchId)) {
+                if ($parentSearchId !== null) {
                     $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;
+                }
+                if ($filterValue !== null) {
+                    $params[self::SEARCH_PARAM_FILTER] = $filterValue;
                 }
 
                 $result = $this->_client->search($query, $typoCorrection, $params, $this->_helper->isSearchEnriched());

@@ -8,6 +8,7 @@ class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
 {
     const BLOCK_ID = 'tooso_sdk_init';
     const SCRIPT_ID = 'tooso-sdk-init';
+    const STYLE_ID = 'tooso-sdk-style-init';
 
     protected function _toHtml()
     {
@@ -27,6 +28,14 @@ class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
         if ($this->_helperSpeechToText->includeExampleTemplate()) {
             $this->_logger->debug('Speech to Text: including speech to text template');
             $exampleInit .= $this->exampleTemplateSpeechToText($initParams);
+        }
+
+        if ($this->_helper->isCustomCSSEnabled()) {
+            ?>
+            <style id='<?=self::STYLE_ID?>'>
+                <?=$this->_helper->getCustomCSS() ?>
+            </style>
+            <?php
         }
 
         return ob_get_clean().$exampleInit;

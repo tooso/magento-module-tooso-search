@@ -8,6 +8,7 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
 {
     const XML_PATH_RESPONSE_TYPE = 'tooso/search/response_type';
     const XML_PATH_FALLBACK_ENABLE = 'tooso/search/fallback_enable';
+    const XML_PATH_DEFAULT_LIMIT = 'tooso/search/default_limit';
     const REGISTRY_SEARCH_RESULT_KEY = 'tooso-search-response';
 
     /**
@@ -96,5 +97,20 @@ class Bitbull_Tooso_Helper_Search extends Mage_Core_Helper_Abstract
         }
 
         return null;
+    }
+
+    /**
+     * Get default limit param
+     *
+     * @return int|null
+     */
+    public function getDefaultLimit()
+    {
+        $limit = Mage::getStoreConfig(self::XML_PATH_DEFAULT_LIMIT);
+        if ($limit === null || !is_numeric($limit)) {
+            return null;
+        }
+
+        return (int)$limit;
     }
 }

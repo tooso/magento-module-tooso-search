@@ -134,19 +134,32 @@ class Bitbull_Tooso_Client
      * @param boolean $typoCorrection
      * @param array $extraParams
      * @param boolean $enriched
-     * @param integer $page
+     * @param int $page
+     * @param int $limit
      * @return Bitbull_Tooso_Search_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false, $page = 0)
+    public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false, $page = null, $limit = null)
     {
         if(self::FORCE_ERROR){
             $query = null;
         }
 
+        if($page === null){
+            $page = 0;
+        }
+        if($limit === null){
+            $limit = 250;
+        }
+
         $path = '/search';
         $params = array_merge(
-            array('q' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false'), 'page' => $page),
+            array(
+                'q' => $query,
+                'typoCorrection' => ($typoCorrection ? 'true' : 'false'),
+                'page' => $page,
+                'limit' => $limit,
+            ),
             (array)$extraParams
         );
 

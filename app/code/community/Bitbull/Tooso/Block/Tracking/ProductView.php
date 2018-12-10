@@ -14,6 +14,21 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
      */
     protected $_productId = null;
 
+    /**
+     * Constructor
+     */
+    public function _construct(){
+        parent::_construct();
+
+        $this->addData([
+            'cache_lifetime' => null,
+            'esi_options' => [
+                'access' => 'private',
+                'ttl' => 0
+            ]
+        ]);
+    }
+
     protected function _toHtml()
     {
         if($this->_productId == null){

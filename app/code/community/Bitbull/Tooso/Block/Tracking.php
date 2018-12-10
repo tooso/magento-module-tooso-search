@@ -25,13 +25,10 @@ class Bitbull_Tooso_Block_Tracking extends Mage_Core_Block_Template
         $this->_helper = Mage::helper('tooso/tracking');
 
         $this->setBlockId(self::BLOCK_ID);
-        $this->addCacheTag(array(
+        $this->addCacheTag([
             Mage::app()->getStore()->getId(),
             Mage_Catalog_Model_Product::CACHE_TAG
-        ));
-        $this->addData(array(
-            'cache_lifetime' => null,
-        ));
+        ]);
     }
 
     /**

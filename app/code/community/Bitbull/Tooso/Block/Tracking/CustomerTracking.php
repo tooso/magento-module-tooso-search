@@ -9,6 +9,21 @@ class Bitbull_Tooso_Block_Tracking_CustomerTracking extends Bitbull_Tooso_Block_
     const BLOCK_ID = 'tooso_tracking_customer';
     const SCRIPT_ID = 'tooso-tracking-customer';
 
+    /**
+     * Constructor
+     */
+    public function _construct(){
+        parent::_construct();
+
+        $this->addData([
+            'cache_lifetime' => null,
+            'esi_options' => [
+                'access' => 'private',
+                'ttl' => 86400
+            ]
+        ]);
+    }
+
     protected function _toHtml()
     {
         if ($this->_helper->isUserIdTrakingEnable() === false || Mage::getSingleton('customer/session')->isLoggedIn() === false){

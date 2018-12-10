@@ -142,6 +142,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
         $client->setLogger(Mage::helper('tooso/log'));
         $client->setReportSender(Mage::helper('tooso/log_send'));
         $client->setSessionStorage(Mage::helper('tooso/session'));
+        $client->setAgent(Mage::helper('tooso/tracking')->getTrackingAgent());
 
         return $client;
     }

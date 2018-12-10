@@ -369,4 +369,17 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
         return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_TRACK_USERID, $store);
     }
 
+    /**
+     * Get tracking agent
+     *
+     * @return string
+     */
+    public function getTrackingAgent()
+    {
+        $agent = 'PHP/'.phpversion();
+        $agent .= ' Magento/'.Mage::getVersion();
+        $agent .= ' Tooso/'.Mage::getConfig()->getNode()->modules->Bitbull_Tooso->version;
+        return $agent;
+    }
+
 }

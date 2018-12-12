@@ -17,23 +17,39 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     /**
      * Constructor
      */
-    public function _construct(){
+    public function _construct()
+    {
         parent::_construct();
 
         $this->addData([
             'cache_lifetime' => null,
             'esi_options' => [
                 'access' => 'private',
-                'ttl' => 0
+                'ttl' => 0,
+                'registry_keys' => [
+                   'current_product' => null
+                ],
+                'dummy_blocks' => [
+                    'after_body_start'
+                ]
             ]
         ]);
     }
 
     protected function _toHtml()
     {
-        if($this->_productId == null){
-            $this->_logger->warn('Tracking product: product_id not set');
-            return;
+        if ($this->isTurpentineTemplateSet()){
+            return $this->renderView();
+        }
+
+        if($this->_productId === null){
+            $this->_logger->warn('Tracking product: product_id not set, searching from registry');
+            $currentProduct = Mage::registry('current_product');
+            if ($currentProduct === null) {
+                $this->_logger->warn('Tracking product: product_id not found in registry');
+                return;
+            }
+            $this->_productId = $currentProduct->getId();
         }
 
         $trackingProductParams = $this->_helper->getProductTrackingParams($this->_productId);
@@ -139,5 +155,15 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     public function setProductID($id)
     {
         $this->_productId = $id;
+
+        if ($this->isTurpentineTemplateSet()){
+            $currentData = $this->getData();
+            if (isset($currentData['esi_options']) && isset($currentData['esi_options']['registry_keys'])) {
+                $currentData['esi_options']['registry_keys'] = [
+                    'current_product' => $id
+                ];
+            }
+            $this->setData($currentData);
+        }
     }
 }

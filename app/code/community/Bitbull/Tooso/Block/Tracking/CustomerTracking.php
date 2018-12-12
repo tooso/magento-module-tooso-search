@@ -12,20 +12,28 @@ class Bitbull_Tooso_Block_Tracking_CustomerTracking extends Bitbull_Tooso_Block_
     /**
      * Constructor
      */
-    public function _construct(){
+    public function _construct()
+    {
         parent::_construct();
 
         $this->addData([
             'cache_lifetime' => null,
             'esi_options' => [
                 'access' => 'private',
-                'ttl' => 86400
+                'ttl' => 86400,
+                'dummy_blocks' => [
+                    'after_body_start'
+                ]
             ]
         ]);
     }
 
     protected function _toHtml()
     {
+        if ($this->isTurpentineTemplateSet()){
+            return $this->renderView();
+        }
+
         if ($this->_helper->isUserIdTrakingEnable() === false || Mage::getSingleton('customer/session')->isLoggedIn() === false){
             return;
         }

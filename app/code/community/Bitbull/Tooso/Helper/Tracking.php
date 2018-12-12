@@ -44,7 +44,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getProductTrackingBlock($productId){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_productView');
+        $block = $layout->createBlock('tooso/tracking_productView', 'tooso_tracking_productView');
         $block->setProductID($productId);
         return $block;
     }
@@ -56,7 +56,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getPageTrackingBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_pageView');
+        $block = $layout->createBlock('tooso/tracking_pageView', 'tooso_tracking_pageView');
         return $block;
     }
 
@@ -68,7 +68,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getCheckoutTrackingBlock($orderId){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_checkout');
+        $block = $layout->createBlock('tooso/tracking_checkout', 'tooso_tracking_checkout');
         $block->setOrderId($orderId);
         return $block;
     }
@@ -80,7 +80,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getClearSearchIDBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/clearSearchId');
+        $block = $layout->createBlock('tooso/clearSearchId', 'tooso_clearSearchId');
         return $block;
     }
 
@@ -176,7 +176,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getTrackingLibraryBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_library');
+        $block = $layout->createBlock('tooso/tracking_library', 'tooso_tracking_library');
         return $block;
     }
 
@@ -187,7 +187,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getTrackingLibraryInitBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_libraryInit');
+        $block = $layout->createBlock('tooso/tracking_libraryInit', 'tooso_tracking_libraryInit');
         return $block;
     }
 
@@ -198,7 +198,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getPluginInfosBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_pluginInfos');
+        $block = $layout->createBlock('tooso/tracking_pluginInfos', 'tooso_tracking_pluginInfos');
         return $block;
     }
 
@@ -209,7 +209,7 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function getCustomerTrackingBlock(){
         $layout = Mage::app()->getLayout();
-        $block = $layout->createBlock('tooso/tracking_customerTracking');
+        $block = $layout->createBlock('tooso/tracking_customerTracking', 'tooso_tracking_customerTracking');
         return $block;
     }
 

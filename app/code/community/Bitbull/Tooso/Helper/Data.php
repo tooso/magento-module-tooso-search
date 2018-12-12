@@ -223,4 +223,29 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getUuid(){
         return Mage::helper('tooso')->getClient()->getUuid();
     }
+
+    /**
+     * Is turpentine ESI request
+     *
+     * @return string
+     */
+    public function isTurpentineEsiRequest(){
+        $request = Mage::app()->getRequest();
+        return get_class($request) === 'Nexcessnet_Turpentine_Model_Dummy_Request';
+    }
+
+    /**
+     * Build layout xml
+     *
+     * @param $block Mage_Core_Block_Template
+     * @return string
+     */
+    public function addLayoutUpdate($block){
+        $layout = Mage::app()->getLayout();
+        $layout->getUpdate()->addUpdate('
+            <reference name="'.$block->getParentBlock()->getNameInLayout().'">
+                <block type="core/template" name="'.$block->getNameInLayout().'" template="" class="'.get_class($block).'"/>
+             </reference>
+        ');
+    }
 }

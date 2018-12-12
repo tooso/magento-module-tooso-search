@@ -23,10 +23,18 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 
     /**
      * Include javascript library
+     * @param  Varien_Event_Observer $observer
      */
-    public function includeLibrary()
+    public function includeLibrary(Varien_Event_Observer $observer)
     {
         if(!Mage::helper('tooso')->isTrackingEnabled() || !Mage::helper('tooso/tracking')->includeTrackingJSLibrary()){
+            return;
+        }
+
+        if (
+            $observer->getEvent()->getName() === 'controller_action_layout_load_before' &&
+            Mage::helper('tooso')->isTurpentineEsiRequest() === false
+        ){
             return;
         }
 
@@ -41,6 +49,9 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
                 $blockCustomerTracking = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
                 $parentBlock->append($blockCustomerTracking);
+                if(Mage::helper('tooso')->isTurpentineEsiRequest()){
+                    Mage::helper('tooso')->addLayoutUpdate($blockCustomerTracking);
+                }
                 $this->_logger->debug('Tracking: added customer tracking');
             }
 
@@ -75,6 +86,14 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         if(!Mage::helper('tooso')->isTrackingEnabled()){
             return;
         }
+
+        if (
+            $observer->getEvent()->getName() === 'controller_action_layout_load_before' &&
+            Mage::helper('tooso')->isTurpentineEsiRequest() === false
+        ){
+            return;
+        }
+
         $currentProduct = Mage::registry('current_product');
         if($currentProduct != null) {
 
@@ -83,6 +102,9 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
                 $block = Mage::helper('tooso/tracking')->getProductTrackingBlock($currentProduct->getId());
                 $parentBlock->append($block);
                 $this->_logger->debug('Tracking product: added tracking script');
+                if(Mage::helper('tooso')->isTurpentineEsiRequest()){
+                    Mage::helper('tooso')->addLayoutUpdate($block);
+                }
             }else{
                 $this->_logger->warn('Cannot add ProductTracking block, parent container not found');
             }

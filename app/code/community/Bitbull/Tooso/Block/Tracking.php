@@ -40,4 +40,14 @@ class Bitbull_Tooso_Block_Tracking extends Mage_Core_Block_Template
     {
         return strtoupper(self::BLOCK_ID);
     }
+
+    /**
+     * Check if template is turpentine esi
+     *
+     * @return bool
+     */
+    protected function isTurpentineTemplateSet()
+    {
+        return $this->_template === 'turpentine/esi.phtml';
+    }
 }

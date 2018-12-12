@@ -30,14 +30,6 @@ class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
             $exampleInit .= $this->exampleTemplateSpeechToText($initParams);
         }
 
-        if ($this->_helper->isCustomCSSEnabled()) {
-            ?>
-            <style id='<?=self::STYLE_ID?>'>
-                <?=$this->_helper->getCustomCSS() ?>
-            </style>
-            <?php
-        }
-
         return ob_get_clean().$exampleInit;
     }
 

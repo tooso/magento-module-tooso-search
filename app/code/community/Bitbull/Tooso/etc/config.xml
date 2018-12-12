@@ -140,6 +140,11 @@
                         <class>tooso/observer_sdk</class>
                         <method>includeLibrary</method>
                     </tooso_sdk_frontend_pipeline>
+                    <tooso_sdk_frontend_custom_css>
+                        <type>singleton</type>
+                        <class>tooso/observer_sdk</class>
+                        <method>addCustomCSS</method>
+                    </tooso_sdk_frontend_custom_css>
                 </observers>
             </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>

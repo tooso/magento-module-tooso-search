@@ -139,3 +139,15 @@ Once your catalog has been integrated with Tooso, you will get a notification fr
 
 **IMPORTANT**: For any question about our early adopters program, reach out anytime to our CCO mattia.pavoni@tooso.ai; for technical enquiries, ping directly our CTO jacopo.tagliabue@tooso.ai. 
 
+## Tips & Tricks
+
+If you are using a proxy in front of Magento, like a load balancer, an HA proxy or a Varnish instance add this configuration to Magento `local.xml` file:
+```xml
+<global>
+    <remote_addr_headers>
+        <header1><![CDATA[HTTP_X_REAL_IP]]></header1>
+        <header2><![CDATA[HTTP_X_FORWARDED_FOR]]></header2>
+    </remote_addr_headers>
+</global>
+```
+this in order to identify the correct user's IP using `X-Forwarded-For` or `X-Real-IP` HTTP headers.

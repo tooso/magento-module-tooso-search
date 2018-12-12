@@ -225,7 +225,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Is turpentine ESI request
+     * Is Turpentine ESI request
      *
      * @return string
      */
@@ -236,6 +236,7 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * Build layout xml
+     * this is a fix to let Turpentine find block during ESI request
      *
      * @param $block Mage_Core_Block_Template
      * @return string

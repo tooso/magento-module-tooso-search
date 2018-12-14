@@ -244,4 +244,25 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
              </reference>
         ');
     }
+
+    /**
+     * Get current requested block for ESI request
+     *
+     * @return string
+     */
+    public function getESIRequestBlockName()
+    {
+        $req = Mage::app()->getRequest();
+        $esiHelper = Mage::helper('turpentine/esi');
+        $dataHelper = Mage::helper('turpentine/data');
+        if ($esiHelper === null || $dataHelper === null) {
+            return '';
+        }
+        $esiDataParamValue = $req->getParam( $esiHelper->getEsiDataParam() );
+        $esiDataArray = $dataHelper->thaw( $esiDataParamValue );
+        if (!isset($esiDataArray['name_in_layout'])) {
+            return '';
+        }
+        return $esiDataArray['name_in_layout'];
+    }
 }

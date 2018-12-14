@@ -101,6 +101,10 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             return;
         }
 
+        if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_customerTracking') {
+            return;
+        }
+
         if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
             $block = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
             Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
@@ -115,6 +119,10 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
     public function includeProductTrackingScriptEsi(Varien_Event_Observer $observer)
     {
         if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_productView') {
             return;
         }
 

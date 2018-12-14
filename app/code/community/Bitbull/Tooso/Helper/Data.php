@@ -225,16 +225,6 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Is Turpentine ESI request
-     *
-     * @return string
-     */
-    public function isTurpentineEsiRequest(){
-        $request = Mage::app()->getRequest();
-        return get_class($request) === 'Nexcessnet_Turpentine_Model_Dummy_Request';
-    }
-
-    /**
      * Build layout xml
      * this is a fix to let Turpentine find block during ESI request
      *
@@ -243,8 +233,13 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function addLayoutUpdate($block){
         $layout = Mage::app()->getLayout();
+        $parent = $block->getParentBlock();
+        $referenceName = '';
+        if ($parent !== null) {
+            $referenceName = $block->getParentBlock()->getNameInLayout();
+        }
         $layout->getUpdate()->addUpdate('
-            <reference name="'.$block->getParentBlock()->getNameInLayout().'">
+            <reference name="'.$referenceName.'">
                 <block type="core/template" name="'.$block->getNameInLayout().'" template="" class="'.get_class($block).'"/>
              </reference>
         ');

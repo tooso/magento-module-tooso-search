@@ -31,13 +31,6 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             return;
         }
 
-        if (
-            $observer->getEvent()->getName() === 'controller_action_layout_load_before' &&
-            Mage::helper('tooso')->isTurpentineEsiRequest() === false
-        ){
-            return;
-        }
-
         $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
         if($parentBlock){
             $blockLibrary = Mage::helper('tooso/tracking')->getTrackingLibraryBlock();
@@ -46,15 +39,11 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             $parentBlock->append($blockInit);
             $this->_logger->debug('Tracking: added tracking library');
 
-            if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
+            if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable()){
                 $blockCustomerTracking = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
                 $parentBlock->append($blockCustomerTracking);
-                if(Mage::helper('tooso')->isTurpentineEsiRequest()){
-                    Mage::helper('tooso')->addLayoutUpdate($blockCustomerTracking);
-                }
                 $this->_logger->debug('Tracking: added customer tracking');
             }
-
         }else{
             $this->_logger->warn('Cannot include library block, parent container not found');
         }
@@ -87,31 +76,51 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             return;
         }
 
-        if (
-            $observer->getEvent()->getName() === 'controller_action_layout_load_before' &&
-            Mage::helper('tooso')->isTurpentineEsiRequest() === false
-        ){
-            return;
-        }
-
         $currentProduct = Mage::registry('current_product');
-        if($currentProduct != null) {
-
+        if($currentProduct !== null) {
             $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
             if($parentBlock){
                 $block = Mage::helper('tooso/tracking')->getProductTrackingBlock($currentProduct->getId());
                 $parentBlock->append($block);
                 $this->_logger->debug('Tracking product: added tracking script');
-                if(Mage::helper('tooso')->isTurpentineEsiRequest()){
-                    Mage::helper('tooso')->addLayoutUpdate($block);
-                }
             }else{
                 $this->_logger->warn('Cannot add ProductTracking block, parent container not found');
             }
-
         }else{
             $this->_logger->warn('Tracking product: product not found in request');
         }
+    }
+
+    /**
+     * Add customer tracking script for ESI requests
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includeCustomerTrackingEsi(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled() || !Mage::helper('tooso/tracking')->includeTrackingJSLibrary()){
+            return;
+        }
+
+        if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
+            $block = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
+            Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
+            Mage::helper('tooso')->addLayoutUpdate($block);
+        }
+    }
+
+    /**
+     * Add product tracking script for ESI requests
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includeProductTrackingScriptEsi(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        $block = Mage::helper('tooso/tracking')->getProductTrackingBlock(null);
+        Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
+        Mage::helper('tooso')->addLayoutUpdate($block);
     }
 
     /**

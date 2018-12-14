@@ -151,20 +151,20 @@
                     </tooso_tracking_product>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
-            <controller_action_layout_generate_xml_before>
+            <controller_action_predispatch_turpentine_esi_getBlock>
                 <observers>
                     <tooso_tracking_product>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
-                        <method>includeProductTrackingScript</method>
+                        <method>includeProductTrackingScriptEsi</method>
                     </tooso_tracking_product>
                     <tooso_sdk_frontend_init>
                         <type>singleton</type>
                         <class>tooso/observer_tracking</class>
-                        <method>includeLibrary</method>
+                        <method>includeCustomerTrackingEsi</method>
                     </tooso_sdk_frontend_init>
                 </observers>
-            </controller_action_layout_generate_xml_before>
+            </controller_action_predispatch_turpentine_esi_getBlock>
             <controller_action_layout_render_before_checkout_onepage_success>
                 <observers>
                     <tooso_track_checkout>

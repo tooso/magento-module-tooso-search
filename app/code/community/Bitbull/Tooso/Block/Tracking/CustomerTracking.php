@@ -21,9 +21,6 @@ class Bitbull_Tooso_Block_Tracking_CustomerTracking extends Bitbull_Tooso_Block_
             'esi_options' => [
                 'access' => 'private',
                 'ttl' => 86400,
-                'dummy_blocks' => [
-                    'after_body_start'
-                ]
             ]
         ]);
     }

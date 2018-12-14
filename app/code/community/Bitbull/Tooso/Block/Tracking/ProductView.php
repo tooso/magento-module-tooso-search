@@ -28,9 +28,6 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
                 'ttl' => 0,
                 'registry_keys' => [
                    'current_product' => null
-                ],
-                'dummy_blocks' => [
-                    'after_body_start'
                 ]
             ]
         ]);
@@ -39,6 +36,13 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     protected function _toHtml()
     {
         if ($this->isTurpentineTemplateSet()){
+            $currentData = $this->getData();
+            if (isset($currentData['esi_options']) && isset($currentData['esi_options']['registry_keys'])) {
+                $currentData['esi_options']['registry_keys'] = [
+                    'current_product' => $this->_productId
+                ];
+            }
+            $this->setData($currentData);
             return $this->renderView();
         }
 
@@ -155,15 +159,5 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     public function setProductID($id)
     {
         $this->_productId = $id;
-
-        if ($this->isTurpentineTemplateSet()){
-            $currentData = $this->getData();
-            if (isset($currentData['esi_options']) && isset($currentData['esi_options']['registry_keys'])) {
-                $currentData['esi_options']['registry_keys'] = [
-                    'current_product' => $id
-                ];
-            }
-            $this->setData($currentData);
-        }
     }
 }

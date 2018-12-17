@@ -91,6 +91,9 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      */
     public function isUserComingFromSearch(){
         $lastPageSearch = Mage::helper('tooso/session')->getLastSearchPage();
+        if ($lastPageSearch === false || $lastPageSearch === '') {
+            return false;
+        }
         $lastPage = $this->getLastPage();
         return $lastPageSearch == $lastPage;
     }

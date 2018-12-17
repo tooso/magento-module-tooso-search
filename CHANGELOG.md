@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+- Fix error when query is empty
+- Add revenue param to order tracking
+- Add custom CSS settings
+- Add custom user agent for s2s HTTP requests
+- Add default value to query's page params
+- Add configurable limit settings for query results
+
 ## [4.11.2]
 - Fix "isUserComingFromSearch" check when user direct access product page
 

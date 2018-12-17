@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.11.2]
+- Fix "isUserComingFromSearch" check when user direct access product page
+
 ## [4.11.1]
 - Fix customer tracking default setting
 

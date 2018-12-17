@@ -8,6 +8,7 @@ class Bitbull_Tooso_Client
 {
     const HTTP_METHOD_GET = 'GET';
     const HTTP_METHOD_POST = 'POST';
+    const TRACKING_AGENT_HEADER = 'X-Tooso-Agent';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
     const INDEX_DOC_TYPE = 1;
@@ -87,6 +88,11 @@ class Bitbull_Tooso_Client
     protected $_sessionStorage;
 
     /**
+     * @var string
+     */
+    protected $_agent = 'Unknown';
+
+    /**
      * @param string $apiKey
      * @param string $version
      * @param string $apiBaseUrl
@@ -128,24 +134,46 @@ class Bitbull_Tooso_Client
     }
 
     /**
+     * @param string $agent
+     */
+    public function setAgent($agent)
+    {
+        $this->_agent = $agent;
+    }
+
+    /**
      * Perform a search
      *
      * @param string $query
      * @param boolean $typoCorrection
      * @param array $extraParams
      * @param boolean $enriched
+     * @param int $page
+     * @param int $limit
      * @return Bitbull_Tooso_Search_Result
      * @throws Bitbull_Tooso_Exception
     */
-    public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false)
+    public function search($query, $typoCorrection = true, $extraParams = array(), $enriched = false, $page = null, $limit = null)
     {
         if(self::FORCE_ERROR){
             $query = null;
         }
 
+        if($page === null){
+            $page = 0;
+        }
+        if($limit === null){
+            $limit = 250;
+        }
+
         $path = '/search';
         $params = array_merge(
-            array('q' => $query, 'typoCorrection' => ($typoCorrection ? 'true' : 'false')),
+            array(
+                'q' => $query,
+                'typoCorrection' => ($typoCorrection ? 'true' : 'false'),
+                'page' => $page,
+                'limit' => $limit,
+            ),
             (array)$extraParams
         );
 
@@ -336,6 +364,9 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, !is_null($timeout) ? $timeout : $this->_timeout);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            self::TRACKING_AGENT_HEADER.': '.$this->_agent
+        ]);
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);

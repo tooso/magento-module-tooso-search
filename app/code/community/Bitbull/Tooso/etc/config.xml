@@ -140,6 +140,11 @@
                         <class>tooso/observer_sdk</class>
                         <method>includeLibrary</method>
                     </tooso_sdk_frontend_pipeline>
+                    <tooso_sdk_frontend_custom_css>
+                        <type>singleton</type>
+                        <class>tooso/observer_sdk</class>
+                        <method>addCustomCSS</method>
+                    </tooso_sdk_frontend_custom_css>
                 </observers>
             </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
@@ -226,6 +231,7 @@
             <search>
                 <fallback_enable>1</fallback_enable>
                 <response_type>0</response_type>
+                <default_limit>250</default_limit>
             </search>
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>

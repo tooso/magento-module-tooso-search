@@ -14,9 +14,14 @@ class Bitbull_Tooso_Block_Sdk extends Mage_Core_Block_Template
     protected $_logger = null;
 
     /**
-     * @var Bitbull_Tooso_Helper_SpeechToText
+     * @var Bitbull_Tooso_Helper_Sdk
      */
     protected $_helper = null;
+
+    /**
+     * @var Bitbull_Tooso_Helper_SpeechToText
+     */
+    protected $_helperSpeechToText = null;
 
     public function _construct(){
         parent::_construct();

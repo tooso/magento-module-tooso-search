@@ -33,6 +33,10 @@ class Bitbull_Tooso_Model_CatalogSearch_Resource_Fulltext extends Mage_CatalogSe
             return parent::prepareResult($object, $queryText, $query);
         }
 
+        if (trim($queryText) === ''){
+            return $this;
+        }
+
         $search = null;
 
         if (!Mage::helper('tooso')->getSearchAlreadyDone()) {

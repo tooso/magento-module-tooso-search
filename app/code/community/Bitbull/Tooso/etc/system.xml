@@ -221,6 +221,14 @@
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[IMPORTANT NOTICE: Once this function is activated, switching back from ‘YES’ to ‘NO’ can impact your front end. Before doing it, please make sure that your Magento theme can handle an empty response from the product information retrieval function.]]></comment>
                         </response_type>
+                        <default_limit translate="label">
+                            <label>Default query limit</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </default_limit>
                     </fields>
                 </search>
                 <indexer translate="label">
@@ -670,6 +678,34 @@
                         </example_template>
                     </fields>
                 </speech_to_text>
+                <skin_configuration>
+                    <label>Skin configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>80</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <custom_css_enable>
+                            <label>Include custom CSS</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </custom_css_enable>
+                        <custom_css>
+                            <label>Custom CSS</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><custom_css_enable>1</custom_css_enable></depends>
+                        </custom_css>
+                    </fields>
+                </skin_configuration>
             </groups>
         </tooso>
     </sections>

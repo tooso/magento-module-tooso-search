@@ -8,6 +8,7 @@ class Bitbull_Tooso_Client
 {
     const HTTP_METHOD_GET = 'GET';
     const HTTP_METHOD_POST = 'POST';
+    const TRACKING_AGENT_HEADER = 'X-Tooso-Agent';
     const FORCE_ERROR = false; //DEBUG: force client to trigger error
 
     const INDEX_DOC_TYPE = 1;
@@ -87,6 +88,11 @@ class Bitbull_Tooso_Client
     protected $_sessionStorage;
 
     /**
+     * @var string
+     */
+    protected $_agent = 'Unknown';
+
+    /**
      * @param string $apiKey
      * @param string $version
      * @param string $apiBaseUrl
@@ -125,6 +131,14 @@ class Bitbull_Tooso_Client
     public function setSessionStorage(Bitbull_Tooso_Storage_SessionInterface $sessionStorage)
     {
         $this->_sessionStorage = $sessionStorage;
+    }
+
+    /**
+     * @param string $agent
+     */
+    public function setAgent($agent)
+    {
+        $this->_agent = $agent;
     }
 
     /**
@@ -350,6 +364,9 @@ class Bitbull_Tooso_Client
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->_connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT_MS, !is_null($timeout) ? $timeout : $this->_timeout);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            self::TRACKING_AGENT_HEADER.': '.$this->_agent
+        ]);
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);

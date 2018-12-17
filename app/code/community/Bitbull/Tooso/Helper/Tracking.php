@@ -104,16 +104,12 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
      * @return string
      */
     public function getRemoteAddr(){
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return trim($ips[count($ips) - 1]);
-        } else {
-            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                return $_SERVER['HTTP_CLIENT_IP'];
-            } else {
-                return $_SERVER['REMOTE_ADDR'];
-            }
+        $remoteAddr = Mage::helper('core/http')->getRemoteAddr();
+        if (strpos($remoteAddr, ',') !== false){
+            $remoteAddrParts = explode(',', $remoteAddr);
+            $remoteAddr = $remoteAddrParts[0];
         }
+        return $remoteAddr;
     }
 
     /**
@@ -370,6 +366,19 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
     public function isUserIdTrakingEnable($store = null)
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_ANALYTICS_TRACK_USERID, $store);
+    }
+
+    /**
+     * Get tracking agent
+     *
+     * @return string
+     */
+    public function getTrackingAgent()
+    {
+        $agent = 'PHP/'.phpversion();
+        $agent .= ' Magento/'.Mage::getVersion();
+        $agent .= ' Tooso/'.Mage::getConfig()->getNode()->modules->Bitbull_Tooso->version;
+        return $agent;
     }
 
 }

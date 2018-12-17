@@ -102,13 +102,16 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
 
         if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_customerTracking') {
+            $this->_logger->debug('ESI CustomerTracking: Request block '.Mage::helper('tooso')->getESIRequestBlockName().' not equal to tooso_tracking_customerTracking, skipping');
             return;
         }
 
-        if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
+        if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable()){
+            $this->_logger->debug('ESI CustomerTracking: including block');
             $block = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
             Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
             Mage::helper('tooso')->addLayoutUpdate($block);
+            $this->_logger->debug('ESI CustomerTracking: layout updated');
         }
     }
 
@@ -123,12 +126,14 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         }
 
         if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_productView') {
+            $this->_logger->debug('ESI ProductTracking: Request block '.Mage::helper('tooso')->getESIRequestBlockName().' not equal to tooso_tracking_productView, skipping');
             return;
         }
-
+        $this->_logger->debug('ESI ProductTracking: including block');
         $block = Mage::helper('tooso/tracking')->getProductTrackingBlock(null);
         Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
         Mage::helper('tooso')->addLayoutUpdate($block);
+        $this->_logger->debug('ESI ProductTracking: layout updated');
     }
 
     /**

@@ -36,6 +36,7 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
     protected function _toHtml()
     {
         if ($this->isTurpentineTemplateSet()){
+            $this->_logger->debug('Tracking product: set product id to esi_options.registry_keys');
             $currentData = $this->getData();
             if (isset($currentData['esi_options']) && isset($currentData['esi_options']['registry_keys'])) {
                 $currentData['esi_options']['registry_keys'] = [
@@ -43,6 +44,7 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
                 ];
             }
             $this->setData($currentData);
+            $this->_logger->debug('Tracking product: rendering block using turpentine template');
             return $this->renderView();
         }
 

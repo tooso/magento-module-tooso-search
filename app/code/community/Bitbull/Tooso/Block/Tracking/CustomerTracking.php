@@ -28,6 +28,7 @@ class Bitbull_Tooso_Block_Tracking_CustomerTracking extends Bitbull_Tooso_Block_
     protected function _toHtml()
     {
         if ($this->isTurpentineTemplateSet()){
+            $this->_logger->debug('Tracking customer: rendering block using turpentine template');
             return $this->renderView();
         }
 

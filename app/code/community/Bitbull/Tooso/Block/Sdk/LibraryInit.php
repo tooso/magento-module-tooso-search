@@ -8,6 +8,7 @@ class Bitbull_Tooso_Block_Sdk_LibraryInit extends Bitbull_Tooso_Block_Sdk
 {
     const BLOCK_ID = 'tooso_sdk_init';
     const SCRIPT_ID = 'tooso-sdk-init';
+    const STYLE_ID = 'tooso-sdk-style-init';
 
     protected function _toHtml()
     {

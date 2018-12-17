@@ -37,6 +37,7 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
         $trackingCheckoutParams['shipping'] = $order->getShippingAmount();
         $trackingCheckoutParams['coupon'] = $order->getCouponCode();
         $trackingCheckoutParams['tax'] = $order->getTaxAmount();
+        $trackingCheckoutParams['revenue'] = $order->getGrandTotal();
 
         $items = $order->getAllVisibleItems();
         $trackingProductParams = [];

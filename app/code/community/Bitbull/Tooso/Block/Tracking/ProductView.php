@@ -14,11 +14,48 @@ class Bitbull_Tooso_Block_Tracking_ProductView extends Bitbull_Tooso_Block_Track
      */
     protected $_productId = null;
 
+    /**
+     * Constructor
+     */
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->addData([
+            'cache_lifetime' => null,
+            'esi_options' => [
+                'access' => 'private',
+                'ttl' => 0,
+                'registry_keys' => [
+                   'current_product' => null
+                ]
+            ]
+        ]);
+    }
+
     protected function _toHtml()
     {
-        if($this->_productId == null){
-            $this->_logger->warn('Tracking product: product_id not set');
-            return;
+        if ($this->isTurpentineTemplateSet()){
+            $this->_logger->debug('Tracking product: set product id to esi_options.registry_keys');
+            $currentData = $this->getData();
+            if (isset($currentData['esi_options']) && isset($currentData['esi_options']['registry_keys'])) {
+                $currentData['esi_options']['registry_keys'] = [
+                    'current_product' => $this->_productId
+                ];
+            }
+            $this->setData($currentData);
+            $this->_logger->debug('Tracking product: rendering block using turpentine template');
+            return $this->renderView();
+        }
+
+        if($this->_productId === null){
+            $this->_logger->warn('Tracking product: product_id not set, searching from registry');
+            $currentProduct = Mage::registry('current_product');
+            if ($currentProduct === null) {
+                $this->_logger->warn('Tracking product: product_id not found in registry');
+                return;
+            }
+            $this->_productId = $currentProduct->getId();
         }
 
         $trackingProductParams = $this->_helper->getProductTrackingParams($this->_productId);

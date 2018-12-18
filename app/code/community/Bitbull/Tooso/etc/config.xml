@@ -8,7 +8,7 @@
 <config>
     <modules>
         <Bitbull_Tooso>
-            <version>4.11.2</version>
+            <version>4.12.0</version>
             <api_compatibility>v3.0</api_compatibility>
             <notes><![CDATA[
                 Find our versions on <a href="https://github.com/tooso/magento-module-tooso-search/releases/">github</a>.
@@ -140,6 +140,11 @@
                         <class>tooso/observer_sdk</class>
                         <method>includeLibrary</method>
                     </tooso_sdk_frontend_pipeline>
+                    <tooso_sdk_frontend_custom_css>
+                        <type>singleton</type>
+                        <class>tooso/observer_sdk</class>
+                        <method>addCustomCSS</method>
+                    </tooso_sdk_frontend_custom_css>
                 </observers>
             </controller_action_layout_render_before>
             <controller_action_layout_render_before_catalog_product_view>
@@ -151,6 +156,20 @@
                     </tooso_tracking_product>
                 </observers>
             </controller_action_layout_render_before_catalog_product_view>
+            <controller_action_predispatch_turpentine_esi_getBlock>
+                <observers>
+                    <tooso_tracking_product>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>includeProductTrackingScriptEsi</method>
+                    </tooso_tracking_product>
+                    <tooso_sdk_frontend_init>
+                        <type>singleton</type>
+                        <class>tooso/observer_tracking</class>
+                        <method>includeCustomerTrackingEsi</method>
+                    </tooso_sdk_frontend_init>
+                </observers>
+            </controller_action_predispatch_turpentine_esi_getBlock>
             <controller_action_layout_render_before_checkout_onepage_success>
                 <observers>
                     <tooso_track_checkout>
@@ -212,6 +231,7 @@
             <search>
                 <fallback_enable>1</fallback_enable>
                 <response_type>0</response_type>
+                <default_limit>250</default_limit>
             </search>
             <indexer>
                 <attributes_to_index>sku,name,description,price,short_description,status,visibility,special_price,is_in_stock,variants,categories</attributes_to_index>

@@ -23,8 +23,9 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
 
     /**
      * Include javascript library
+     * @param  Varien_Event_Observer $observer
      */
-    public function includeLibrary()
+    public function includeLibrary(Varien_Event_Observer $observer)
     {
         if(!Mage::helper('tooso')->isTrackingEnabled() || !Mage::helper('tooso/tracking')->includeTrackingJSLibrary()){
             return;
@@ -38,12 +39,11 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             $parentBlock->append($blockInit);
             $this->_logger->debug('Tracking: added tracking library');
 
-            if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable() && Mage::getSingleton('customer/session')->isLoggedIn()){
+            if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable()){
                 $blockCustomerTracking = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
                 $parentBlock->append($blockCustomerTracking);
                 $this->_logger->debug('Tracking: added customer tracking');
             }
-
         }else{
             $this->_logger->warn('Cannot include library block, parent container not found');
         }
@@ -75,9 +75,9 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
         if(!Mage::helper('tooso')->isTrackingEnabled()){
             return;
         }
-        $currentProduct = Mage::registry('current_product');
-        if($currentProduct != null) {
 
+        $currentProduct = Mage::registry('current_product');
+        if($currentProduct !== null) {
             $parentBlock = Mage::helper('tooso/tracking')->getInitScriptContainerBlock();
             if($parentBlock){
                 $block = Mage::helper('tooso/tracking')->getProductTrackingBlock($currentProduct->getId());
@@ -86,10 +86,54 @@ class Bitbull_Tooso_Model_Observer_Tracking extends Bitbull_Tooso_Model_Observer
             }else{
                 $this->_logger->warn('Cannot add ProductTracking block, parent container not found');
             }
-
         }else{
             $this->_logger->warn('Tracking product: product not found in request');
         }
+    }
+
+    /**
+     * Add customer tracking script for ESI requests
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includeCustomerTrackingEsi(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled() || !Mage::helper('tooso/tracking')->includeTrackingJSLibrary()){
+            return;
+        }
+
+        if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_customerTracking') {
+            $this->_logger->debug('ESI CustomerTracking: Request block '.Mage::helper('tooso')->getESIRequestBlockName().' not equal to tooso_tracking_customerTracking, skipping');
+            return;
+        }
+
+        if (Mage::helper('tooso/tracking')->isUserIdTrakingEnable()){
+            $this->_logger->debug('ESI CustomerTracking: including block');
+            $block = Mage::helper('tooso/tracking')->getCustomerTrackingBlock();
+            Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
+            Mage::helper('tooso')->addLayoutUpdate($block);
+            $this->_logger->debug('ESI CustomerTracking: layout updated');
+        }
+    }
+
+    /**
+     * Add product tracking script for ESI requests
+     * @param  Varien_Event_Observer $observer
+     */
+    public function includeProductTrackingScriptEsi(Varien_Event_Observer $observer)
+    {
+        if(!Mage::helper('tooso')->isTrackingEnabled()){
+            return;
+        }
+
+        if (Mage::helper('tooso')->getESIRequestBlockName() !== 'tooso_tracking_productView') {
+            $this->_logger->debug('ESI ProductTracking: Request block '.Mage::helper('tooso')->getESIRequestBlockName().' not equal to tooso_tracking_productView, skipping');
+            return;
+        }
+        $this->_logger->debug('ESI ProductTracking: including block');
+        $block = Mage::helper('tooso/tracking')->getProductTrackingBlock(null);
+        Mage::getSingleton( 'core/layout' )->addBlock($block, $block->getNameInLayout());
+        Mage::helper('tooso')->addLayoutUpdate($block);
+        $this->_logger->debug('ESI ProductTracking: layout updated');
     }
 
     /**

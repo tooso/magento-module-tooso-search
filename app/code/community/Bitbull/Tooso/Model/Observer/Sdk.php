@@ -22,7 +22,7 @@ class Bitbull_Tooso_Model_Observer_Sdk extends Bitbull_Tooso_Model_Observer
             $parentBlock->append($blockLibrary);
             $this->_logger->debug('Javascript SDK: added sdk library');
         }else{
-            $this->_logger->warn('Cannot include library init block, parent container not found');
+            $this->_logger->warn('Cannot include library block, parent container not found');
         }
     }
 
@@ -41,7 +41,26 @@ class Bitbull_Tooso_Model_Observer_Sdk extends Bitbull_Tooso_Model_Observer
             $parentBlock->append($blockInitLibrary);
             $this->_logger->debug('Javascript SDK: added SDK library init');
         }else{
-            $this->_logger->warn('Cannot include library block, parent container not found');
+            $this->_logger->warn('Cannot include library init block, parent container not found');
+        }
+    }
+
+    /**
+     * Include custom CSS configurations
+     */
+    public function addCustomCSS()
+    {
+        if(!Mage::helper('tooso/sdk')->isCustomCSSEnabled()){
+            return;
+        }
+
+        $parentBlock = Mage::helper('tooso/sdk')->getScriptContainerBlock();
+        if($parentBlock){
+            $blockInitLibrary = Mage::helper('tooso/sdk')->getCustomCSSBlock();
+            $parentBlock->append($blockInitLibrary);
+            $this->_logger->debug('Javascript SDK: added custom CSS block');
+        }else{
+            $this->_logger->warn('Cannot include custom CSS block, parent container not found');
         }
     }
 

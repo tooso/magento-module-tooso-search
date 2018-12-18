@@ -15,6 +15,9 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
     const XML_PATH_SDK_INPUT = 'tooso/sdk/input_selector';
     const XML_PATH_SDK_DEBUG = 'tooso/sdk/debug_mode';
 
+    const XML_PATH_SDK_CUSTOM_CSS_ENABLE = 'tooso/skin_configuration/custom_css_enable';
+    const XML_PATH_SDK_CUSTOM_CSS = 'tooso/skin_configuration/custom_css';
+
     /**
      * Get SDK library endpoint
      *
@@ -71,6 +74,18 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Create custom CSS Block
+     *
+     * @return Bitbull_Tooso_Block_Sdk_CustomCss
+     */
+    public function getCustomCSSBlock()
+    {
+        $layout = Mage::app()->getLayout();
+        $block = $layout->createBlock('tooso/sdk_customCss');
+        return $block;
+    }
+
+    /**
      * Get javascript library initialization params
      *
      * @param null $store
@@ -110,5 +125,26 @@ class Bitbull_Tooso_Helper_Sdk extends Mage_Core_Helper_Abstract
         }
 
         return (object)  $data;
+    }
+
+
+    /**
+     * Check if custom CSS is enabled
+     *
+     * @return bool
+     */
+    public function isCustomCSSEnabled()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_SDK_CUSTOM_CSS_ENABLE);
+    }
+
+    /**
+     * Return custom CSS
+     *
+     * @return string
+     */
+    public function getCustomCSS()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_SDK_CUSTOM_CSS);
     }
 }

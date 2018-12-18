@@ -55,20 +55,26 @@ class Bitbull_Tooso_Model_Search
      * @param string $query
      * @param boolean $typoCorrection
      * @param string $parentSearchId
+     * @param integer $page
+     * @param integer $limit
      * @return Bitbull_Tooso_Model_Search
      */
-    public function search($query, $typoCorrection = true, $parentSearchId = null)
+    public function search($query, $typoCorrection = true, $parentSearchId = null, $page = null, $limit = null)
     {
         $query = urldecode($query);
         if ($query) {
             try {
                 $params = Mage::helper('tooso')->getProfilingParams();
 
-                if (!is_null($parentSearchId)) {
+                if ($parentSearchId !== null) {
                     $params[self::SEARCH_PARAM_PARENT_SEARCH_ID] = $parentSearchId;
                 }
 
-                $result = $this->_client->search($query, $typoCorrection, $params, $this->_helper->isSearchEnriched());
+                if ($limit === null) {
+                    $limit = $this->_helper->getDefaultLimit();
+                }
+
+                $result = $this->_client->search($query, $typoCorrection, $params, $this->_helper->isSearchEnriched(), $page, $limit);
 
                 if($result->isValid()){
                     $this->setResult($result);

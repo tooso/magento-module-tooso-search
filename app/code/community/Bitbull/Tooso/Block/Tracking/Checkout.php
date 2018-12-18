@@ -14,6 +14,21 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
      */
     protected $_orderId = null;
 
+    /**
+     * Constructor
+     */
+    public function _construct(){
+        parent::_construct();
+
+        $this->addData([
+            'cache_lifetime' => null,
+            'esi_options' => [
+                'access' => 'private',
+                'ttl' => 0
+            ]
+        ]);
+    }
+
     protected function _toHtml()
     {
         $trackingCheckoutParams = [];
@@ -37,11 +52,12 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
         $trackingCheckoutParams['shipping'] = $order->getShippingAmount();
         $trackingCheckoutParams['coupon'] = $order->getCouponCode();
         $trackingCheckoutParams['tax'] = $order->getTaxAmount();
+        $trackingCheckoutParams['revenue'] = $order->getGrandTotal();
 
         $items = $order->getAllVisibleItems();
         $trackingProductParams = [];
 
-        foreach ($items as $item) {
+        foreach ($items as $index=>$item) {
             $productId = $item->getProductId();
             $productData = $this->_helper->getProductTrackingParams($productId);
             if ($productData == null) {
@@ -50,6 +66,7 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
             }
             $productData['quantity'] = round($item->getQtyOrdered());
             $productData['price'] = $item->getPrice();
+            $productData['position'] = $index;
             array_push($trackingProductParams, $productData);
         }
 

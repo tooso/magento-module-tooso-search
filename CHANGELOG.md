@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add configurable limit settings for query results
 - Add default product tracking param position to 0
 - Add position attribute to order tracking
+- Add Turpentine module support
 
 ## [4.11.2]
 - Fix "isUserComingFromSearch" check when user direct access product page

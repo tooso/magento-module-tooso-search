@@ -263,7 +263,8 @@ class Bitbull_Tooso_Helper_Tracking extends Mage_Core_Helper_Abstract
             'name' => $product->getName(),
             'brand' => $product->getBrand(),
             'price' => $product->getFinalPrice(),
-            'quantity' => 1
+            'quantity' => 1,
+            'position' => 0,
         ];
 
         $categoryIds = $product->getCategoryIds();

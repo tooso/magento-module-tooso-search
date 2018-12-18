@@ -224,4 +224,46 @@ class Bitbull_Tooso_Helper_Data extends Mage_Core_Helper_Abstract
     public function getUuid(){
         return Mage::helper('tooso')->getClient()->getUuid();
     }
+
+    /**
+     * Build layout xml
+     * this is a fix to let Turpentine find block during ESI request
+     *
+     * @param $block Mage_Core_Block_Template
+     * @return string
+     */
+    public function addLayoutUpdate($block){
+        $layout = Mage::app()->getLayout();
+        $parent = $block->getParentBlock();
+        $referenceName = '';
+        if ($parent !== null) {
+            $referenceName = $block->getParentBlock()->getNameInLayout();
+        }
+        $layout->getUpdate()->addUpdate('
+            <reference name="'.$referenceName.'">
+                <block type="core/template" name="'.$block->getNameInLayout().'" template="" class="'.get_class($block).'"/>
+             </reference>
+        ');
+    }
+
+    /**
+     * Get current requested block for ESI request
+     *
+     * @return string
+     */
+    public function getESIRequestBlockName()
+    {
+        $req = Mage::app()->getRequest();
+        $esiHelper = Mage::helper('turpentine/esi');
+        $dataHelper = Mage::helper('turpentine/data');
+        if ($esiHelper === null || $dataHelper === null) {
+            return '';
+        }
+        $esiDataParamValue = $req->getParam( $esiHelper->getEsiDataParam() );
+        $esiDataArray = $dataHelper->thaw( $esiDataParamValue );
+        if (!isset($esiDataArray['name_in_layout'])) {
+            return '';
+        }
+        return $esiDataArray['name_in_layout'];
+    }
 }

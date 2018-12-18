@@ -14,6 +14,21 @@ class Bitbull_Tooso_Block_Tracking_Checkout extends Bitbull_Tooso_Block_Tracking
      */
     protected $_orderId = null;
 
+    /**
+     * Constructor
+     */
+    public function _construct(){
+        parent::_construct();
+
+        $this->addData([
+            'cache_lifetime' => null,
+            'esi_options' => [
+                'access' => 'private',
+                'ttl' => 0
+            ]
+        ]);
+    }
+
     protected function _toHtml()
     {
         $trackingCheckoutParams = [];
